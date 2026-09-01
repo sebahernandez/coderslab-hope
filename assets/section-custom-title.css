@@ -1,0 +1,82 @@
+/* Custom Title Section Styles */
+.custom-title-section {
+  width: 100%;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.custom-title-content {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.custom-title {
+  margin-top: 0;
+  line-height: 1.2;
+  font-weight: bold;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.custom-subtitle {
+  line-height: 1.4;
+  margin-top: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Container responsive behavior */
+@media screen and (max-width: 1200px) {
+  .custom-title-section {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .custom-title-section {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  .custom-title {
+    line-height: 1.1;
+  }
+  
+  .custom-subtitle {
+    line-height: 1.3;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .custom-title-section {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+/* Flexbox utility classes for enhanced control */
+.custom-title-section.flex-column {
+  flex-direction: column;
+}
+
+.custom-title-section.flex-row {
+  flex-direction: row;
+}
+
+/* Accessibility improvements */
+.custom-title:focus,
+.custom-subtitle:focus {
+  outline: 2px solid #4A90E2;
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .custom-title-section {
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+    min-height: auto !important;
+  }
+}

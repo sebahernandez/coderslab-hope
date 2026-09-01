@@ -1,0 +1,28 @@
+{%- comment -%}
+  Block: toppings-customizer.liquid
+  Tema: Horizon
+
+  Este bloque se agrega desde el editor visual (Personalizar tema) dentro
+  de la sección de producto, junto a los demás bloques nativos
+  (title, price, variant_picker, buy_buttons, etc.)
+
+  No requiere configuración: automáticamente toma el metafield
+  custom.opciones_customizador del producto que se esté mostrando.
+{%- endcomment -%}
+
+{{ 'toppings-customizer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'toppings-customizer.js' | asset_url }}" defer></script>
+
+{% render 'toppings-customizer', product: product %}
+
+{% schema %}
+{
+  "name": "Customizador de toppings",
+  "settings": [],
+   "presets": [
+    {
+      "name": "Customizador de toppings"
+    }
+  ]
+}
+{% endschema %}

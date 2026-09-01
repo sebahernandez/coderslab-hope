@@ -1,0 +1,88 @@
+<div class="products-container">
+  <!-- Producto 1 -->
+  <div class="select-product">
+    <div class="product-image">
+      {% if section.settings.product_1_image %}
+        <img
+          src="{{ section.settings.product_1_image | image_url: width: 400 }}"
+          alt="{{ section.settings.product_1_title | escape }}"
+          loading="lazy">
+      {% else %}
+        <div class="placeholder-image">
+          <span>Imagen del Producto 1</span>
+        </div>
+      {% endif %}
+    </div>
+    <div class="product-content">
+      <h3 class="product-title">
+        {{ section.settings.product_1_title | default: "Producto 1" }}
+      </h3>
+      <p class="product-description">
+        {{ section.settings.product_1_description | default: "Descripción del primer producto. Aquí puedes agregar detalles sobre las características y beneficios." }}
+      </p>
+      {% if section.settings.product_1_button_text != blank %}
+        <a href="{{ section.settings.product_1_link | default: '#' }}" class="product-button">
+          {{ section.settings.product_1_button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Producto 2 -->
+  <div class="select-product">
+    <div class="product-image">
+      {% if section.settings.product_2_image %}
+        <img
+          src="{{ section.settings.product_2_image | image_url: width: 400 }}"
+          alt="{{ section.settings.product_2_title | escape }}"
+          loading="lazy">
+      {% else %}
+        <div class="placeholder-image">
+          <span>Imagen del Producto 2</span>
+        </div>
+      {% endif %}
+    </div>
+    <div class="product-content">
+      <h3 class="product-title">
+        {{ section.settings.product_2_title | default: "Producto 2" }}
+      </h3>
+      <p class="product-description">
+        {{ section.settings.product_2_description | default: "Descripción del segundo producto. Aquí puedes agregar detalles sobre las características y beneficios." }}
+      </p>
+      {% if section.settings.product_2_button_text != blank %}
+        <a href="{{ section.settings.product_2_link | default: '#' }}" class="product-button">
+          {{ section.settings.product_2_button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Producto 3 -->
+  <div class="select-product">
+    <div class="product-image">
+      {% if section.settings.product_3_image %}
+        <img
+          src="{{ section.settings.product_3_image | image_url: width: 400 }}"
+          alt="{{ section.settings.product_3_title | escape }}"
+          loading="lazy">
+      {% else %}
+        <div class="placeholder-image">
+          <span>Imagen del Producto 3</span>
+        </div>
+      {% endif %}
+    </div>
+    <div class="product-content">
+      <h3 class="product-title">
+        {{ section.settings.product_3_title | default: "Producto 3" }}
+      </h3>
+      <p class="product-description">
+        {{ section.settings.product_3_description | default: "Descripción del tercer producto. Aquí puedes agregar detalles sobre las características y beneficios." }}
+      </p>
+      {% if section.settings.product_3_button_text != blank %}
+        <a href="{{ section.settings.product_3_link | default: '#' }}" class="product-button">
+          {{ section.settings.product_3_button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>

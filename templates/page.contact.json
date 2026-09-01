@@ -1,0 +1,411 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "title": {
+          "type": "text",
+          "name": "t:names.title",
+          "settings": {
+            "text": "<h2>{{ closest.page.title }}</h2>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "center",
+            "type_preset": "h2",
+            "font": "var(--font-primary--family)",
+            "font_size": "",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "content": {
+          "type": "text",
+          "name": "t:names.content",
+          "settings": {
+            "text": "{{ closest.page.content }}",
+            "width": "100%",
+            "max_width": "narrow",
+            "alignment": "center",
+            "type_preset": "rte",
+            "font": "var(--font-primary--family)",
+            "font_size": "",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "title",
+        "content"
+      ],
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "gap": 48,
+        "color_scheme": "",
+        "padding-block-start": 59,
+        "padding-block-end": 0
+      }
+    },
+    "hero_text_p9GAzw": {
+      "type": "hero-text",
+      "name": "Hero Banner Helados",
+      "settings": {
+        "height_type": "auto",
+        "min_height": 700,
+        "min_height_mobile": 400,
+        "height_custom": 80,
+        "height_unit": "vh",
+        "height_custom_mobile": 60,
+        "height_unit_mobile": "vh",
+        "background_color": "#ffb6d9",
+        "background_image": "shopify://shop_images/bg-contact.png",
+        "show_image": true,
+        "heading_alignment": "left",
+        "heading_alignment_mobile": "center",
+        "subheading_alignment": "left",
+        "subheading_alignment_mobile": "center",
+        "description_alignment": "left",
+        "description_alignment_mobile": "center",
+        "button_alignment": "left",
+        "button_alignment_mobile": "center",
+        "heading": "ESTAMOS AQUÍ \nPARA TI",
+        "heading_color": "#630022",
+        "heading_font_type": "theme",
+        "heading_font": "poppins_n7",
+        "heading_custom_font_name": "",
+        "heading_custom_font_url": "",
+        "heading_custom_font_weight": "900",
+        "heading_weight": "800",
+        "heading_bold": true,
+        "heading_font_size": 52,
+        "heading_font_size_mobile": 24,
+        "subheading": "",
+        "subheading_color": "#630022",
+        "subheading_font_type": "theme",
+        "subheading_font": "sans_serif_n7",
+        "subheading_custom_font_name": "",
+        "subheading_custom_font_url": "",
+        "subheading_custom_font_weight": "auto",
+        "subheading_weight": "auto",
+        "subheading_bold": false,
+        "subheading_font_size": 32,
+        "subheading_font_size_mobile": 20,
+        "description": "Endulzamos cada rincón de Tucacas con sabores que te roban sonrisas. Pide con Retiro en tienda o disfruta nuestro Delivery directo a tu puerta.",
+        "description_color": "#630022",
+        "description_font_type": "theme",
+        "description_font": "poppins_n6",
+        "description_custom_font_name": "",
+        "description_custom_font_url": "",
+        "description_custom_font_weight": "auto",
+        "description_weight": "auto",
+        "description_bold": false,
+        "description_font_size": 16,
+        "description_font_size_mobile": 14,
+        "button_label": "",
+        "button_bold": false,
+        "button_link": "",
+        "button_glass_background": "#ffffff40",
+        "button_glass_border_color": "#ffffff80",
+        "button_glass_blur": 10,
+        "button_text_color": "#ff69b4",
+        "button_font_type": "theme",
+        "button_font": "sans_serif_n4",
+        "button_custom_font_name": "",
+        "button_custom_font_url": "",
+        "button_custom_font_weight": "auto",
+        "button_weight": "auto",
+        "button_font_size": 16,
+        "button_font_size_mobile": 14,
+        "button_border_radius": 25
+      }
+    },
+    "custom_contact_fKYEWW": {
+      "type": "custom-contact",
+      "disabled": true,
+      "name": "Custom Contact Section",
+      "settings": {
+        "address": "123 Main Street, City, State 12345",
+        "schedule": "Mon-Fri: 9AM-6PM",
+        "phone": "+1 (555) 123-4567",
+        "email": "contact@example.com",
+        "strawberry_image": "shopify://shop_images/frutilla.png"
+      }
+    },
+    "information_boxes_nwyFAB": {
+      "type": "information-boxes",
+      "blocks": {
+        "box_EAYgbL": {
+          "type": "box",
+          "settings": {
+            "icon": "shopify://shop_images/Icon-localization.png",
+            "show_icon_placeholder": true,
+            "icon_size": 30,
+            "icon_padding_top": 0,
+            "icon_padding_right": 0,
+            "icon_padding_bottom": 0,
+            "icon_padding_left": 0,
+            "title": "UBICACIÓN",
+            "title_font": "anonymous_pro_n4",
+            "title_weight": "bold",
+            "title_size": 20,
+            "title_alignment": "inherit",
+            "title_color": "#111111",
+            "title_padding_top": 12,
+            "title_padding_right": 0,
+            "title_padding_bottom": 0,
+            "title_padding_left": 0,
+            "text": "<p>Dirección, número, ciudad, local, Venezuela</p>",
+            "text_font": "work_sans_n4",
+            "text_weight": "auto",
+            "text_size": 15,
+            "text_color": "#444444",
+            "text_padding_top": 8,
+            "text_padding_right": 0,
+            "text_padding_bottom": 0,
+            "text_padding_left": 0,
+            "box_background": "#ffffff",
+            "content_color": "#333333",
+            "box_radius": 12,
+            "box_padding_top": 24,
+            "box_padding_right": 24,
+            "box_padding_bottom": 24,
+            "box_padding_left": 24
+          }
+        },
+        "box_yBUBqj": {
+          "type": "box",
+          "settings": {
+            "icon": "shopify://shop_images/Icon-contacto.png",
+            "show_icon_placeholder": true,
+            "icon_size": 30,
+            "icon_padding_top": 0,
+            "icon_padding_right": 0,
+            "icon_padding_bottom": 0,
+            "icon_padding_left": 0,
+            "title": "CONTACTO",
+            "title_font": "anonymous_pro_n4",
+            "title_weight": "bold",
+            "title_size": 20,
+            "title_alignment": "inherit",
+            "title_color": "#111111",
+            "title_padding_top": 12,
+            "title_padding_right": 0,
+            "title_padding_bottom": 0,
+            "title_padding_left": 0,
+            "text": "<p>Describe aquí la información de esta caja.</p>",
+            "text_font": "work_sans_n4",
+            "text_weight": "auto",
+            "text_size": 15,
+            "text_color": "#444444",
+            "text_padding_top": 8,
+            "text_padding_right": 0,
+            "text_padding_bottom": 0,
+            "text_padding_left": 0,
+            "box_background": "#ffffff",
+            "content_color": "#333333",
+            "box_radius": 12,
+            "box_padding_top": 24,
+            "box_padding_right": 24,
+            "box_padding_bottom": 24,
+            "box_padding_left": 24
+          }
+        },
+        "box_qfMjim": {
+          "type": "box",
+          "settings": {
+            "icon": "shopify://shop_images/Icon-clock.png",
+            "show_icon_placeholder": true,
+            "icon_size": 30,
+            "icon_padding_top": 0,
+            "icon_padding_right": 0,
+            "icon_padding_bottom": 0,
+            "icon_padding_left": 0,
+            "title": "HORARIO",
+            "title_font": "anonymous_pro_n4",
+            "title_weight": "bold",
+            "title_size": 20,
+            "title_alignment": "inherit",
+            "title_color": "#111111",
+            "title_padding_top": 12,
+            "title_padding_right": 0,
+            "title_padding_bottom": 0,
+            "title_padding_left": 0,
+            "text": "<p>Describe aquí la información de esta caja.</p>",
+            "text_font": "work_sans_n4",
+            "text_weight": "auto",
+            "text_size": 15,
+            "text_color": "#444444",
+            "text_padding_top": 8,
+            "text_padding_right": 0,
+            "text_padding_bottom": 0,
+            "text_padding_left": 0,
+            "box_background": "#ffffff",
+            "content_color": "#333333",
+            "box_radius": 12,
+            "box_padding_top": 24,
+            "box_padding_right": 24,
+            "box_padding_bottom": 24,
+            "box_padding_left": 24
+          }
+        }
+      },
+      "block_order": [
+        "box_EAYgbL",
+        "box_yBUBqj",
+        "box_qfMjim"
+      ],
+      "name": "Cajas de información",
+      "settings": {
+        "heading": "<p>¿Cómo encontrarnos?</p>",
+        "heading_font": "poppins_n7",
+        "heading_weight": "auto",
+        "heading_size": 50,
+        "heading_alignment": "inherit",
+        "heading_color": "#630022",
+        "background_color": "#fce4ec",
+        "background_gradient": "",
+        "page_width": 1480,
+        "columns": 3,
+        "gap": 24,
+        "content_alignment": "left",
+        "padding_top": 60,
+        "padding_bottom": 60
+      }
+    },
+    "custom_form_HgeJJW": {
+      "type": "custom-form",
+      "blocks": {
+        "social_kY9eRt": {
+          "type": "social",
+          "settings": {
+            "platform": "instagram",
+            "url": "#hope"
+          }
+        },
+        "social_ETWfdQ": {
+          "type": "social",
+          "settings": {
+            "platform": "facebook",
+            "url": "#hope"
+          }
+        },
+        "social_KRzqJG": {
+          "type": "social",
+          "settings": {
+            "platform": "messenger",
+            "url": "#hope"
+          }
+        }
+      },
+      "block_order": [
+        "social_kY9eRt",
+        "social_ETWfdQ",
+        "social_KRzqJG"
+      ],
+      "name": "Formulario de contacto",
+      "settings": {
+        "eyebrow": "ESCRÍBENOS",
+        "title_line_1": "Cuéntanos",
+        "title_line_2": "lo que necesitas",
+        "description": "<p>Ya sea un pedido especial, un evento, una pregunta sobre nuestros sabores, o simplemente decir hola — nos encanta saber de ti.</p>",
+        "label_name": "Nombre",
+        "placeholder_name": "María García",
+        "name_required": true,
+        "label_email": "Correo",
+        "placeholder_email": "maria@email.com",
+        "show_subject": true,
+        "label_subject": "Asunto",
+        "subject_placeholder": "Selecciona un tema",
+        "subject_options": "Pedido especial\nEventos\nPreguntas sobre sabores\nOtro",
+        "subject_required": false,
+        "label_message": "Mensaje",
+        "placeholder_message": "Cuéntanos en qué podemos ayudarte...",
+        "message_required": true,
+        "button_text": "Enviar mensaje",
+        "success_message": "¡Gracias! Hemos recibido tu mensaje y te responderemos pronto.",
+        "form_position": "right",
+        "max_width": 1440,
+        "column_gap": 64,
+        "card_radius": 28,
+        "section_bg": "#f9a8c9",
+        "eyebrow_color": "#5a0f2e",
+        "title_color_1": "#5a0f2e",
+        "title_color_2": "#ffffff",
+        "description_color": "#5a0f2e",
+        "card_bg": "#fbd0e2",
+        "field_bg": "#ffffff",
+        "field_border": "#f5b8d1",
+        "label_color": "#5a0f2e",
+        "input_text_color": "#3a0a1e",
+        "placeholder_color": "#b98aa0",
+        "button_bg": "#5a0f2e",
+        "button_text_color": "#ffffff",
+        "social_bg": "#fbd0e2",
+        "social_icon_color": "#5a0f2e",
+        "social_border": "#5a0f2e"
+      }
+    },
+    "custom_image_kA4QB4": {
+      "type": "custom-image",
+      "name": "Custom Image",
+      "settings": {
+        "image_desktop": "shopify://shop_images/Piscinahope.jpg",
+        "image_mobile": "shopify://shop_images/Piscinahope.jpg",
+        "image_height_desktop": "40vh",
+        "image_height_mobile": "50vh",
+        "image_fit": "cover",
+        "image_position": "center",
+        "fallback_color": "#f0f0f0",
+        "overlay_enable": false,
+        "overlay_color": "#000000",
+        "overlay_opacity": 0,
+        "heading": "",
+        "subheading": "",
+        "button_label": "",
+        "button_link": "",
+        "content_alignment_desktop": "center",
+        "content_alignment_mobile": "center"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "hero_text_p9GAzw",
+    "custom_contact_fKYEWW",
+    "information_boxes_nwyFAB",
+    "custom_form_HgeJJW",
+    "custom_image_kA4QB4"
+  ]
+}

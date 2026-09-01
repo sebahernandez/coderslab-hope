@@ -1,0 +1,258 @@
+{% comment %}
+Custom contact form section
+{% endcomment %}
+
+<style>
+  .contact-section {
+    width: 100%;
+    padding: 40px 24px;
+  }
+
+  .contact-container {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    max-width: 1152px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+  }
+
+  .contact-box {
+    position: relative;
+    background: linear-gradient(to bottom, rgb(249, 168, 212), rgb(252, 165, 207));
+    border-radius: 24px;
+    padding: 32px;
+    width: 100%;
+    max-width: 500px;
+    overflow: hidden;
+    flex: 1;
+    min-width: 280px;
+  }
+
+  .contact-box h2 {
+    color: white;
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 16px;
+    line-height: 1.3;
+  }
+
+  .contact-box p {
+    color: white;
+    margin-bottom: 16px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .contact-info {
+    color: white;
+    margin-bottom: 24px;
+  }
+
+  .contact-info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .contact-info-item p {
+    margin: 0;
+  }
+
+  .contact-box h3 {
+    color: white;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .strawberry-image {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    opacity: 0.3;
+    width: 224px;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .form-wrapper {
+    width: 100%;
+    max-width: 500px;
+    flex: 1;
+    min-width: 280px;
+  }
+
+  .form-title {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 32px;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .form-input,
+  .form-textarea {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid rgb(249, 168, 212);
+    outline: none;
+    padding: 8px 0;
+    font-size: 16px;
+  }
+
+  .form-textarea {
+    height: 112px;
+    font-family: inherit;
+    resize: vertical;
+  }
+
+  .submit-button {
+    background-color: rgb(249, 168, 212);
+    color: white;
+    font-weight: 600;
+    padding: 12px 40px;
+    border-radius: 9999px;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .submit-button:hover {
+    background-color: rgb(245, 145, 195);
+  }
+</style>
+
+<section class="contact-section">
+  <div class="contact-container">
+
+    <!-- Left pink box -->
+    <div class="contact-box">
+
+      <h2>¿Tienes antojo de un helado?<br>¡Encuéntranos!</h2>
+      <p>Estamos listos para recibirte en:</p>
+
+      <div class="contact-info">
+        <div class="contact-info-item">
+          <i class="fa-solid fa-location-dot"></i>
+          <p>{{ section.settings.address }}</p>
+        </div>
+        <div class="contact-info-item">
+          <i class="fa-solid fa-clock"></i>
+          <p>{{ section.settings.schedule }}</p>
+        </div>
+      </div>
+
+      <h3>Contáctanos!</h3>
+      <div class="contact-info">
+        <div class="contact-info-item">
+          <i class="fa-solid fa-phone"></i>
+          <p>{{ section.settings.phone }}</p>
+        </div>
+        <div class="contact-info-item">
+          <i class="fa-solid fa-envelope"></i>
+          <p>{{ section.settings.email }}</p>
+        </div>
+      </div>
+
+      {% if section.settings.strawberry_image != blank %}
+      <img src="{{ section.settings.strawberry_image | image_url: width: 600, height: 400 }}" alt="strawberry" width="600" height="400" class="strawberry-image" />
+      {% endif %}
+
+    </div>
+
+    <!-- Right form -->
+    <div class="form-wrapper">
+      <h2 class="form-title">También puedes rellenar el siguiente formulario y te responderemos lo antes posible.</h2>
+
+      <form method="post" action="/contact#contact_form" id="contact_form" class="contact-form">
+        <input type="hidden" name="form_type" value="contact" />
+        {{ form.errors | default_errors }}
+
+        <div class="form-group">
+          <label class="form-label">Nombre</label>
+          <input type="text" name="contact[name]" placeholder="Nombre y apellido" class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Teléfono / Celular</label>
+          <input type="text" name="contact[phone]" placeholder="Número de contacto" class="form-input">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" name="contact[email]" placeholder="Escribe tu email aquí..." class="form-input" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mensaje</label>
+          <textarea name="contact[body]" placeholder="Escribe tu mensaje aquí..." class="form-textarea" required></textarea>
+        </div>
+
+        <button type="submit" class="submit-button">
+          ENVIAR
+        </button>
+      </form>
+    </div>
+
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Custom Contact Form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "address",
+      "label": "Dirección",
+      "default": "Calle del Sabor 123, Barrio El Dulce"
+    },
+    {
+      "type": "text",
+      "id": "schedule",
+      "label": "Horario",
+      "default": "Martes a domingo 12:00 a 20:00 hrs."
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Teléfono",
+      "default": "+58 1234567890"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "Correo electrónico",
+      "default": "contacto@contacto.ve"
+    },
+    {
+      "type": "image_picker",
+      "id": "strawberry_image",
+      "label": "Imagen de la frutilla"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Contact Form"
+    }
+  ]
+}
+{% endschema %}

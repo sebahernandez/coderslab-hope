@@ -1,0 +1,852 @@
+{% style %}
+  {%- comment -%} Título: fuente de tema o personalizada por URL {%- endcomment -%}
+  {%- if section.settings.heading_font_type == 'custom' and section.settings.heading_custom_font_url != blank -%}
+    @font-face {
+      font-family: '{{ section.settings.heading_custom_font_name }}';
+      src: url('{{ section.settings.heading_custom_font_url }}');
+      font-weight: {% if section.settings.heading_custom_font_weight == 'auto' %}normal{% else %}{{ section.settings.heading_custom_font_weight }}{% endif %};
+      font-style: normal;
+      font-display: swap;
+    }
+  {%- else -%}
+    {{ section.settings.heading_font | font_face: font_display: 'swap' }}
+  {%- endif -%}
+
+  {%- comment -%} Título de feature {%- endcomment -%}
+  {%- if section.settings.feature_title_font_type == 'custom' and section.settings.feature_title_custom_font_url != blank -%}
+    @font-face {
+      font-family: '{{ section.settings.feature_title_custom_font_name }}';
+      src: url('{{ section.settings.feature_title_custom_font_url }}');
+      font-weight: {% if section.settings.feature_title_custom_font_weight == 'auto' %}normal{% else %}{{ section.settings.feature_title_custom_font_weight }}{% endif %};
+      font-style: normal;
+      font-display: swap;
+    }
+  {%- else -%}
+    {{ section.settings.feature_title_font | font_face: font_display: 'swap' }}
+  {%- endif -%}
+
+  {%- comment -%} Descripción {%- endcomment -%}
+  {%- if section.settings.feature_description_font_type == 'custom' and section.settings.feature_description_custom_font_url != blank -%}
+    @font-face {
+      font-family: '{{ section.settings.feature_description_custom_font_name }}';
+      src: url('{{ section.settings.feature_description_custom_font_url }}');
+      font-weight: {% if section.settings.feature_description_custom_font_weight == 'auto' %}normal{% else %}{{ section.settings.feature_description_custom_font_weight }}{% endif %};
+      font-style: normal;
+      font-display: swap;
+    }
+  {%- else -%}
+    {{ section.settings.feature_description_font | font_face: font_display: 'swap' }}
+  {%- endif -%}
+
+  /* Sección padre: rompe el ancho del contenedor del tema
+     y pinta el fondo a todo el ancho del viewport (full-bleed) */
+  .hope-features {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    padding-top: var(--hope-padding-top, 0px);
+    padding-bottom: var(--hope-padding-bottom, 0px);
+  }
+
+  /* Contenido: respeta el ancho de página oficial de Shopify y se centra */
+  .hope-features__grid {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+    max-width: var(--page-width, 1200px);
+    margin-inline: auto;
+    min-height: 600px;
+  }
+
+  /* Imagen: 50% del ancho, cubre todo el alto del bloque */
+  .hope-features__media {
+    flex: 0 0 50%;
+    max-width: 50%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hope-features__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .hope-features__image--placeholder {
+    background-color: #e8e8e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hope-features__image--placeholder svg {
+    width: 60%;
+    height: 60%;
+  }
+
+  /* Panel de contenido: 50%, centrado */
+  .hope-features__content {
+    flex: 0 0 50%;
+    max-width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 64px 72px;
+  }
+
+  .hope-features__heading {
+    font-family: var(--hope-heading-family);
+    font-weight: var(--hope-heading-weight);
+    font-style: var(--hope-heading-style);
+    font-size: var(--hope-heading-size, 2.4rem);
+    line-height: var(--hope-heading-line-height, 1.2);
+    letter-spacing: var(--hope-heading-letter-spacing, 0px);
+    text-transform: var(--hope-heading-transform, none);
+    text-align: center;
+    margin: 0 0 40px;
+    color: var(--color-heading, var(--color-foreground));
+  }
+
+  .hope-features__list {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .hope-features__item {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .hope-features__icon-wrap {
+    flex: 0 0 auto;
+    width: var(--hope-icon-size, 48px);
+    height: var(--hope-icon-size, 48px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hope-features__icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .hope-features__text {
+    flex: 1 1 auto;
+  }
+
+  .hope-features__item-title {
+    font-family: var(--hope-feature-title-family);
+    font-style: var(--hope-feature-title-style);
+    font-size: var(--hope-feature-title-size, 1.1rem);
+    font-weight: var(--hope-feature-title-weight, 700);
+    letter-spacing: var(--hope-feature-title-letter-spacing, 0px);
+    color: var(--hope-feature-title-color, var(--color-foreground));
+    margin: 0 0 4px;
+  }
+
+  .hope-features__item-description {
+    font-family: var(--hope-feature-description-family);
+    font-weight: var(--hope-feature-description-weight);
+    font-style: var(--hope-feature-description-style);
+    font-size: var(--hope-feature-description-size, 0.95rem);
+    letter-spacing: var(--hope-feature-description-letter-spacing, 0px);
+    color: var(--hope-feature-description-color, var(--color-foreground));
+    line-height: var(--hope-feature-description-line-height, 1.5);
+    margin: 0;
+  }
+
+  .hope-features__item-description p {
+    margin: 0;
+  }
+
+  /* Imagen a la derecha, contenido a la izquierda (setting image_side = right) */
+  .hope-features[data-image-side="right"] .hope-features__grid {
+    flex-direction: row-reverse;
+  }
+
+  /* ============ RESPONSIVE ============ */
+
+  /* Tablet */
+  @media screen and (max-width: 989px) {
+    .hope-features__content {
+      padding: 48px 40px;
+    }
+
+    .hope-features__heading {
+      font-size: calc(var(--hope-heading-size, 2.4rem) * 0.83);
+      margin-bottom: 32px;
+    }
+  }
+
+  /* Mobile: apila imagen arriba, panel abajo */
+  @media screen and (max-width: 749px) {
+    .hope-features__grid,
+    .hope-features[data-image-side="right"] .hope-features__grid {
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .hope-features__media,
+    .hope-features__content {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+
+    .hope-features__media {
+      min-height: 320px;
+    }
+
+    .hope-features__content {
+      padding: 40px 24px;
+    }
+
+    .hope-features__heading {
+      font-size: var(--hope-heading-size-mobile, calc(var(--hope-heading-size, 2.4rem) * 0.71));
+      margin-bottom: 28px;
+    }
+
+    .hope-features__item-title {
+      font-size: var(--hope-feature-title-size-mobile, var(--hope-feature-title-size, 1.1rem));
+    }
+
+    .hope-features__item-description {
+      font-size: var(--hope-feature-description-size-mobile, var(--hope-feature-description-size, 0.95rem));
+    }
+
+    .hope-features__item {
+      gap: 12px;
+    }
+
+    .hope-features__icon-wrap {
+      width: var(--hope-icon-size-mobile, var(--hope-icon-size, 40px));
+      height: var(--hope-icon-size-mobile, var(--hope-icon-size, 40px));
+    }
+  }
+{% endstyle %}
+
+<section
+  class="hope-features"
+  data-image-side="{{ section.settings.image_side }}"
+  style="
+    --color-background: {{ section.settings.background_color }};
+    --color-foreground: {{ section.settings.text_color }};
+    --color-heading: {{ section.settings.heading_color }};
+    {%- comment -%} Familia del título: personalizada o de tema {%- endcomment -%}
+    --hope-heading-family: {% if section.settings.heading_font_type == 'custom' and section.settings.heading_custom_font_name != blank %}'{{ section.settings.heading_custom_font_name }}', {{ section.settings.heading_font.fallback_families }}{% else %}{{ section.settings.heading_font.family }}, {{ section.settings.heading_font.fallback_families }}{% endif %};
+    --hope-heading-weight: {% if section.settings.heading_weight != 'auto' %}{{ section.settings.heading_weight }}{% elsif section.settings.heading_bold %}700{% else %}{{ section.settings.heading_font.weight }}{% endif %};
+    --hope-heading-style: {% if section.settings.heading_font_type == 'custom' %}normal{% else %}{{ section.settings.heading_font.style }}{% endif %};
+    --hope-heading-size: {{ section.settings.heading_size }}px;
+    --hope-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
+    --hope-heading-letter-spacing: {{ section.settings.heading_letter_spacing }}px;
+    --hope-heading-line-height: {{ section.settings.heading_line_height }};
+    --hope-heading-transform: {{ section.settings.heading_text_transform }};
+    {%- comment -%} Familia del título de feature {%- endcomment -%}
+    --hope-feature-title-family: {% if section.settings.feature_title_font_type == 'custom' and section.settings.feature_title_custom_font_name != blank %}'{{ section.settings.feature_title_custom_font_name }}', {{ section.settings.feature_title_font.fallback_families }}{% else %}{{ section.settings.feature_title_font.family }}, {{ section.settings.feature_title_font.fallback_families }}{% endif %};
+    --hope-feature-title-weight: {% if section.settings.feature_title_weight != 'auto' %}{{ section.settings.feature_title_weight }}{% elsif section.settings.feature_title_bold %}700{% else %}{{ section.settings.feature_title_font.weight }}{% endif %};
+    --hope-feature-title-style: {% if section.settings.feature_title_font_type == 'custom' %}normal{% else %}{{ section.settings.feature_title_font.style }}{% endif %};
+    --hope-feature-title-size: {{ section.settings.feature_title_size }}px;
+    --hope-feature-title-size-mobile: {{ section.settings.feature_title_size_mobile }}px;
+    --hope-feature-title-letter-spacing: {{ section.settings.feature_title_letter_spacing }}px;
+    --hope-feature-title-color: {{ section.settings.feature_title_color }};
+    {%- comment -%} Familia de la descripción {%- endcomment -%}
+    --hope-feature-description-family: {% if section.settings.feature_description_font_type == 'custom' and section.settings.feature_description_custom_font_name != blank %}'{{ section.settings.feature_description_custom_font_name }}', {{ section.settings.feature_description_font.fallback_families }}{% else %}{{ section.settings.feature_description_font.family }}, {{ section.settings.feature_description_font.fallback_families }}{% endif %};
+    --hope-feature-description-weight: {% if section.settings.feature_description_weight != 'auto' %}{{ section.settings.feature_description_weight }}{% elsif section.settings.feature_description_bold %}700{% else %}{{ section.settings.feature_description_font.weight }}{% endif %};
+    --hope-feature-description-style: {% if section.settings.feature_description_font_type == 'custom' %}normal{% else %}{{ section.settings.feature_description_font.style }}{% endif %};
+    --hope-feature-description-size: {{ section.settings.feature_description_size }}px;
+    --hope-feature-description-size-mobile: {{ section.settings.feature_description_size_mobile }}px;
+    --hope-feature-description-letter-spacing: {{ section.settings.feature_description_letter_spacing }}px;
+    --hope-feature-description-line-height: {{ section.settings.feature_description_line_height }};
+    --hope-feature-description-color: {{ section.settings.feature_description_color }};
+    --hope-padding-top: {{ section.settings.padding_top }}px;
+    --hope-padding-bottom: {{ section.settings.padding_bottom }}px;
+  "
+>
+  <div class="hope-features__grid section section--page-width">
+
+    <div class="hope-features__media">
+      {%- if section.settings.image != blank -%}
+        <img
+          src="{{ section.settings.image | image_url: width: 1500 }}"
+          alt="{{ section.settings.image.alt | escape }}"
+          loading="lazy"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+          class="hope-features__image"
+        >
+      {%- else -%}
+        <div class="hope-features__image hope-features__image--placeholder">
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="hope-features__content">
+      {%- if section.settings.heading != blank -%}
+        <h2 class="hope-features__heading">{{ section.settings.heading }}</h2>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="hope-features__list">
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+              {%- when 'feature' -%}
+                <div
+                  class="hope-features__item"
+                  style="--hope-icon-size: {{ block.settings.icon_size }}px; --hope-icon-size-mobile: {{ block.settings.icon_size_mobile }}px;"
+                  {{ block.shopify_attributes }}
+                >
+                  <div class="hope-features__icon-wrap">
+                    {%- if block.settings.icon != blank -%}
+                      <img
+                        src="{{ block.settings.icon | image_url: width: 64 }}"
+                        alt=""
+                        loading="lazy"
+                        width="32"
+                        height="32"
+                        class="hope-features__icon"
+                      >
+                    {%- else -%}
+                      <div><small>Icon</small></div>
+                    {%- endif -%}
+                  </div>
+                  <div class="hope-features__text">
+                    {%- if block.settings.title != blank -%}
+                      <h3 class="hope-features__item-title">{{ block.settings.title }}</h3>
+                    {%- endif -%}
+                    {%- if block.settings.description != blank -%}
+                      <div class="hope-features__item-description">{{ block.settings.description }}</div>
+                    {%- endif -%}
+                  </div>
+                </div>
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Hope Features",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Imagen"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen"
+    },
+    {
+      "type": "select",
+      "id": "image_side",
+      "label": "Posición de la imagen",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Título",
+      "default": "<p>¿Por qué todos <strong>aman</strong> HOPE?</p>"
+    },
+    {
+      "type": "header",
+      "content": "Tipografía — Título"
+    },
+    {
+      "type": "select",
+      "id": "heading_font_type",
+      "label": "Origen de la fuente",
+      "options": [
+        { "value": "theme", "label": "Fuente de Shopify" },
+        { "value": "custom", "label": "Fuente personalizada (URL / @font-face)" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Fuente del título (Shopify)",
+      "info": "Se usa cuando el origen es 'Fuente de Shopify'. También aporta las fuentes de respaldo.",
+      "default": "work_sans_n7"
+    },
+    {
+      "type": "text",
+      "id": "heading_custom_font_name",
+      "label": "Nombre de la fuente personalizada",
+      "info": "Ej: 'MiFuente'. Se usa como font-family."
+    },
+    {
+      "type": "url",
+      "id": "heading_custom_font_url",
+      "label": "URL del archivo de fuente",
+      "info": "Sube el .woff2/.woff/.ttf a Contenido → Archivos y pega su URL. Se usa cuando el origen es 'personalizada'."
+    },
+    {
+      "type": "select",
+      "id": "heading_custom_font_weight",
+      "label": "Peso real del archivo de fuente",
+      "info": "Peso con el que se registra el @font-face de la fuente personalizada.",
+      "options": [
+        { "value": "auto", "label": "Normal" },
+        { "value": "100", "label": "100" },
+        { "value": "200", "label": "200" },
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" },
+        { "value": "900", "label": "900" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Grosor aplicado",
+      "options": [
+        { "value": "auto", "label": "Automático (según fuente)" },
+        { "value": "100", "label": "100 - Thin" },
+        { "value": "200", "label": "200 - Extra Light" },
+        { "value": "300", "label": "300 - Light" },
+        { "value": "400", "label": "400 - Regular" },
+        { "value": "500", "label": "500 - Medium" },
+        { "value": "600", "label": "600 - Semi Bold" },
+        { "value": "700", "label": "700 - Bold" },
+        { "value": "800", "label": "800 - Extra Bold" },
+        { "value": "900", "label": "900 - Black" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_bold",
+      "label": "Título en negrita",
+      "info": "Solo se aplica si el grosor está en 'Automático'.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Tamaño del título",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 38
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Tamaño del título (móvil)",
+      "min": 14,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 27
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "label": "Interlineado del título",
+      "min": 0.8,
+      "max": 2.5,
+      "step": 0.1,
+      "default": 1.2
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "label": "Espaciado entre letras (título)",
+      "min": -5,
+      "max": 20,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "heading_text_transform",
+      "label": "Transformación del texto (título)",
+      "options": [
+        { "value": "none", "label": "Ninguna" },
+        { "value": "uppercase", "label": "MAYÚSCULAS" },
+        { "value": "lowercase", "label": "minúsculas" },
+        { "value": "capitalize", "label": "Capitalizar" }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Tipografía — Título de feature"
+    },
+    {
+      "type": "select",
+      "id": "feature_title_font_type",
+      "label": "Origen de la fuente",
+      "options": [
+        { "value": "theme", "label": "Fuente de Shopify" },
+        { "value": "custom", "label": "Fuente personalizada (URL / @font-face)" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "font_picker",
+      "id": "feature_title_font",
+      "label": "Fuente del título de feature (Shopify)",
+      "default": "work_sans_n7"
+    },
+    {
+      "type": "text",
+      "id": "feature_title_custom_font_name",
+      "label": "Nombre de la fuente personalizada"
+    },
+    {
+      "type": "url",
+      "id": "feature_title_custom_font_url",
+      "label": "URL del archivo de fuente",
+      "info": "Sube el archivo a Contenido → Archivos y pega su URL."
+    },
+    {
+      "type": "select",
+      "id": "feature_title_custom_font_weight",
+      "label": "Peso real del archivo de fuente",
+      "options": [
+        { "value": "auto", "label": "Normal" },
+        { "value": "100", "label": "100" },
+        { "value": "200", "label": "200" },
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" },
+        { "value": "900", "label": "900" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "feature_title_weight",
+      "label": "Grosor aplicado",
+      "options": [
+        { "value": "auto", "label": "Automático (según fuente)" },
+        { "value": "100", "label": "100 - Thin" },
+        { "value": "200", "label": "200 - Extra Light" },
+        { "value": "300", "label": "300 - Light" },
+        { "value": "400", "label": "400 - Regular" },
+        { "value": "500", "label": "500 - Medium" },
+        { "value": "600", "label": "600 - Semi Bold" },
+        { "value": "700", "label": "700 - Bold" },
+        { "value": "800", "label": "800 - Extra Bold" },
+        { "value": "900", "label": "900 - Black" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_title_bold",
+      "label": "Título de feature en negrita",
+      "info": "Solo se aplica si el grosor está en 'Automático'.",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "feature_title_size",
+      "label": "Tamaño del título de feature",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "feature_title_size_mobile",
+      "label": "Tamaño del título de feature (móvil)",
+      "min": 10,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "feature_title_letter_spacing",
+      "label": "Espaciado entre letras",
+      "min": -5,
+      "max": 20,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "feature_title_color",
+      "label": "Color del título de feature",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Tipografía — Descripción"
+    },
+    {
+      "type": "select",
+      "id": "feature_description_font_type",
+      "label": "Origen de la fuente",
+      "options": [
+        { "value": "theme", "label": "Fuente de Shopify" },
+        { "value": "custom", "label": "Fuente personalizada (URL / @font-face)" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "font_picker",
+      "id": "feature_description_font",
+      "label": "Fuente de la descripción (Shopify)",
+      "default": "work_sans_n4"
+    },
+    {
+      "type": "text",
+      "id": "feature_description_custom_font_name",
+      "label": "Nombre de la fuente personalizada"
+    },
+    {
+      "type": "url",
+      "id": "feature_description_custom_font_url",
+      "label": "URL del archivo de fuente",
+      "info": "Sube el archivo a Contenido → Archivos y pega su URL."
+    },
+    {
+      "type": "select",
+      "id": "feature_description_custom_font_weight",
+      "label": "Peso real del archivo de fuente",
+      "options": [
+        { "value": "auto", "label": "Normal" },
+        { "value": "100", "label": "100" },
+        { "value": "200", "label": "200" },
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" },
+        { "value": "900", "label": "900" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "feature_description_weight",
+      "label": "Grosor aplicado",
+      "options": [
+        { "value": "auto", "label": "Automático (según fuente)" },
+        { "value": "100", "label": "100 - Thin" },
+        { "value": "200", "label": "200 - Extra Light" },
+        { "value": "300", "label": "300 - Light" },
+        { "value": "400", "label": "400 - Regular" },
+        { "value": "500", "label": "500 - Medium" },
+        { "value": "600", "label": "600 - Semi Bold" },
+        { "value": "700", "label": "700 - Bold" },
+        { "value": "800", "label": "800 - Extra Bold" },
+        { "value": "900", "label": "900 - Black" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_description_bold",
+      "label": "Descripción en negrita",
+      "info": "Solo se aplica si el grosor está en 'Automático'.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "feature_description_size",
+      "label": "Tamaño de la descripción",
+      "min": 10,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "feature_description_size_mobile",
+      "label": "Tamaño de la descripción (móvil)",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "feature_description_line_height",
+      "label": "Interlineado de la descripción",
+      "min": 0.8,
+      "max": 2.5,
+      "step": 0.1,
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "feature_description_letter_spacing",
+      "label": "Espaciado entre letras",
+      "min": -5,
+      "max": 20,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "feature_description_color",
+      "label": "Color de la descripción",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de fondo",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color del título",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado de la sección"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Ícono"
+        },
+        {
+          "type": "range",
+          "id": "icon_size",
+          "label": "Tamaño del ícono",
+          "min": 16,
+          "max": 160,
+          "step": 4,
+          "unit": "px",
+          "default": 48
+        },
+        {
+          "type": "range",
+          "id": "icon_size_mobile",
+          "label": "Tamaño del ícono (móvil)",
+          "min": 12,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "default": 40
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Sin conservantes:"
+        },
+        {
+          "type": "richtext",
+          "id": "description",
+          "label": "Descripción",
+          "default": "<p>Nuestros helados están hechos con ingredientes frescos, sin quimicos ni aditivos artificiales.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hope Features",
+      "blocks": [
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Sin conservantes:",
+            "description": "<p>Nuestros helados están hechos con ingredientes frescos, sin quimicos ni aditivos artificiales. Solo lo bueno, como si los hicieras en casa.</p>"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Ingredientes naturales:",
+            "description": "<p>Usamos frutas reales, bases artesanales y sabores auténticos que le dan a cada mezcla un gusto inigualable. Lo natural sabe mejor.</p>"
+          }
+        },
+        {
+          "type": "feature",
+          "settings": {
+            "title": "Opciones veganas:",
+            "description": "<p>Creemos que todos merecen un postre delicioso. Por eso ofrecemos opciones sin lácteos, igual de cremosas, dulces y felices.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

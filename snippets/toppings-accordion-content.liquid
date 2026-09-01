@@ -1,0 +1,53 @@
+{%- comment -%}
+  Snippet: toppings-accordion-content.liquid
+  Uso:
+    {% render 'toppings-accordion-content', product: product, filtro: 'toppings' %}
+    {% render 'toppings-accordion-content', product: product, filtro: 'sirope' %}
+
+  filtro 'toppings' = muestra todas las categorías EXCEPTO "Sirope"
+  filtro 'sirope'   = muestra únicamente la categoría "Sirope"
+{%- endcomment -%}
+
+{%- assign config = product.metafields.custom.opciones_customizador.value -%}
+
+{%- if config -%}
+  {%- for categoria in config.categorias -%}
+    {%- assign es_sirope = false -%}
+    {%- if categoria.nombre == 'Sirope' -%}
+      {%- assign es_sirope = true -%}
+    {%- endif -%}
+
+    {%- assign mostrar = false -%}
+    {%- if filtro == 'sirope' and es_sirope -%}
+      {%- assign mostrar = true -%}
+    {%- elsif filtro == 'toppings' and es_sirope == false -%}
+      {%- assign mostrar = true -%}
+    {%- endif -%}
+
+    {%- if mostrar -%}
+      <div class="topcust__subcategory">
+        {%- if filtro == 'toppings' -%}
+          <p class="topcust__subcategory-title">{{ categoria.nombre }}</p>
+        {%- endif -%}
+        <div class="topcust__items">
+          {%- for item in categoria.items -%}
+            <label class="topcust__item">
+              <input
+                type="checkbox"
+                class="topcust__checkbox"
+                data-categoria="{{ categoria.nombre | escape }}"
+                data-nombre="{{ item.nombre | escape }}"
+                data-precio="{{ item.precio_extra | default: 0 }}"
+                data-imagen="{{ item.imagen | default: '' }}"
+              >
+              <span class="topcust__item-name">{{ item.nombre }}</span>
+              {%- if item.precio_extra > 0 -%}
+                <span class="topcust__item-price">+{{ item.precio_extra | times: 100 | money }}</span>
+              {%- endif -%}
+            </label>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}

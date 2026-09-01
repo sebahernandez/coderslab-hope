@@ -1,0 +1,653 @@
+/* ==========================================================================
+   Configurador Hope — "Crea tu Hope"
+   Estilos autocontenidos y scoped bajo .hopecfg (no dependen de Tailwind).
+   Se cargan globalmente en theme.liquid, por eso TODO cuelga de .hopecfg.
+   Paleta: ink #392f36 · hope #ed5d96 · cream #fff8f5
+   ========================================================================== */
+
+/* Fondo rosa suave para toda la página donde vive el configurador
+   (solo afecta a páginas que contienen .hopecfg, no al resto del sitio) */
+body:has(.hopecfg) {
+  background-color: #ffeef4;
+}
+
+.hopecfg {
+  --hopecfg-ink: #392f36;
+  --hopecfg-hope: #ed5d96;
+  --hopecfg-cream: #fff8f5;
+  box-sizing: border-box;
+  color: var(--hopecfg-ink);
+  font-family: Inter, ui-rounded, "Segoe UI", sans-serif;
+  padding-inline: 0.5rem;
+  padding-block: 6rem;
+}
+.hopecfg *,
+.hopecfg *::before,
+.hopecfg *::after {
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .hopecfg { padding-inline: 0.75rem; padding-block: 7rem; }
+}
+@media (min-width: 1024px) {
+  .hopecfg { padding-inline: 1.25rem; padding-block: 9.5rem; }
+}
+
+/* Contenedor tarjeta con los 2 paneles */
+.hopecfg__frame {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin: 0 auto;
+  max-width: 80rem;
+  min-height: 640px;
+  height: min(88dvh, 900px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 20px 70px #7d526226;
+  backdrop-filter: blur(8px);
+  background-image: radial-gradient(#ed5d961b 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+@media (min-width: 1024px) {
+  .hopecfg__frame {
+    flex-direction: row;
+    border-radius: 32px;
+  }
+}
+
+/* ===================== Panel de vista previa ===================== */
+.hopecfg__preview {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 40%;
+  overflow: hidden;
+  background: linear-gradient(to bottom right, #fff1db, #ffe4ed, #e9e0ff);
+  transition: background-color 0.25s ease;
+}
+@media (min-width: 1024px) {
+  .hopecfg__preview {
+    height: auto;
+    width: 50%;
+  }
+}
+
+/* Fondos por modo (nubes Cloudinary) */
+.hopecfg__preview[data-view="2d"] {
+  background-color: #f59abf;
+  background-image: url("https://res.cloudinary.com/slealu5f/image/upload/f_auto,q_auto,w_1600/hope/catalog/hope-pink-clouds-bg-v1");
+  background-position: center;
+  background-size: cover;
+}
+.hopecfg__preview[data-view="yogurt"] {
+  background-color: #8fc7eb;
+  background-image: url("https://res.cloudinary.com/slealu5f/image/upload/f_auto,q_auto,w_1600/hope/catalog/hope-mixo-blue-clouds-bg-v1");
+  background-position: center;
+  background-size: cover;
+}
+.hopecfg__preview[data-view="milkshake"] {
+  background-color: #c7a3ee;
+  background-image: url("https://res.cloudinary.com/slealu5f/image/upload/f_auto,q_auto,w_1600/hope/catalog/hope-milkshake-purple-clouds-bg-v1");
+  background-position: center;
+  background-size: cover;
+}
+.hopecfg__preview[data-view="milkshake"] .hopecfg__extras {
+  display: none;
+}
+
+.hopecfg__brand {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  border-bottom-right-radius: 28px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.75rem 1rem;
+  box-shadow: 0 10px 28px #8f66732e;
+}
+@media (min-width: 1024px) {
+  .hopecfg__brand { padding: 1.25rem 1.5rem; }
+}
+.hopecfg__brand-logo {
+  height: 2rem;
+  width: auto;
+  display: block;
+}
+@media (min-width: 1024px) {
+  .hopecfg__brand-logo { height: 3.5rem; }
+}
+
+/* Tabs de presentación */
+.hopecfg__tabs {
+  position: relative;
+  z-index: 10;
+  margin: 0.75rem auto 0;
+  display: flex;
+  gap: 0;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(6px);
+  font-size: 10px;
+  font-weight: 900;
+}
+@media (min-width: 1024px) {
+  .hopecfg__tabs { margin-top: 1.25rem; font-size: 12px; }
+}
+.hopecfg__tab {
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  color: var(--hopecfg-ink);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font: inherit;
+  letter-spacing: 0.02em;
+  transition: 0.18s ease;
+}
+.hopecfg__tab.is-active {
+  color: #fff;
+  background: var(--hopecfg-ink);
+  box-shadow: 0 7px 18px #392f3630;
+}
+
+/* Escenario con la imagen del producto */
+.hopecfg__stage {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0.5rem 1rem 0;
+}
+@media (min-width: 1024px) {
+  .hopecfg__stage { padding: 1rem 2rem 0; }
+}
+.hopecfg__cup {
+  width: auto;
+  height: 96%;
+  max-width: 94%;
+  max-height: 680px;
+  object-fit: contain;
+  transform-origin: center bottom;
+  filter: drop-shadow(0 22px 25px rgba(113, 57, 79, 0.18));
+  opacity: 1;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 0.75, 0.25, 1),
+    opacity 0.18s ease;
+}
+.hopecfg__cup.is-loading { opacity: 0.82; }
+.hopecfg__cup[data-mode="yogurt"] {
+  height: 92%;
+  max-width: 90%;
+  max-height: 650px;
+}
+.hopecfg__cup[data-mode="milkshake"] {
+  height: 106%;
+  max-width: 98%;
+  max-height: 780px;
+}
+
+/* Panel de extras seleccionados */
+.hopecfg__extras {
+  height: 78px;
+  flex-shrink: 0;
+  border-top: 1px solid #d9cfd3;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0 1.25rem;
+}
+@media (min-width: 1024px) {
+  .hopecfg__extras { height: 94px; padding: 0 2rem; }
+}
+.hopecfg__extras-inner {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  text-align: center;
+}
+.hopecfg__stack {
+  display: flex;
+  height: 2rem;
+}
+.hopecfg__stack > span {
+  display: grid;
+  height: 2rem;
+  width: 2rem;
+  place-items: center;
+  border-radius: 999px;
+  border: 2px solid #fff;
+  background: #fff;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-left: -0.5rem;
+}
+.hopecfg__stack > span:first-child { margin-left: 0; }
+.hopecfg__extras-label {
+  margin: 0;
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--hopecfg-ink);
+}
+@media (min-width: 1024px) {
+  .hopecfg__extras-label { font-size: 10px; }
+}
+
+/* ===================== Panel de configuración ===================== */
+.hopecfg__config {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  height: 60%;
+  background: #fffdfb;
+}
+@media (min-width: 1024px) {
+  .hopecfg__config { height: auto; width: 50%; }
+}
+.hopecfg__config-scroll {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.75rem;
+  overflow: hidden;
+  padding: 1rem;
+}
+@media (min-width: 640px) { .hopecfg__config-scroll { padding: 1rem 1.5rem; } }
+@media (min-width: 1024px) { .hopecfg__config-scroll { gap: 1.25rem; padding: 1.5rem 2.5rem; } }
+
+.hopecfg__heading { flex-shrink: 0; }
+.hopecfg__eyebrow {
+  margin: 0;
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--hopecfg-hope);
+}
+@media (min-width: 1024px) { .hopecfg__eyebrow { font-size: 10px; } }
+.hopecfg__title {
+  margin: 0.25rem 0 0;
+  font-size: 1.25rem;
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+@media (min-width: 640px) { .hopecfg__title { font-size: 1.5rem; } }
+@media (min-width: 1024px) { .hopecfg__title { font-size: 2.25rem; } }
+
+.hopecfg__groups {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: 0.75rem;
+  padding: 0.25rem 0;
+}
+@media (min-width: 1024px) {
+  .hopecfg__groups { justify-content: space-between; padding: 0.5rem 0; }
+}
+.hopecfg__groups.is-hidden,
+.hopecfg__milkshake.is-hidden { display: none; }
+
+.hopecfg__group { border: 0; margin: 0; padding: 0; min-width: 0; }
+.hopecfg__group.is-hidden { display: none; }
+.hopecfg__legend {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.375rem;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #745f69;
+}
+.hopecfg__legend-hint {
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: normal;
+  color: #a08a93;
+}
+.hopecfg__legend-count {
+  font-weight: 800;
+  color: var(--hopecfg-hope);
+}
+.hopecfg__buy-hint {
+  margin: 0.15rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--hopecfg-hope);
+  min-height: 0.9rem;
+}
+@media (min-width: 1024px) { .hopecfg__legend { margin-bottom: 0.5rem; } }
+
+.hopecfg__grid { display: grid; gap: 0.5rem; }
+.hopecfg__grid--3 { grid-template-columns: repeat(3, 1fr); }
+
+.hopecfg__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 0.25rem;
+}
+
+/* Botón de opción base */
+.hopecfg__choice {
+  position: relative;
+  cursor: pointer;
+  border: 1.5px solid #eee1e4;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--hopecfg-ink);
+  font: inherit;
+  transition: 0.18s ease;
+}
+.hopecfg__choice:hover {
+  transform: translateY(-1px);
+  border-color: #f19abb;
+}
+.hopecfg__choice.is-active {
+  border-color: var(--hopecfg-hope);
+  background: #fff3f8;
+  box-shadow: 0 0 0 2px #ffd7e7;
+}
+.hopecfg__check {
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
+  height: 0.375rem;
+  width: 0.375rem;
+  border-radius: 999px;
+  background: var(--hopecfg-hope);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: 0.18s;
+}
+.hopecfg__choice.is-active .hopecfg__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Variante tamaño (tarjeta) */
+.hopecfg__choice--size {
+  border-radius: 16px;
+  padding: 0.5rem;
+  text-align: center;
+}
+.hopecfg__choice-name {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+@media (min-width: 1024px) { .hopecfg__choice-name { font-size: 0.875rem; } }
+.hopecfg__choice-sub {
+  font-size: 9px;
+  color: #8c7881;
+}
+@media (min-width: 1024px) { .hopecfg__choice-sub { font-size: 10px; } }
+
+/* Variante chip (topping/sirope) */
+.hopecfg__choice--chip {
+  flex-shrink: 0;
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  font-size: 10px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+@media (min-width: 1024px) { .hopecfg__choice--chip { font-size: 12px; } }
+.topping-icon { font-size: 1.1rem; line-height: 1; }
+
+/* Precio del extra dentro del chip (+$X) */
+.hopecfg__chip-price {
+  margin-left: 0.15rem;
+  font-size: 0.72em;
+  font-weight: 700;
+  color: #8c7881;
+}
+.hopecfg__choice.is-active .hopecfg__chip-price { color: inherit; }
+
+/* Marca de item premium ★ */
+.hopecfg__star {
+  color: var(--hopecfg-hope);
+  font-size: 0.85em;
+}
+.hopecfg__choice.is-active .hopecfg__star { color: inherit; }
+
+/* ---- Modo mixo (yogurt): topping en grilla ---- */
+.hopecfg__config[data-view="mixo"] #topping-options {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+.hopecfg__config[data-view="mixo"] .topping-grid {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+}
+.hopecfg__config[data-view="mixo"] .topping-grid .hopecfg__choice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  font-size: 1rem;
+  font-weight: 800;
+}
+.hopecfg__config[data-view="mixo"] #topping-options .hopecfg__legend {
+  font-size: 0.82rem;
+  letter-spacing: 0.14em;
+}
+.hopecfg__config[data-view="mixo"] .topping-icon { font-size: 1.45rem; }
+.hopecfg__config[data-view="mixo"] .topping-name { line-height: 1.15; font-weight: 700; }
+
+/* ---- Milkshake ---- */
+.hopecfg__milkshake {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+.hopecfg__milkshake fieldset {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+.hopecfg__milkshake-grid {
+  display: grid;
+  min-height: 0;
+  flex: 1;
+  gap: 0.75rem;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+}
+.hopecfg__milkshake-choice {
+  display: grid;
+  grid-template-columns: 44px 1fr auto;
+  align-items: center;
+  text-align: left;
+  border-radius: 16px;
+  padding: 0.75rem 1.25rem;
+}
+.hopecfg__ms-emoji { font-size: 1.65rem; line-height: 1; }
+.hopecfg__ms-name { font-size: 1.05rem; font-weight: 700; }
+.hopecfg__ms-price { font-size: 0.85rem; font-weight: 700; color: #856f78; }
+
+/* ===================== Footer ===================== */
+.hopecfg__footer {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #eee3df;
+  padding: 0.75rem 1rem;
+}
+@media (min-width: 640px) { .hopecfg__footer { padding: 0.75rem 1.5rem; } }
+@media (min-width: 1024px) { .hopecfg__footer { padding: 1.25rem 2.5rem; } }
+.hopecfg__total-label {
+  margin: 0;
+  font-size: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #9b7a86;
+}
+.hopecfg__price {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+@media (min-width: 1024px) { .hopecfg__price { font-size: 1.875rem; } }
+.hopecfg__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+.hopecfg__reset {
+  display: grid;
+  height: 2.5rem;
+  width: 2.5rem;
+  flex-shrink: 0;
+  place-items: center;
+  cursor: pointer;
+  border: 0;
+  border-radius: 999px;
+  background: var(--hopecfg-hope);
+  color: #fff;
+  box-shadow: 0 10px 25px #ed5d9640;
+  transition: 0.18s ease;
+}
+.hopecfg__reset:hover { transform: translateY(-2px); background: #dc4e88; }
+.hopecfg__reset:active { transform: scale(0.95); }
+.hopecfg__reset svg { height: 1rem; width: 1rem; }
+@media (min-width: 1024px) {
+  .hopecfg__reset { height: 3rem; width: 3rem; }
+  .hopecfg__reset svg { height: 1.25rem; width: 1.25rem; }
+}
+.hopecfg__buy {
+  cursor: pointer;
+  border: 0;
+  border-radius: 999px;
+  background: var(--hopecfg-hope);
+  color: #fff;
+  padding: 0.625rem 1.5rem;
+  font-size: 12px;
+  font-weight: 900;
+  box-shadow: 0 10px 25px #ed5d9640;
+  transition: 0.18s ease;
+}
+.hopecfg__buy:hover { transform: translateY(-2px); background: #dc4e88; }
+.hopecfg__buy:active { transform: scale(0.95); }
+.hopecfg__buy[disabled] { opacity: 0.55; cursor: not-allowed; transform: none; }
+.hopecfg__buy-arrow { margin-left: 0.5rem; }
+@media (min-width: 1024px) {
+  .hopecfg__buy { padding: 0.875rem 2.25rem; font-size: 14px; }
+}
+
+/* ===================== Toast ===================== */
+.hopecfg__toast {
+  pointer-events: none;
+  position: fixed;
+  left: 50%;
+  top: 1rem;
+  z-index: 50;
+  transform: translate(-50%, -6rem);
+  border-radius: 999px;
+  background: var(--hopecfg-ink);
+  color: #fff;
+  padding: 0.625rem 1.25rem;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  transition: transform 0.3s ease;
+}
+.hopecfg__toast.is-visible { transform: translate(-50%, 0); }
+.hopecfg__toast.is-error { background: #c0392b; }
+
+/* Miniatura que "vuela" al carrito (fly-to-cart) */
+.hopecfg-fly {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  border-radius: 999px;
+  background-color: #fff;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 10px 24px rgba(113, 57, 79, 0.35);
+  will-change: transform, opacity;
+  transition: opacity 0.2s ease;
+}
+
+/* ===================== Responsive: modo 2d en móvil ===================== */
+@media (max-width: 1023px) {
+  .hopecfg__brand { padding: 0.55rem 0.7rem; border-bottom-right-radius: 20px; }
+  .hopecfg__brand-logo { height: 1.3rem; }
+  .hopecfg__preview[data-view="2d"] .hopecfg__extras { height: 48px; }
+  .hopecfg__preview[data-view="2d"] .hopecfg__extras-label { display: none; }
+  .hopecfg__preview[data-view="2d"] .hopecfg__stack { height: 2rem; align-items: center; }
+
+  .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice-sub { display: none; }
+  .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice { border-radius: 10px; }
+
+  .hopecfg__config[data-view="2d"] #topping-options,
+  .hopecfg__config[data-view="2d"] #syrup-options {
+    min-width: 0;
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .hopecfg__config[data-view="2d"] .topping-grid,
+  .hopecfg__config[data-view="2d"] #syrup-options > .hopecfg__chips {
+    display: flex;
+    width: 100%;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    touch-action: pan-x;
+    -webkit-overflow-scrolling: touch;
+  }
+  .hopecfg__config[data-view="2d"] .topping-grid::-webkit-scrollbar,
+  .hopecfg__config[data-view="2d"] #syrup-options > .hopecfg__chips::-webkit-scrollbar {
+    display: none;
+  }
+  .hopecfg__config[data-view="2d"] .topping-grid .hopecfg__choice,
+  .hopecfg__config[data-view="2d"] #syrup-options .hopecfg__choice {
+    min-width: max-content;
+    min-height: 2.8rem;
+    padding: 0.7rem 0.95rem;
+    font-size: 0.78rem;
+    line-height: 1;
+    scroll-snap-align: start;
+  }
+  .hopecfg__config[data-view="2d"] .topping-grid .topping-icon {
+    margin-right: 0.26rem;
+    font-size: 1.1rem;
+  }
+}

@@ -1,0 +1,687 @@
+<section class="ideal-combos-section">
+  <div class="section section--pagewidth">
+    <div class="header-section">
+      <h2>Elige tu combinación ideal</h2>
+      <p class="subtitle">Descubre nuestras opciones perfectamente diseñadas para ti</p>
+    </div>
+    <div class="selector-products">
+      {% render 'selector-products' %}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Sección principal - estilo Airbnb */
+  .ideal-combos-section {
+    padding: 6rem 2rem;
+    overflow-x: hidden; /* Prevenir desborde horizontal */
+  }
+
+  /* Header centrado */
+  .header-section {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .header-section h2 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #222;
+    margin-bottom: 1rem;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    color: #717171;
+    font-weight: 400;
+    margin: 0 auto;
+    max-width: 600px;
+  }
+
+  .product-content h3.product-title {
+    text-transform: uppercase;
+  }
+
+  /* Contenedor de productos - Grid centrado */
+  .selector-products .products-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    align-items: stretch;
+    overflow: hidden; /* Prevenir desborde de elementos hijos */
+  }
+
+  /* Productos sin card */
+  .selector-products .select-product {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    transition: none;
+    overflow: hidden; /* Prevenir desborde de efectos */
+    position: relative;
+    isolation: isolate;
+  }
+
+  .selector-products .select-product:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Imagen grande en la parte superior */
+  .selector-products .product-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 360px;
+    position: relative;
+    background: transparent;
+    margin-bottom: 1.5rem;
+    z-index: 1;
+    isolation: isolate;
+  }
+
+  .selector-products .product-image img {
+    width: 320px;
+    height: 320px;
+    object-fit: contain;
+    object-position: center;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Efecto de haz de luz desde abajo hacia arriba - Simulación de linterna */
+  .selector-products .product-image {
+    --beam-progress: 0;
+    --beam-opacity: 0;
+  }
+  
+  /* Halo blanco central para simular el centro brillante de la linterna */
+  .selector-products .product-image::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 60px; /* Más amplio */
+    height: 100%;
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 1) 0%,
+      rgba(255, 255, 255, 0.95) 25%,
+      rgba(255, 255, 255, 0.8) 50%,
+      rgba(255, 255, 255, 0.6) 75%,
+      rgba(255, 255, 255, 0.3) 90%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    /* Clip-path circular más suave para el centro */
+    clip-path: ellipse(
+      calc(25% + var(--beam-progress) * 35%) 
+      calc(0% + var(--beam-progress) * 100%) 
+      at 50% 100%
+    );
+    transform: translateX(-50%);
+    opacity: var(--beam-opacity);
+    filter: blur(calc(1px + var(--beam-progress) * 12px));
+    pointer-events: none;
+    z-index: -1;
+    mix-blend-mode: normal;
+  }
+  
+  .selector-products .product-image::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 100px; /* Más amplio */
+    height: 100%;
+    background: linear-gradient(
+      to top,
+      rgba(245, 178, 209, 1) 0%,
+      rgba(255, 240, 248, 0.95) 20%,
+      rgba(255, 250, 252, 0.9) 35%,
+      rgba(255, 255, 255, 0.85) 50%,
+      rgba(255, 255, 255, 0.7) 65%,
+      rgba(255, 255, 255, 0.5) 80%,
+      rgba(255, 255, 255, 0.2) 90%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    /* Clip-path circular más suave */
+    clip-path: ellipse(
+      calc(30% + var(--beam-progress) * 50%) 
+      calc(0% + var(--beam-progress) * 100%) 
+      at 50% 100%
+    );
+    transform: translateX(-50%);
+    opacity: var(--beam-opacity);
+    filter: blur(calc(3px + var(--beam-progress) * 25px));
+    pointer-events: none;
+    z-index: -2;
+    mix-blend-mode: normal;
+  }
+  
+  /* Halo exterior difuminado para simular la dispersión de luz de linterna */
+  .selector-products .product-image.halo-light::after {
+    box-shadow: 
+      0 0 80px rgba(255, 255, 255, calc(var(--beam-opacity) * 0.9)),
+      0 0 160px rgba(255, 255, 255, calc(var(--beam-opacity) * 0.7)),
+      0 0 240px rgba(255, 255, 255, calc(var(--beam-opacity) * 0.5)),
+      0 0 320px rgba(255, 255, 255, calc(var(--beam-opacity) * 0.3)),
+      0 0 400px rgba(255, 255, 255, calc(var(--beam-opacity) * 0.15)),
+      0 0 500px rgba(255, 255, 255, calc(var(--beam-opacity) * 0.08));
+  }
+
+  /* Efecto circular adicional más amplio */
+  .selector-products .product-image.halo-light {
+    position: relative;
+    filter: drop-shadow(0 0 60px rgba(255, 255, 255, calc(var(--beam-opacity) * 0.6))) 
+            drop-shadow(0 0 120px rgba(255, 255, 255, calc(var(--beam-opacity) * 0.4)))
+            drop-shadow(0 0 200px rgba(255, 255, 255, calc(var(--beam-opacity) * 0.2)));
+  }
+
+
+  .select-product .placeholder-image {
+    width: 100%;
+    height: 100%;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 0.9rem;
+  }
+
+  /* Contenido de la card */
+  .selector-products .product-content {
+    padding: 1rem 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+    min-height: 200px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .selector-products .product-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #222;
+    margin: 0 0 0.5rem;
+    line-height: 1.3;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .selector-products .product-description {
+    color: #3c3c3c;
+    margin: 0 0 2rem;
+    flex-grow: 1;
+    text-align: center;
+    font-size: 1.1rem;
+    height: 100px;
+  }
+
+  .selector-products .product-button {
+    position: relative;
+    background: #F5B2D1;
+    padding: 26px 32px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+    text-decoration: none;
+    text-align: center;
+    width: auto;
+    max-width: 250px;
+    white-space: nowrap;
+    margin: 0 auto;
+    box-sizing: border-box;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .selector-products .product-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    border-radius: 50px;
+    opacity: 1;
+    transition: all 0.3s ease;
+  }
+
+  .selector-products .product-button:hover {
+    transform: translateY(-2px) scale(1.03);
+    border-radius: 35px;
+    background: rgba(245, 178, 209, 0.95);
+    border-color: rgba(255, 255, 255, 0.9);
+  }
+
+  .selector-products .product-button:hover::before {
+    opacity: 1;
+  }
+
+  .selector-products .product-button:active {
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 0 4px 15px rgba(245, 178, 209, 0.5)
+    , 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .selector-products .product-button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .selector-products .product-button:hover::after {
+    width: 150%;
+    height: 150%;
+    opacity: 0;
+  }
+
+  .selector-products .product-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 221, 237, 0.9)
+    , 0 4px 20px rgba(245, 178, 209, 0.9);
+  }
+
+  .selector-products .product-button .button-text {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 600;
+  }
+
+  .selector-products .product-button:hover .button-text {
+    animation: subtleFloat 0.3s ease-out;
+  }
+
+  @keyframes subtleFloat {
+    0,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-1px);
+    }
+  }
+
+  /* Responsive Design */
+  @media (min-width: 1025px) {
+    /* Asegurar que el halo no cause desborde en pantallas grandes */
+    .selector-products .product-image::after {
+      width: min(320px, calc(100vw / 3 - 4rem));
+      height: min(320px, calc(100vw / 3 - 4rem));
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .combos-content {
+      max-width: 800px;
+    }
+
+    .selector-products .products-container {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .selector-products .select-product {
+      height: 560px;
+    }
+
+    .selector-products .product-image {
+      height: 300px;
+    }
+
+    .selector-products .product-image img {
+      width: 280px;
+      height: 280px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .ideal-combos-section {
+      padding: 4rem 1rem;
+    }
+
+    .combos-content {
+      max-width: 100%;
+    }
+
+    .header-section {
+      margin-bottom: 3rem;
+    }
+
+    .header-section h2 {
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+    }
+
+    /* Cards apiladas en pantallas pequeñas */
+    .selector-products .products-container {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .selector-products .select-product {
+      height: 520px;
+    }
+
+    .selector-products .product-image {
+      height: 260px;
+    }
+
+    .selector-products .product-image img {
+      width: 240px;
+      height: 240px;
+    }
+
+    /* Reducir tamaño de efectos de animación en móvil */
+    .selector-products .product-image::before {
+      width: 180px;
+      height: 180px;
+    }
+
+    .selector-products .product-image::after {
+      width: min(220px, 70vw);
+      height: min(220px, 70vw);
+    }
+
+    .selector-products .product-content {
+      padding: 1rem 1.25rem 1.5rem;
+      min-height: 200px;
+    }
+
+    .selector-products .product-title {
+      font-size: 1rem;
+    }
+
+    .selector-products .product-description {
+      font-size: 0.85rem;
+      -webkit-line-clamp: 2;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .ideal-combos-section {
+      padding: 2rem 1rem;
+    }
+
+    .header-section h2 {
+      font-size: 1.8rem;
+    }
+
+    .selector-products .select-product {
+      height: 480px;
+    }
+
+    .selector-products .product-image {
+      height: 240px;
+    }
+
+    .selector-products .product-image img {
+      width: 220px;
+      height: 220px;
+    }
+
+    /* Efectos aún más pequeños en pantallas muy pequeñas */
+    .selector-products .product-image::before {
+      width: 160px;
+      height: 160px;
+    }
+
+    .selector-products .product-image::after {
+      width: min(180px, 60vw);
+      height: min(180px, 60vw);
+    }
+
+    .selector-products .product-content {
+      padding: 1rem 1rem 1.5rem;
+      min-height: 190px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const productImages = document.querySelectorAll('.selector-products .product-image');
+    
+    productImages.forEach(function(productImage) {
+      let animationId = null;
+      let fadeOutId = null;
+      let startTime = null;
+      const duration = 500; // 0.5 segundos para el haz de luz (más rápido)
+      const fadeInDuration = 150; // 0.15 segundos fade-in (más rápido)
+      const fadeOutDuration = 200; // 0.2 segundos fade-out (más rápido)
+      
+      // Encontrar el botón correspondiente dentro del mismo producto
+      const productContainer = productImage.closest('.select-product');
+      const productButton = productContainer ? productContainer.querySelector('.product-button') : null;
+      
+      function animate(timestamp) {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        
+        // Calcular el progreso de 0 a 1
+        const rawProgress = elapsed / duration;
+        
+        // Usar función easing para efecto más suave (ease-in-out)
+        const progress = rawProgress < 0.5 
+          ? 2 * rawProgress * rawProgress 
+          : 1 - Math.pow(-2 * rawProgress + 2, 3) / 2;
+        
+        // Limitar el progreso entre 0 y 1
+        const clampedProgress = Math.min(progress, 1);
+        
+        // Aplicar el progreso del haz de luz
+        productImage.style.setProperty('--beam-progress', clampedProgress);
+        
+        // Continuar la animación solo si no ha terminado y hay hover en imagen o botón
+        const hasHover = productImage.matches(':hover') || (productButton && productButton.matches(':hover'));
+        if (clampedProgress < 1 && hasHover) {
+          animationId = requestAnimationFrame(animate);
+        }
+        // Cuando termine la animación, mantener el efecto visible mientras haya hover
+      }
+      
+      function startFadeOut() {
+        let fadeStartTime = null;
+        
+        function fadeOut(timestamp) {
+          if (!fadeStartTime) fadeStartTime = timestamp;
+          const fadeElapsed = timestamp - fadeStartTime;
+          const fadeProgress = Math.min(fadeElapsed / fadeOutDuration, 1);
+          
+          // Fade out suave
+          const opacity = 1 - fadeProgress;
+          productImage.style.setProperty('--beam-opacity', opacity);
+          
+          if (fadeProgress < 1) {
+            fadeOutId = requestAnimationFrame(fadeOut);
+          } else {
+            // Reset completo cuando termine el fade-out
+            productImage.style.setProperty('--beam-progress', '0');
+            productImage.style.setProperty('--beam-opacity', '0');
+            productImage.classList.remove('halo-light');
+          }
+        }
+        
+        fadeOutId = requestAnimationFrame(fadeOut);
+      }
+      
+      function startHaloEffect() {
+        // Cancelar animaciones previas si existen
+        if (animationId) {
+          cancelAnimationFrame(animationId);
+        }
+        if (fadeOutId) {
+          cancelAnimationFrame(fadeOutId);
+        }
+        
+        // Reiniciar tiempo para comenzar desde 0
+        startTime = null;
+        
+        // Iniciar fade-in inmediato y animación
+        productImage.style.setProperty('--beam-opacity', '1');
+        productImage.style.setProperty('--beam-progress', '0');
+        
+        // Agregar clase para el halo de linterna
+        productImage.classList.add('halo-light');
+        
+        // Iniciar nueva animación
+        animationId = requestAnimationFrame(animate);
+      }
+      
+      function stopHaloEffect() {
+        // Solo detener si no hay hover ni en imagen ni en botón
+        const hasHover = productImage.matches(':hover') || (productButton && productButton.matches(':hover'));
+        if (!hasHover) {
+          // Detener todas las animaciones
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+          }
+          if (fadeOutId) {
+            cancelAnimationFrame(fadeOutId);
+          }
+          
+          // Fade-out inmediato al salir del hover
+          startFadeOut();
+        }
+      }
+      
+      // Event listeners para la imagen
+      productImage.addEventListener('mouseenter', startHaloEffect);
+      productImage.addEventListener('mouseleave', stopHaloEffect);
+      
+      // Event listeners para el botón (si existe)
+      if (productButton) {
+        productButton.addEventListener('mouseenter', startHaloEffect);
+        productButton.addEventListener('mouseleave', stopHaloEffect);
+      }
+    });
+  });
+</script>
+
+{% schema %}
+  {
+    "name": "Combinaciones Ideales",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Producto 1"
+      },
+      {
+        "type": "image_picker",
+        "id": "product_1_image",
+        "label": "Imagen del producto 1"
+      },
+      {
+        "type": "text",
+        "id": "product_1_title",
+        "label": "Título del producto 1",
+        "default": "Producto 1"
+      },
+      {
+        "type": "textarea",
+        "id": "product_1_description",
+        "label": "Descripción del producto 1",
+        "default": "Descripción del primer producto."
+      }, {
+        "type": "text",
+        "id": "product_1_button_text",
+        "label": "Texto del botón del producto 1",
+        "default": "Ver más"
+      }, {
+        "type": "url",
+        "id": "product_1_link",
+        "label": "Enlace del producto 1"
+      }, {
+        "type": "header",
+        "content": "Producto 2"
+      }, {
+        "type": "image_picker",
+        "id": "product_2_image",
+        "label": "Imagen del producto 2"
+      }, {
+        "type": "text",
+        "id": "product_2_title",
+        "label": "Título del producto 2",
+        "default": "Producto 2"
+      }, {
+        "type": "textarea",
+        "id": "product_2_description",
+        "label": "Descripción del producto 2",
+        "default": "Descripción del segundo producto."
+      }, {
+        "type": "text",
+        "id": "product_2_button_text",
+        "label": "Texto del botón del producto 2",
+        "default": "Ver más"
+      }, {
+        "type": "url",
+        "id": "product_2_link",
+        "label": "Enlace del producto 2"
+      }, {
+        "type": "header",
+        "content": "Producto 3"
+      }, {
+        "type": "image_picker",
+        "id": "product_3_image",
+        "label": "Imagen del producto 3"
+      }, {
+        "type": "text",
+        "id": "product_3_title",
+        "label": "Título del producto 3",
+        "default": "Producto 3"
+      }, {
+        "type": "textarea",
+        "id": "product_3_description",
+        "label": "Descripción del producto 3",
+        "default": "Descripción del tercer producto."
+      }, {
+        "type": "text",
+        "id": "product_3_button_text",
+        "label": "Texto del botón del producto 3",
+        "default": "Ver más"
+      }, {
+        "type": "url",
+        "id": "product_3_link",
+        "label": "Enlace del producto 3"
+      }
+    ],
+    "presets": [
+      {
+        "name": "Combinaciones Ideales"
+      }
+    ]
+  }
+{% endschema %}

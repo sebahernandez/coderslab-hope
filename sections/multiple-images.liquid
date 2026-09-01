@@ -1,0 +1,94 @@
+{% stylesheet %}
+  .galeria-helados {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 50px;
+    padding: 100px 20px;
+    text-align: center;
+    min-height: 350px;
+  }
+  .galeria-helados img {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  .galeria-helados img.pos-abajo {
+    transform: translateY(30px);
+  }
+  .galeria-helados img.pos-centro {
+    transform: translateY(0);
+  }
+  .galeria-helados h3 {
+    width: 100%;
+    font-family: 'Helvetica Neue'
+    , sans-serif;
+    font-weight: bold;
+    font-size: 50px;
+    color: #f5b2d1;
+    margin-top: 70px;
+  }
+
+  @media (max-width: 768px) {
+    .galeria-helados img.pos-abajo {
+      transform: none;
+    }
+    .galeria-helados h3 {
+      font-size: 30px;
+    }
+  }
+{% endstylesheet %}
+
+<div class="section section--pagewidth" style="background-color: #fff6f7;">
+  <div class="galeria-helados">
+    {% for block in section.blocks %}
+      {% if block.settings.imagen != blank %}
+        {% assign posicion = forloop.index | modulo: 2 %}
+        {% case posicion %}
+          {% when 1 %}
+            <img
+              src="{{ block.settings.imagen | img_url: 'medium' }}"
+              alt="Helado {{ forloop.index }}"
+              class="pos-centro">
+          {% when 0 %}
+            <img
+          src="{{ block.settings.imagen | img_url: 'medium' }}"
+          alt="Helado {{ forloop.index }}"
+          class="pos-abajo">
+        {% endcase %}
+      {% endif %}
+    {% endfor %}
+    <h3>@hopesweetvzla</h3>
+  </div>
+</div>
+
+{% schema %}
+  {
+    "name": "Galería de Helados",
+    "settings": [],
+    "blocks": [
+      {
+        "type": "imagen",
+        "name": "Imagen",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "imagen",
+            "label": "Selecciona una imagen"
+          }
+        ]
+      }
+    ],
+    "max_blocks": 6,
+    "presets": [
+      {
+        "name": "Galería de Helados",
+        "category": "Imagen"
+      }
+    ]
+  }
+{% endschema %}

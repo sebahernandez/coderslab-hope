@@ -1,0 +1,274 @@
+{% comment %}
+  Section: Hero Wave Banner
+  - Fondo con burbujas (repeating-radial-gradient)
+  - Texto centrado
+  - Onda inferior con SVG que se funde con el fondo blanco de la página
+{% endcomment %}
+
+<style>
+  #hero-wave-{{ section.id }}{
+    --bg: {{ section.settings.bg_color }};
+    --text: {{ section.settings.text_color }};
+    --pyt: {{ section.settings.pad_y }}px;
+    --fs: {{ section.settings.heading_size }}px;
+    display: grid;
+    grid-template-areas: 
+      {% case section.settings.wave_position %}
+        {% when 'top' %}
+          "wave"
+          "content";
+        {% when 'bottom' %}
+          "content"
+          "wave";
+        {% when 'left' %}
+          "wave content";
+        {% when 'right' %}
+          "content wave";
+      {% endcase %}
+    grid-template-columns: {% if section.settings.wave_position == 'left' %}{{ section.settings.wave_width }}% 1fr{% elsif section.settings.wave_position == 'right' %}1fr {{ section.settings.wave_width }}%{% else %}1fr{% endif %};
+    grid-template-rows: {% if section.settings.wave_position == 'top' or section.settings.wave_position == 'bottom' %}auto 1fr{% else %}1fr{% endif %};
+    overflow: hidden;
+    {% if section.settings.wave_position == 'top' or section.settings.wave_position == 'bottom' %}
+      padding: 0;
+    {% else %}
+      padding: var(--pyt) 16px;
+    {% endif %}
+    {% case section.settings.background_type %}
+      {% when 'color' %}
+        background: var(--bg) url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.16' fill-rule='evenodd'/%3E%3C/svg%3E");;
+        background-size: 300px 300px;
+      {% when 'image' %}
+        {% if section.settings.background_image %}
+          background: url("{{ section.settings.background_image | image_url: width: 1920, height: 1080 }}") no-repeat center center;
+          background-size: cover;
+        {% else %}
+          background: var(--bg);
+        {% endif %}
+    {% endcase %}
+  }
+
+  #hero-wave-{{ section.id }} .hero-wave__inner{
+    grid-area: content;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    {% if section.settings.wave_position == 'top' or section.settings.wave_position == 'bottom' %}
+      padding: var(--pyt) 16px;
+    {% endif %}
+  }
+
+  #hero-wave-{{ section.id }} .hero-wave__heading{
+    margin: 0;
+    color: var(--text);
+    font-weight: 800;
+    font-size: var(--fs);
+    letter-spacing: {{ section.settings.letter_spacing }}px;
+    line-height: 1.2;
+    text-shadow: {% if section.settings.text_shadow %}0 1px 0 rgb(0 0 0 / .08){% else %}none{% endif %};
+    position: relative;
+    z-index: 3;
+  }
+
+  #hero-wave-{{ section.id }} .hero-wave__svg{
+    grid-area: wave;
+    display: block;
+    pointer-events: none;
+    z-index: 1;
+    line-height: 0;
+    font-size: 0;
+    overflow: hidden;
+    {% if section.settings.wave_position == 'top' or section.settings.wave_position == 'bottom' %}
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    {% else %}
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    {% endif %}
+  }
+  #hero-wave-{{ section.id }} .hero-wave__svg svg{
+    height: auto;
+    display: block;      
+    width: 100%;
+    vertical-align: middle; 
+    line-height: 0;
+    font-size: 0;
+    margin-bottom: -1px;
+    overflow: hidden;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 750px){
+    #hero-wave-{{ section.id }}{ --fs: {{ section.settings.heading_size | times: 0.82 | round }}px; }
+  }
+</style>
+
+
+<section id="hero-wave-{{ section.id }}" class="hero-wave-banner" role="region" aria-label="{{ section.settings.heading | escape }}">
+    <div class="hero-wave__inner">
+        {% if section.settings.heading != blank %}
+          <h2 class="hero-wave__heading">
+            {% if section.settings.uppercase %}
+              {{ section.settings.heading | upcase }}
+            {% else %}
+              {{ section.settings.heading | downcase }}
+            {% endif %}
+          </h2>
+        {% endif %}
+      </div>
+  {%- comment -%}
+    Wave divider SVG con CSS Grid
+  {%- endcomment -%}
+  {% if section.settings.wave_svg != blank %}
+    <div class="hero-wave__svg" aria-hidden="true">
+      {{ section.settings.wave_svg }}
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Hero con Onda y Burbujas",
+  "tag": "section",
+  "class": "section hero-wave",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "PORQUE LA FELICIDAD TAMBIÉN SE SABOREA."
+    },
+    {
+      "type": "checkbox",
+      "id": "uppercase",
+      "label": "Texto en mayúsculas",
+      "info": "Cuando está activado, el título se muestra en MAYÚSCULAS. Cuando está desactivado, se muestra en minúsculas.",
+      "default": true
+    },
+    {
+      "type": "number",
+      "id": "heading_size",
+      "label": "Tamaño del título (px)",
+      "default": 28,
+      "info": "Recomendado: 18-60px"
+    },
+    {
+      "type": "number",
+      "id": "letter_spacing",
+      "label": "Espaciado de letras (px)",
+      "default": 1,
+      "info": "Recomendado: 0-4px. Acepta decimales"
+    },
+    {
+      "type": "checkbox",
+      "id": "text_shadow",
+      "label": "Sombra sutil de texto",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#FFFFFF"
+    },
+
+    { "type": "header", "content": "Fondo" },
+    {
+      "type": "select",
+      "id": "background_type",
+      "label": "Tipo de fondo",
+      "options": [
+        {
+          "value": "color",
+          "label": "Color sólido"
+        },
+        {
+          "value": "image",
+          "label": "Imagen"
+        }
+      ],
+      "default": "color"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Color de fondo",
+      "info": "Se usa como color base o de respaldo",
+      "default": "#EB8EB4"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Imagen de fondo",
+      "visible_if": "{{ section.settings.background_type == 'image' }}"
+    },
+
+    { "type": "header", "content": "Wave Divider SVG" },
+    {
+      "type": "textarea",
+      "id": "wave_svg",
+      "label": "Código SVG del Wave Divider",
+      "info": "Pega aquí el código SVG completo para el divisor de onda (incluyendo <svg>...</svg>)"
+    },
+    {
+      "type": "select",
+      "id": "wave_position",
+      "label": "Posición del Wave",
+      "options": [
+        {
+          "value": "top",
+          "label": "Superior"
+        },
+        {
+          "value": "bottom",
+          "label": "Inferior"
+        },
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ],
+      "default": "bottom"
+    },
+    {
+      "type": "number",
+      "id": "wave_width",
+      "label": "Ancho del Wave (%)",
+      "default": 90,
+      "info": "Recomendado: 50-99%"
+    },
+
+    { "type": "header", "content": "Espaciado y ancho" },
+    {
+      "type": "number",
+      "id": "pad_y",
+      "label": "Padding vertical (px)",
+      "default": 56,
+      "info": "Recomendado: 16-160px"
+    },
+    {
+      "type": "number",
+      "id": "max_width",
+      "label": "Ancho máximo del contenido (%)",
+      "default": 90,
+      "info": "Recomendado: 50-99%"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero con onda y burbujas",
+      "category": "Banner"
+    }
+  ]
+}
+{% endschema %}

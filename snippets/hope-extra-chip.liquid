@@ -1,0 +1,34 @@
+{%- comment -%}
+  Snippet: hope-extra-chip.liquid
+  Renderiza un chip de topping/sirope del configurador Hope. El precio del extra
+  viene del metafield (precio_cents). El JS usa ese precio para calcular el total
+  y elegir la variante nativa "nivel de precio" del producto (no hay producto add-on).
+
+  @param {object} item - Item del metafield custom.opciones_customizador
+                         { id, nombre, emoji, precio_cents, premium }
+  @param {string} tipo - 'topping' | 'syrup'
+{%- endcomment -%}
+
+{%- assign vcents = item.precio_cents | default: 0 -%}
+<button
+  class="hopecfg__choice hopecfg__choice--chip"
+  data-id="{{ item.id }}"
+  data-label="{{ item.nombre | escape }}"
+  data-emoji="{{ item.emoji }}"
+  data-precio-cents="{{ vcents }}"
+  type="button"
+>
+  {%- if tipo == 'topping' -%}
+    <span class="topping-icon">{{ item.emoji }}</span>
+    <span class="topping-name">
+      {{- item.nombre -}}
+      {%- if item.premium %} <span class="hopecfg__star">★</span>{% endif -%}
+    </span>
+  {%- else -%}
+    {{- item.nombre -}}
+    {%- if item.premium %} <span class="hopecfg__star">★</span>{% endif -%}
+  {%- endif -%}
+  {%- if vcents > 0 -%}
+    <span class="hopecfg__chip-price">+{{ vcents | money }}</span>
+  {%- endif -%}
+</button>

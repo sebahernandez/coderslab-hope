@@ -1,0 +1,712 @@
+{% comment %}
+  Contact section: intro text + social icons on one side, Shopify contact form on the other.
+{% endcomment %}
+
+{%- liquid
+  assign s = section.settings
+  assign radius = s.card_radius
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} .contact-split {
+    --cs-section-bg: {{ s.section_bg }};
+    --cs-eyebrow: {{ s.eyebrow_color }};
+    --cs-title-1: {{ s.title_color_1 }};
+    --cs-title-2: {{ s.title_color_2 }};
+    --cs-desc: {{ s.description_color }};
+    --cs-card-bg: {{ s.card_bg }};
+    --cs-field-bg: {{ s.field_bg }};
+    --cs-field-border: {{ s.field_border }};
+    --cs-label: {{ s.label_color }};
+    --cs-input-text: {{ s.input_text_color }};
+    --cs-placeholder: {{ s.placeholder_color }};
+    --cs-btn-bg: {{ s.button_bg }};
+    --cs-btn-bg-hover: {{ s.button_bg | color_darken: 8 }};
+    --cs-btn-text: {{ s.button_text_color }};
+    --cs-social-bg: {{ s.social_bg }};
+    --cs-social-icon: {{ s.social_icon_color }};
+    --cs-social-border: {{ s.social_border }};
+    --cs-card-radius: {{ radius }}px;
+    --cs-max-width: {{ s.max_width }}px;
+    --cs-gap: {{ s.column_gap }}px;
+  }
+{% endstyle %}
+
+<section class="contact-split contact-split--form-{{ s.form_position }}">
+  <div class="contact-split__inner">
+
+    <div class="contact-split__intro">
+      {%- if s.eyebrow != blank -%}
+        <p class="contact-split__eyebrow">{{ s.eyebrow }}</p>
+      {%- endif -%}
+
+      {%- if s.title_line_1 != blank or s.title_line_2 != blank -%}
+        <h2 class="contact-split__title">
+          {%- if s.title_line_1 != blank -%}
+            <span class="contact-split__title-1">{{ s.title_line_1 }}</span>
+          {%- endif -%}
+          {%- if s.title_line_2 != blank -%}
+            <span class="contact-split__title-2">{{ s.title_line_2 }}</span>
+          {%- endif -%}
+        </h2>
+      {%- endif -%}
+
+      {%- if s.description != blank -%}
+        <div class="contact-split__desc rte">{{ s.description }}</div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <ul class="contact-split__socials" role="list">
+          {%- for block in section.blocks -%}
+            {%- if block.settings.url != blank -%}
+              <li {{ block.shopify_attributes }}>
+                <a
+                  class="contact-split__social"
+                  href="{{ block.settings.url }}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="{{ block.settings.platform }}"
+                >
+                  {%- render 'contact-split-icon', name: block.settings.platform -%}
+                </a>
+              </li>
+            {%- endif -%}
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+
+    <div class="contact-split__card">
+      {%- form 'contact', id: 'contact-split-form', class: 'contact-split__form' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="contact-split__success" role="status">{{ s.success_message }}</p>
+        {%- endif -%}
+
+        {{ form.errors | default_errors }}
+
+        <div class="contact-split__row">
+          <div class="contact-split__field">
+            <label class="contact-split__label" for="ContactSplitName-{{ section.id }}">{{ s.label_name }}</label>
+            <input
+              class="contact-split__input"
+              type="text"
+              id="ContactSplitName-{{ section.id }}"
+              name="contact[name]"
+              value="{{ form.name }}"
+              placeholder="{{ s.placeholder_name }}"
+              autocomplete="name"
+              {% if s.name_required %}required{% endif %}
+            >
+          </div>
+
+          <div class="contact-split__field">
+            <label class="contact-split__label" for="ContactSplitEmail-{{ section.id }}">{{ s.label_email }}</label>
+            <input
+              class="contact-split__input"
+              type="email"
+              id="ContactSplitEmail-{{ section.id }}"
+              name="contact[email]"
+              value="{{ form.email }}"
+              placeholder="{{ s.placeholder_email }}"
+              autocomplete="email"
+              spellcheck="false"
+              autocapitalize="off"
+              required
+            >
+          </div>
+        </div>
+
+        {%- if s.show_subject -%}
+          <div class="contact-split__field">
+            <label class="contact-split__label" for="ContactSplitSubject-{{ section.id }}">{{ s.label_subject }}</label>
+            <div class="contact-split__select-wrap">
+              <select
+                class="contact-split__input contact-split__select"
+                id="ContactSplitSubject-{{ section.id }}"
+                name="contact[subject]"
+                {% if s.subject_required %}required{% endif %}
+              >
+                <option value="" disabled selected>{{ s.subject_placeholder }}</option>
+                {%- assign subjects = s.subject_options | newline_to_br | split: '<br />' -%}
+                {%- for subject in subjects -%}
+                  {%- assign option = subject | strip -%}
+                  {%- if option != blank -%}
+                    <option value="{{ option | escape }}">{{ option }}</option>
+                  {%- endif -%}
+                {%- endfor -%}
+              </select>
+              {%- render 'contact-split-icon', name: 'chevron' -%}
+            </div>
+          </div>
+        {%- endif -%}
+
+        <div class="contact-split__field">
+          <label class="contact-split__label" for="ContactSplitBody-{{ section.id }}">{{ s.label_message }}</label>
+          <textarea
+            class="contact-split__input contact-split__textarea"
+            id="ContactSplitBody-{{ section.id }}"
+            name="contact[body]"
+            rows="4"
+            placeholder="{{ s.placeholder_message }}"
+            {% if s.message_required %}required{% endif %}
+          >{{ form.body }}</textarea>
+        </div>
+
+        <button type="submit" class="contact-split__button">{{ s.button_text }}</button>
+      {%- endform -%}
+    </div>
+
+  </div>
+</section>
+
+{% stylesheet %}
+  .contact-split {
+    width: 100%;
+    padding: 48px 24px;
+    background-color: var(--cs-section-bg);
+    box-sizing: border-box;
+  }
+
+  .contact-split__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--cs-gap);
+    max-width: var(--cs-max-width);
+    margin: 0 auto;
+  }
+
+  .contact-split--form-left .contact-split__intro {
+    order: 2;
+  }
+
+  .contact-split--form-left .contact-split__card {
+    order: 1;
+  }
+
+  .contact-split__eyebrow {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--cs-eyebrow);
+  }
+
+  .contact-split__title {
+    margin: 0 0 20px;
+    font-size: clamp(34px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.05;
+  }
+
+  .contact-split__title span {
+    display: block;
+  }
+
+  .contact-split__title-1 {
+    color: var(--cs-title-1);
+  }
+
+  .contact-split__title-2 {
+    color: var(--cs-title-2);
+  }
+
+  .contact-split__desc {
+    max-width: 42ch;
+    margin: 0 0 28px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--cs-desc);
+  }
+
+  .contact-split__desc :where(p):last-child {
+    margin-bottom: 0;
+  }
+
+  .contact-split__socials {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contact-split__social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: var(--cs-social-bg);
+    border: 1px solid var(--cs-social-border);
+    color: var(--cs-social-icon);
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .contact-split__social:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+  }
+
+  .contact-split__social svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .contact-split__card {
+    background-color: var(--cs-card-bg);
+    border-radius: var(--cs-card-radius);
+    padding: 32px;
+    box-sizing: border-box;
+  }
+
+  .contact-split__form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .contact-split__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .contact-split__field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .contact-split__label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cs-label);
+  }
+
+  .contact-split__input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-family: inherit;
+    color: var(--cs-input-text);
+    background-color: var(--cs-field-bg);
+    border: 1px solid var(--cs-field-border);
+    border-radius: 12px;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .contact-split__input:focus {
+    border-color: var(--cs-btn-bg);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--cs-btn-bg) 20%, transparent);
+  }
+
+  .contact-split__input::placeholder {
+    color: var(--cs-placeholder);
+  }
+
+  .contact-split__textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  .contact-split__select-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .contact-split__select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding-right: 44px;
+    cursor: pointer;
+  }
+
+  .contact-split__select-wrap svg {
+    position: absolute;
+    right: 16px;
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    color: var(--cs-input-text);
+  }
+
+  .contact-split__button {
+    margin-top: 4px;
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    color: var(--cs-btn-text);
+    background-color: var(--cs-btn-bg);
+    border: none;
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+
+  .contact-split__button:hover {
+    background-color: var(--cs-btn-bg-hover);
+  }
+
+  .contact-split__button:active {
+    transform: translateY(1px);
+  }
+
+  .contact-split__success {
+    margin: 0;
+    padding: 14px 16px;
+    border-radius: 12px;
+    background-color: color-mix(in srgb, var(--cs-btn-bg) 12%, transparent);
+    color: var(--cs-input-text);
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .contact-split {
+      padding: 32px 16px;
+    }
+
+    .contact-split__inner {
+      grid-template-columns: 1fr;
+      gap: 28px;
+    }
+
+    .contact-split--form-left .contact-split__intro,
+    .contact-split--form-left .contact-split__card {
+      order: initial;
+    }
+
+    .contact-split__card {
+      padding: 24px;
+    }
+
+    .contact-split__row {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Formulario de contacto",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenido"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto superior",
+      "default": "ESCRÍBENOS"
+    },
+    {
+      "type": "text",
+      "id": "title_line_1",
+      "label": "Título línea 1",
+      "default": "Cuéntanos"
+    },
+    {
+      "type": "text",
+      "id": "title_line_2",
+      "label": "Título línea 2",
+      "default": "lo que necesitas"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Descripción",
+      "default": "<p>Ya sea un pedido especial, un evento, una pregunta sobre nuestros sabores, o simplemente decir hola — nos encanta saber de ti.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Campos del formulario"
+    },
+    {
+      "type": "text",
+      "id": "label_name",
+      "label": "Etiqueta nombre",
+      "default": "Nombre"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_name",
+      "label": "Placeholder nombre",
+      "default": "María García"
+    },
+    {
+      "type": "checkbox",
+      "id": "name_required",
+      "label": "Nombre obligatorio",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_email",
+      "label": "Etiqueta correo",
+      "default": "Correo"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_email",
+      "label": "Placeholder correo",
+      "default": "maria@email.com"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_subject",
+      "label": "Mostrar campo asunto",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_subject",
+      "label": "Etiqueta asunto",
+      "default": "Asunto"
+    },
+    {
+      "type": "text",
+      "id": "subject_placeholder",
+      "label": "Placeholder asunto",
+      "default": "Selecciona un tema"
+    },
+    {
+      "type": "textarea",
+      "id": "subject_options",
+      "label": "Opciones de asunto (una por línea)",
+      "default": "Pedido especial\nEventos\nPreguntas sobre sabores\nOtro"
+    },
+    {
+      "type": "checkbox",
+      "id": "subject_required",
+      "label": "Asunto obligatorio",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "label_message",
+      "label": "Etiqueta mensaje",
+      "default": "Mensaje"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_message",
+      "label": "Placeholder mensaje",
+      "default": "Cuéntanos en qué podemos ayudarte..."
+    },
+    {
+      "type": "checkbox",
+      "id": "message_required",
+      "label": "Mensaje obligatorio",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texto del botón",
+      "default": "Enviar mensaje"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Mensaje de éxito",
+      "default": "¡Gracias! Hemos recibido tu mensaje y te responderemos pronto."
+    },
+    {
+      "type": "header",
+      "content": "Diseño y posición"
+    },
+    {
+      "type": "select",
+      "id": "form_position",
+      "label": "Posición del formulario",
+      "options": [
+        { "value": "right", "label": "Derecha" },
+        { "value": "left", "label": "Izquierda" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 900,
+      "max": 1500,
+      "step": 20,
+      "unit": "px",
+      "label": "Ancho máximo",
+      "default": 1160
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Espacio entre columnas",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Redondeo de la tarjeta",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Fondo de la sección",
+      "default": "#f9a8c9"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Texto superior",
+      "default": "#5a0f2e"
+    },
+    {
+      "type": "color",
+      "id": "title_color_1",
+      "label": "Título línea 1",
+      "default": "#5a0f2e"
+    },
+    {
+      "type": "color",
+      "id": "title_color_2",
+      "label": "Título línea 2",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Descripción",
+      "default": "#5a0f2e"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Fondo de la tarjeta",
+      "default": "#fbd0e2"
+    },
+    {
+      "type": "color",
+      "id": "field_bg",
+      "label": "Fondo de los campos",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "field_border",
+      "label": "Borde de los campos",
+      "default": "#f5b8d1"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Etiquetas",
+      "default": "#5a0f2e"
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Texto de los campos",
+      "default": "#3a0a1e"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color",
+      "label": "Placeholder",
+      "default": "#b98aa0"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Fondo del botón",
+      "default": "#5a0f2e"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Texto del botón",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "social_bg",
+      "label": "Fondo iconos sociales",
+      "default": "#fbd0e2"
+    },
+    {
+      "type": "color",
+      "id": "social_icon_color",
+      "label": "Color iconos sociales",
+      "default": "#5a0f2e"
+    },
+    {
+      "type": "color",
+      "id": "social_border",
+      "label": "Borde iconos sociales",
+      "default": "#5a0f2e"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "social",
+      "name": "Icono social",
+      "settings": [
+        {
+          "type": "select",
+          "id": "platform",
+          "label": "Plataforma",
+          "options": [
+            { "value": "instagram", "label": "Instagram" },
+            { "value": "facebook", "label": "Facebook" },
+            { "value": "whatsapp", "label": "WhatsApp" },
+            { "value": "messenger", "label": "Messenger / Chat" },
+            { "value": "tiktok", "label": "TikTok" },
+            { "value": "x", "label": "X (Twitter)" },
+            { "value": "youtube", "label": "YouTube" },
+            { "value": "email", "label": "Correo" }
+          ],
+          "default": "instagram"
+        },
+        {
+          "type": "url",
+          "id": "url",
+          "label": "Enlace"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Formulario de contacto",
+      "blocks": [
+        { "type": "social", "settings": { "platform": "instagram" } },
+        { "type": "social", "settings": { "platform": "facebook" } },
+        { "type": "social", "settings": { "platform": "messenger" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

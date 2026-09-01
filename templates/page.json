@@ -1,0 +1,84 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "blocks": {
+        "heading": {
+          "type": "text",
+          "name": "Title",
+          "settings": {
+            "text": "<h1>{{ closest.page.title }}</h1>",
+            "width": "100%",
+            "max_width": "normal",
+            "alignment": "left",
+            "type_preset": "h2",
+            "font": "var(--font-primary--family)",
+            "font_size": "",
+            "line_height": "normal",
+            "letter_spacing": "normal",
+            "case": "none",
+            "wrap": "pretty",
+            "color": "",
+            "background": false,
+            "background_color": "#00000026",
+            "corner_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {}
+        },
+        "page-content": {
+          "type": "page-content",
+          "settings": {},
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "heading",
+        "page-content"
+      ],
+      "disabled": true,
+      "settings": {
+        "content_direction": "column",
+        "gap": 32,
+        "color_scheme": "",
+        "padding-block-start": 40,
+        "padding-block-end": 80
+      }
+    },
+    "custom_divider_6U3fqf": {
+      "type": "custom-divider",
+      "name": "Hero con onda y burbujas",
+      "settings": {
+        "heading": "",
+        "uppercase": true,
+        "heading_size": 28,
+        "letter_spacing": 1,
+        "text_shadow": false,
+        "text_color": "#ffffff",
+        "background_type": "color",
+        "bg_color": "#eb8eb4",
+        "wave_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewbox=\"0 0 1440 320\" width=\"100%\" height=\"auto\" preserveaspectratio=\"none\" style=\"display:block;\">\n    <path fill=\"#ffffff\" fill-opacity=\"1\" d=\"M0,288L48,272C96,256,192,224,288,197.3C384,171,480,149,576,165.3C672,181,768,235,864,250.7C960,267,1056,245,1152,250.7C1248,256,1344,288,1392,304L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z\">\n    </path>\n  </svg>",
+        "wave_position": "bottom",
+        "wave_width": 90,
+        "pad_y": 10,
+        "max_width": 90
+      }
+    }
+  },
+  "order": [
+    "main",
+    "custom_divider_6U3fqf"
+  ]
+}

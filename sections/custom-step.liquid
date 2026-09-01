@@ -1,0 +1,281 @@
+<section class="section section-page">
+  <div class="icecream-steps" style="padding-top:{{ section.settings.padding_top}}px; padding-bottom:{{ section.settings.padding_bottom }}px">
+    {% for block in section.blocks %}
+      <div class="step">
+        {% if block.settings.image != blank %}
+          <div class="step-image-wrapper" style="height: {{ section.settings.image_height | default: 300 }}px;">
+            <img 
+              src="{{ block.settings.image | image_url: width: section.settings.image_width, height: section.settings.image_height }}" 
+              alt="{{ block.settings.title | escape }}" 
+              class="step-image"
+              style="object-fit: {{ section.settings.image_fit | default: 'contain' }};"
+              width="{{ section.settings.image_width | default: 400 }}"
+              height="{{ section.settings.image_height | default: 300 }}"
+            >
+          </div>
+        {% endif %}
+
+        {% if block.settings.title != blank %}
+          <h3 
+            class="step-title" 
+            style="color: {{ block.settings.title_color }}; font-size: {{ block.settings.title_font_size }}px;"
+          >
+            {{ block.settings.title }}
+          </h3>
+        {% endif %}
+
+        {% if block.settings.list_items != blank %}
+          <ul 
+            class="step-list" 
+            style="color: {{ block.settings.list_color }}; font-size: {{ block.settings.list_font_size }}px;"
+          >
+            {% assign list_array = block.settings.list_items | split: ',' %}
+            {% for item in list_array %}
+              <li>{{ item | strip }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<style>
+  .icecream-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: clamp(1rem, 4vw, 3rem);
+    width: 100%;
+    height: 100%;
+    align-items: start;
+  }
+
+  .icecream-steps .step {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-align: center;
+    background: transparent;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+  }
+
+  .icecream-steps .step:hover {
+    transform: translateY(-5px);
+  }
+
+  .step-image-wrapper {
+    width: 100%;
+    overflow: hidden;
+    border-radius: 8px;
+    flex-shrink: 0;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .step-image {
+    width: 100%;
+    height: 100%;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .step-image:hover {
+    transform: scale(1.02);
+  }
+
+  .step-title {
+    margin: clamp(0.8rem, 2vh, 1.5rem) 0 clamp(0.5rem, 1vh, 1rem) 0;
+    font-weight: bold;
+    line-height: 1.2;
+  }
+
+  .step-list {
+    list-style-type:none;
+    padding-left: 1.2rem;
+    text-align: left;
+    margin: 0 auto;
+    max-width: fit-content;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .step-list li {
+    margin-bottom: 0.3rem;
+    line-height: 1.4;
+
+  }
+
+  /* Responsive optimizations */
+  @media (max-width: 1200px) {
+    .icecream-steps {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .icecream-steps {
+      grid-template-columns: 1fr;
+      gap: clamp(1.5rem, 5vw, 2.5rem);
+    }
+
+    .step-image-wrapper {
+      height: calc({{ section.settings.image_height | default: 300 }}px * 0.8) !important;
+    }
+
+    .icecream-steps .step {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .step-image-wrapper {
+      height: calc({{ section.settings.image_height | default: 300 }}px * 0.7) !important;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "custom-step",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuración de Imágenes"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "min": 200,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "label": "Ancho de imágenes",
+      "default": 400,
+      "info": "Controla el ancho de todas las imágenes"
+    },
+    {
+      "type": "range",
+      "id": "image_height",
+      "min": 150,
+      "max": 500,
+      "step": 10,
+      "unit": "px",
+      "label": "Alto de imágenes",
+      "default": 300,
+      "info": "Controla la altura de todas las imágenes"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Ajuste de imagen global",
+      "options": [
+        { "value": "contain", "label": "Ajustar (sin recortes)" },
+        { "value": "cover", "label": "Cubrir (con recortes)" },
+        { "value": "fill", "label": "Rellenar (puede distorsionar)" },
+        { "value": "scale-down", "label": "Escalar hacia abajo" },
+        { "value": "none", "label": "Tamaño original" }
+      ],
+      "default": "contain",
+      "info": "Controla cómo se ajustan todas las imágenes en sus contenedores"
+    },
+       {
+      "type": "header",
+      "content": "Padding"
+    },
+      {
+          "type": "range",
+          "id": "padding_top",
+          "label": "Padding superior",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "px",
+          "default": 40
+        },
+        {
+          "type": "range",
+          "id": "padding_bottom",
+          "label": "Padding inferior",
+          "min": 0,
+          "max": 100,
+          "step": 5,
+          "unit": "px",
+          "default": 40
+        }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Paso",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Elige tamaño"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Color del título",
+          "default": "#d54b87"
+        },
+        {
+          "type": "range",
+          "id": "title_font_size",
+          "min": 12,
+          "max": 48,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño de fuente del título",
+          "default": 22
+        },
+        {
+          "type": "textarea",
+          "id": "list_items",
+          "label": "Lista de ítems (separa con comas)",
+          "default": "Item 1, Item 2, Item 3"
+        },
+        {
+          "type": "color",
+          "id": "list_color",
+          "label": "Color de texto de la lista",
+          "default": "#000000"
+        },
+        {
+          "type": "range",
+          "id": "list_font_size",
+          "min": 12,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "label": "Tamaño de fuente de la lista",
+          "default": 16
+        }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "🍨 Pasos de Helado",
+      "category": "Secciones personalizadas",
+      "blocks": [
+        { "type": "step" },
+        { "type": "step" },
+        { "type": "step" }
+      ]
+    }
+  ]
+}
+{% endschema %}

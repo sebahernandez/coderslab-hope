@@ -1,0 +1,1142 @@
+{%- liquid
+  comment
+    Resuelve, por grupo, la variante de fuente que realmente se va a aplicar. El mismo objeto
+    alimenta el @font-face y las variables CSS, para no pedir nunca un grosor que no esté
+    cargado: pedir un peso inexistente hacía que el navegador simulara la negrita y que el
+    selector de fuente y el de grosor parecieran no responder.
+  endcomment
+
+  assign heading_variant = false
+  unless section.settings.heading_font_type == 'custom'
+    if section.settings.heading_weight != 'auto'
+      assign heading_variant = section.settings.heading_font | font_modify: 'weight', section.settings.heading_weight
+    elsif section.settings.heading_bold
+      assign heading_variant = section.settings.heading_font | font_modify: 'weight', 'bolder'
+    endif
+  endunless
+  assign heading_font_applied = heading_variant | default: section.settings.heading_font
+
+  if section.settings.heading_font_type == 'custom' and section.settings.heading_custom_font_name != blank
+    assign heading_css_family = "'" | append: section.settings.heading_custom_font_name | append: "', " | append: section.settings.heading_font.fallback_families
+    if section.settings.heading_weight != 'auto'
+      assign heading_css_weight = section.settings.heading_weight
+    elsif section.settings.heading_custom_font_weight != 'auto'
+      assign heading_css_weight = section.settings.heading_custom_font_weight
+    else
+      assign heading_css_weight = 400
+    endif
+    assign heading_css_style = 'normal'
+  else
+    assign heading_css_family = "'" | append: heading_font_applied.family | append: "', " | append: heading_font_applied.fallback_families
+    assign heading_css_weight = heading_font_applied.weight
+    assign heading_css_style = heading_font_applied.style
+  endif
+
+  assign subheading_variant = false
+  unless section.settings.subheading_font_type == 'custom'
+    if section.settings.subheading_weight != 'auto'
+      assign subheading_variant = section.settings.subheading_font | font_modify: 'weight', section.settings.subheading_weight
+    elsif section.settings.subheading_bold
+      assign subheading_variant = section.settings.subheading_font | font_modify: 'weight', 'bolder'
+    endif
+  endunless
+  assign subheading_font_applied = subheading_variant | default: section.settings.subheading_font
+
+  if section.settings.subheading_font_type == 'custom' and section.settings.subheading_custom_font_name != blank
+    assign subheading_css_family = "'" | append: section.settings.subheading_custom_font_name | append: "', " | append: section.settings.subheading_font.fallback_families
+    if section.settings.subheading_weight != 'auto'
+      assign subheading_css_weight = section.settings.subheading_weight
+    elsif section.settings.subheading_custom_font_weight != 'auto'
+      assign subheading_css_weight = section.settings.subheading_custom_font_weight
+    else
+      assign subheading_css_weight = 400
+    endif
+    assign subheading_css_style = 'normal'
+  else
+    assign subheading_css_family = "'" | append: subheading_font_applied.family | append: "', " | append: subheading_font_applied.fallback_families
+    assign subheading_css_weight = subheading_font_applied.weight
+    assign subheading_css_style = subheading_font_applied.style
+  endif
+
+  assign description_variant = false
+  unless section.settings.description_font_type == 'custom'
+    if section.settings.description_weight != 'auto'
+      assign description_variant = section.settings.description_font | font_modify: 'weight', section.settings.description_weight
+    elsif section.settings.description_bold
+      assign description_variant = section.settings.description_font | font_modify: 'weight', 'bolder'
+    endif
+  endunless
+  assign description_font_applied = description_variant | default: section.settings.description_font
+
+  if section.settings.description_font_type == 'custom' and section.settings.description_custom_font_name != blank
+    assign description_css_family = "'" | append: section.settings.description_custom_font_name | append: "', " | append: section.settings.description_font.fallback_families
+    if section.settings.description_weight != 'auto'
+      assign description_css_weight = section.settings.description_weight
+    elsif section.settings.description_custom_font_weight != 'auto'
+      assign description_css_weight = section.settings.description_custom_font_weight
+    else
+      assign description_css_weight = 400
+    endif
+    assign description_css_style = 'normal'
+  else
+    assign description_css_family = "'" | append: description_font_applied.family | append: "', " | append: description_font_applied.fallback_families
+    assign description_css_weight = description_font_applied.weight
+    assign description_css_style = description_font_applied.style
+  endif
+
+  assign button_variant = false
+  unless section.settings.button_font_type == 'custom'
+    if section.settings.button_weight != 'auto'
+      assign button_variant = section.settings.button_font | font_modify: 'weight', section.settings.button_weight
+    elsif section.settings.button_bold
+      assign button_variant = section.settings.button_font | font_modify: 'weight', 'bolder'
+    endif
+  endunless
+  assign button_font_applied = button_variant | default: section.settings.button_font
+
+  if section.settings.button_font_type == 'custom' and section.settings.button_custom_font_name != blank
+    assign button_css_family = "'" | append: section.settings.button_custom_font_name | append: "', " | append: section.settings.button_font.fallback_families
+    if section.settings.button_weight != 'auto'
+      assign button_css_weight = section.settings.button_weight
+    elsif section.settings.button_custom_font_weight != 'auto'
+      assign button_css_weight = section.settings.button_custom_font_weight
+    else
+      assign button_css_weight = 400
+    endif
+  else
+    assign button_css_family = "'" | append: button_font_applied.family | append: "', " | append: button_font_applied.fallback_families
+    assign button_css_weight = button_font_applied.weight
+  endif
+-%}
+
+<div class="hero-banner-section" 
+     data-section-id="{{ section.id }}"
+     style="background-color: {{ section.settings.background_color }};
+            {% if section.settings.background_image != blank %}
+            --hero-bg-image: url('{{ section.settings.background_image | image_url }}');
+            {% endif %}
+            {% if section.settings.background_image_mobile != blank %}
+            --hero-bg-image-mobile: url('{{ section.settings.background_image_mobile | image_url }}');
+            {% endif %}
+            --heading-font-size: {{ section.settings.heading_font_size }}px;
+            --subheading-font-size: {{ section.settings.subheading_font_size }}px;
+            --description-font-size: {{ section.settings.description_font_size }}px;
+            --button-font-size: {{ section.settings.button_font_size }}px;
+            --heading-font-size-mobile: {{ section.settings.heading_font_size_mobile }}px;
+            --subheading-font-size-mobile: {{ section.settings.subheading_font_size_mobile }}px;
+            --description-font-size-mobile: {{ section.settings.description_font_size_mobile }}px;
+            --button-font-size-mobile: {{ section.settings.button_font_size_mobile }}px;
+            --heading-font-family: {{ heading_css_family }};
+            --heading-font-weight: {{ heading_css_weight }};
+            --heading-font-style: {{ heading_css_style }};
+            --subheading-font-family: {{ subheading_css_family }};
+            --subheading-font-weight: {{ subheading_css_weight }};
+            --subheading-font-style: {{ subheading_css_style }};
+            --description-font-family: {{ description_css_family }};
+            --description-font-weight: {{ description_css_weight }};
+            --description-font-style: {{ description_css_style }};
+            --button-font-family: {{ button_css_family }};
+            --button-font-weight: {{ button_css_weight }};
+            {%- comment -%} Alineaciones (desktop / mobile). replace mapea left->flex-start, right->flex-end {%- endcomment -%}
+            --heading-text-align: {{ section.settings.heading_alignment }};
+            --heading-self-align: {{ section.settings.heading_alignment | replace: 'left', 'flex-start' | replace: 'right', 'flex-end' }};
+            --heading-text-align-mobile: {{ section.settings.heading_alignment_mobile }};
+            --heading-self-align-mobile: {{ section.settings.heading_alignment_mobile | replace: 'left', 'flex-start' | replace: 'right', 'flex-end' }};
+            --subheading-text-align: {{ section.settings.subheading_alignment }};
+            --subheading-self-align: {{ section.settings.subheading_alignment | replace: 'left', 'flex-start' | replace: 'right', 'flex-end' }};
+            --subheading-text-align-mobile: {{ section.settings.subheading_alignment_mobile }};
+            --subheading-self-align-mobile: {{ section.settings.subheading_alignment_mobile | replace: 'left', 'flex-start' | replace: 'right', 'flex-end' }};
+            --description-text-align: {{ section.settings.description_alignment }};
+            --description-self-align: {{ section.settings.description_alignment | replace: 'left', 'flex-start' | replace: 'right', 'flex-end' }};
+            --description-text-align-mobile: {{ section.settings.description_alignment_mobile }};
+            --description-self-align-mobile: {{ section.settings.description_alignment_mobile | replace: 'left', 'flex-start' | replace: 'right', 'flex-end' }};
+            --button-self-align: {{ section.settings.button_alignment | replace: 'left', 'flex-start' | replace: 'right', 'flex-end' }};
+            --button-self-align-mobile: {{ section.settings.button_alignment_mobile | replace: 'left', 'flex-start' | replace: 'right', 'flex-end' }};
+            {%- if section.settings.height_type == 'full' -%}
+            --hero-height: 100vh;
+            {%- elsif section.settings.height_type == 'custom' -%}
+            --hero-height: {{ section.settings.height_custom }}{{ section.settings.height_unit }};
+            {%- else -%}
+            --hero-height: auto;
+            {%- endif -%}
+            {%- if section.settings.height_type == 'full' -%}
+            --hero-height-mobile: 100vh;
+            {%- elsif section.settings.height_type == 'custom' -%}
+            --hero-height-mobile: {{ section.settings.height_custom_mobile }}{{ section.settings.height_unit_mobile }};
+            {%- else -%}
+            --hero-height-mobile: auto;
+            {%- endif -%}">
+
+  <div class="hero-banner-container  section--page-width section">
+    <div class="hero-banner-content">
+      
+      {%- if section.settings.show_image and section.settings.image != blank -%}
+        <div class="hero-banner-image">
+          <img 
+            src="{{ section.settings.image | image_url: width: 800 }}"
+            alt="{{ section.settings.image.alt | default: section.settings.heading }}"
+            loading="lazy"
+            width="auto"
+            height="auto">
+        </div>
+      {%- endif -%}
+
+      <div class="hero-banner-text">
+        
+        {%- if section.settings.heading != blank -%}
+          <h1 class="hero-banner-heading" 
+              style="color: {{ section.settings.heading_color }};">
+            {{ section.settings.heading | newline_to_br }}
+          </h1>
+        {%- endif -%}
+
+        {%- if section.settings.subheading != blank -%}
+          <h2 class="hero-banner-subheading" 
+              style="color: {{ section.settings.subheading_color }};">
+            {{ section.settings.subheading }}
+          </h2>
+        {%- endif -%}
+
+        {%- if section.settings.description != blank -%}
+       <div class="hero-banner-description"
+          style="color: {{ section.settings.description_color }};">
+       {{ section.settings.description }}
+       </div>
+        {%- endif -%}
+
+        {%- if section.settings.button_label != blank -%}
+          <div class="hero-banner-button-wrapper">
+            <a href="{{ section.settings.button_link }}" 
+               class="hero-banner-button hero-banner-button--glass"
+               style="background: {{ section.settings.button_glass_background }};
+                      color: {{ section.settings.button_text_color }};
+                      border-radius: {{ section.settings.button_border_radius }}px;
+                      border: 1px solid {{ section.settings.button_glass_border_color }};
+                      backdrop-filter: blur({{ section.settings.button_glass_blur }}px);
+                      -webkit-backdrop-filter: blur({{ section.settings.button_glass_blur }}px);
+                      font-family: var(--button-font-family);
+                      font-weight: var(--button-font-weight);">
+              {{ section.settings.button_label }}
+            </a>
+          </div>
+        {%- endif -%}
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  {%- comment -%} Título {%- endcomment -%}
+  {%- if section.settings.heading_font_type == 'custom' and section.settings.heading_custom_font_url != blank -%}
+    @font-face {
+      font-family: '{{ section.settings.heading_custom_font_name }}';
+      src: url('{{ section.settings.heading_custom_font_url }}');
+      font-weight: {% if section.settings.heading_custom_font_weight == 'auto' %}normal{% else %}{{ section.settings.heading_custom_font_weight }}{% endif %};
+      font-style: normal;
+      font-display: swap;
+    }
+  {%- elsif section.settings.heading_font -%}
+    {{ heading_font_applied | font_face: font_display: 'swap' }}
+  {%- endif -%}
+
+  {%- comment -%} Subtítulo {%- endcomment -%}
+  {%- if section.settings.subheading_font_type == 'custom' and section.settings.subheading_custom_font_url != blank -%}
+    @font-face {
+      font-family: '{{ section.settings.subheading_custom_font_name }}';
+      src: url('{{ section.settings.subheading_custom_font_url }}');
+      font-weight: {% if section.settings.subheading_custom_font_weight == 'auto' %}normal{% else %}{{ section.settings.subheading_custom_font_weight }}{% endif %};
+      font-style: normal;
+      font-display: swap;
+    }
+  {%- elsif section.settings.subheading_font -%}
+    {{ subheading_font_applied | font_face: font_display: 'swap' }}
+  {%- endif -%}
+
+  {%- comment -%} Descripción {%- endcomment -%}
+  {%- if section.settings.description_font_type == 'custom' and section.settings.description_custom_font_url != blank -%}
+    @font-face {
+      font-family: '{{ section.settings.description_custom_font_name }}';
+      src: url('{{ section.settings.description_custom_font_url }}');
+      font-weight: {% if section.settings.description_custom_font_weight == 'auto' %}normal{% else %}{{ section.settings.description_custom_font_weight }}{% endif %};
+      font-style: normal;
+      font-display: swap;
+    }
+  {%- elsif section.settings.description_font -%}
+    {{ description_font_applied | font_face: font_display: 'swap' }}
+  {%- endif -%}
+
+  {%- comment -%} Botón {%- endcomment -%}
+  {%- if section.settings.button_font_type == 'custom' and section.settings.button_custom_font_url != blank -%}
+    @font-face {
+      font-family: '{{ section.settings.button_custom_font_name }}';
+      src: url('{{ section.settings.button_custom_font_url }}');
+      font-weight: {% if section.settings.button_custom_font_weight == 'auto' %}normal{% else %}{{ section.settings.button_custom_font_weight }}{% endif %};
+      font-style: normal;
+      font-display: swap;
+    }
+  {%- elsif section.settings.button_font -%}
+    {{ button_font_applied | font_face: font_display: 'swap' }}
+  {%- endif -%}
+.hero-banner-section {
+  background-image: var(--hero-bg-image, none);
+  background-size:cover;
+  background-position:center center;
+  background-repeat:no-repeat;
+  width: 100%;
+  height: var(--hero-height, auto);
+  min-height: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height }}px{% else %}var(--hero-height){% endif %};
+  display: flex;
+  align-items: center;
+}
+
+.hero-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.hero-banner-image {
+  flex: 0 0 auto;
+  max-width: 400px;
+}
+
+.hero-banner-text {
+  flex: 1;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-banner-heading {
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-font-size, 2.5rem);
+  font-weight: var(--heading-font-weight, 700);
+  font-style: var(--heading-font-style, normal);
+  line-height: 1.2;
+  margin: 0 0 15px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: var(--heading-text-align, left);
+  align-self: var(--heading-self-align, flex-start);
+}
+
+.hero-banner-subheading {
+  font-family: var(--subheading-font-family);
+  font-size: var(--subheading-font-size, 2rem);
+  font-weight: var(--subheading-font-weight, 600);
+  font-style: var(--subheading-font-style, normal);
+  line-height: 1.3;
+  margin: 0 0 20px 0;
+  text-transform: uppercase;
+  text-align: var(--subheading-text-align, left);
+  align-self: var(--subheading-self-align, flex-start);
+}
+
+.hero-banner-description {
+  font-family: var(--description-font-family);
+  font-size: var(--description-font-size, 1rem);
+  font-weight: var(--description-font-weight, 400);
+  font-style: var(--description-font-style, normal);
+  line-height: 1.6;
+  margin: 0 0 30px 0;
+  max-width: 600px;
+  text-align: var(--description-text-align, left);
+  align-self: var(--description-self-align, flex-start);
+}
+
+.hero-banner-button-wrapper {
+  margin-top: 20px;
+  align-self: var(--button-self-align, flex-start);
+}
+
+.hero-banner-button {
+  display: inline-block;
+  padding: 15px 40px;
+  font-size: var(--button-font-size, 1rem);
+  font-family: var(--button-font-family);
+  font-weight: var(--button-font-weight);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* Glassmorphism */
+.hero-banner-button--glass {
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.hero-banner-button--glass:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  filter: brightness(1.08);
+}
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hero-banner-button--glass {
+    background: rgba(255, 255, 255, 0.35) !important;
+  }
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+  .hero-banner-section {
+    padding: 40px 15px;
+    height: var(--hero-height-mobile, auto);
+    min-height: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height_mobile }}px{% else %}var(--hero-height-mobile){% endif %};
+    background-image: var(--hero-bg-image-mobile, var(--hero-bg-image, none));
+  }
+
+  .hero-banner-heading {
+    font-size: var(--heading-font-size-mobile, var(--heading-font-size, 2.5rem));
+  }
+
+  .hero-banner-subheading {
+    font-size: var(--subheading-font-size-mobile, var(--subheading-font-size, 2rem));
+  }
+
+  .hero-banner-description {
+    font-size: var(--description-font-size-mobile, var(--description-font-size, 1rem));
+  }
+
+  .hero-banner-button {
+    font-size: var(--button-font-size-mobile, var(--button-font-size, 1rem));
+  }
+
+  .hero-banner-content {
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .hero-banner-image {
+    max-width: 300px;
+  }
+
+  .hero-banner-heading {
+    text-align: var(--heading-text-align-mobile, var(--heading-text-align, left));
+    align-self: var(--heading-self-align-mobile, var(--heading-self-align, flex-start));
+  }
+
+  .hero-banner-subheading {
+    text-align: var(--subheading-text-align-mobile, var(--subheading-text-align, left));
+    align-self: var(--subheading-self-align-mobile, var(--subheading-self-align, flex-start));
+  }
+
+  .hero-banner-description {
+    text-align: var(--description-text-align-mobile, var(--description-text-align, left));
+    align-self: var(--description-self-align-mobile, var(--description-self-align, flex-start));
+  }
+
+  .hero-banner-button-wrapper {
+    align-self: var(--button-self-align-mobile, var(--button-self-align, flex-start));
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-banner-button {
+    padding: 12px 30px;
+  }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Hero Banner Helados",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Altura de la Sección"
+    },
+    {
+      "type": "select",
+      "id": "height_type",
+      "label": "Tipo de Altura",
+      "options": [
+        { "value": "auto", "label": "Automática (según contenido)" },
+        { "value": "full", "label": "Pantalla completa (100vh)" },
+        { "value": "custom", "label": "Personalizada" }
+      ],
+      "default": "auto",
+      "info": "Elige cómo se calcula la altura de la sección"
+    },
+    {
+      "type": "header",
+      "content": "Altura Automática — Mínimo"
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "label": "Altura Mínima (Escritorio)",
+      "min": 200,
+      "max": 1000,
+      "step": 10,
+      "unit": "px",
+      "default": 700,
+      "info": "Solo aplica cuando el tipo de altura es 'Automática'"
+    },
+    {
+      "type": "range",
+      "id": "min_height_mobile",
+      "label": "Altura Mínima (Mobile)",
+      "min": 150,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "default": 400,
+      "info": "Solo aplica cuando el tipo de altura es 'Automática'"
+    },
+    {
+      "type": "header",
+      "content": "Altura Personalizada"
+    },
+    {
+      "type": "range",
+      "id": "height_custom",
+      "label": "Altura Personalizada (Escritorio)",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 80,
+      "info": "Solo aplica cuando el tipo de altura es 'Personalizada'. La unidad se elige abajo."
+    },
+    {
+      "type": "select",
+      "id": "height_unit",
+      "label": "Unidad (Escritorio)",
+      "options": [
+        { "value": "vh", "label": "vh (% de la pantalla)" },
+        { "value": "rem", "label": "rem" },
+        { "value": "px", "label": "px" }
+      ],
+      "default": "vh"
+    },
+    {
+      "type": "range",
+      "id": "height_custom_mobile",
+      "label": "Altura Personalizada (Mobile)",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 60,
+      "info": "Solo aplica cuando el tipo de altura es 'Personalizada'. La unidad se elige abajo."
+    },
+    {
+      "type": "select",
+      "id": "height_unit_mobile",
+      "label": "Unidad (Mobile)",
+      "options": [
+        { "value": "vh", "label": "vh (% de la pantalla)" },
+        { "value": "rem", "label": "rem" },
+        { "value": "px", "label": "px" }
+      ],
+      "default": "vh"
+    },
+    {
+      "type": "header",
+      "content": "Colores de Fondo"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Color de Fondo",
+      "default": "#FFB6D9"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Imagen de Fondo",
+      "info": "Opcional. Si se agrega, se mostrará sobre el color de fondo"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_mobile",
+      "label": "Imagen de Fondo (Mobile)",
+      "info": "Opcional. Si se agrega, reemplaza a la Imagen de Fondo solo en mobile (768px o menos)"
+    },
+    {
+      "type": "header",
+      "content": "Imagen Principal"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "label": "Mostrar Imagen",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen"
+    },
+    {
+      "type": "header",
+      "content": "Alineación (Flexbox)"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Alineación del Título (Escritorio)",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment_mobile",
+      "label": "Alineación del Título (Mobile)",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "subheading_alignment",
+      "label": "Alineación del Subtítulo (Escritorio)",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "subheading_alignment_mobile",
+      "label": "Alineación del Subtítulo (Mobile)",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "description_alignment",
+      "label": "Alineación de la Descripción (Escritorio)",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "description_alignment_mobile",
+      "label": "Alineación de la Descripción (Mobile)",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "button_alignment",
+      "label": "Alineación del Botón (Escritorio)",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "button_alignment_mobile",
+      "label": "Alineación del Botón (Mobile)",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Contenido de Texto"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Título Principal",
+      "info": "Presiona Enter para dividir el título en dos líneas.",
+      "default": "HELADOS ARTESANALES"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color del Título",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "heading_font_type",
+      "label": "Origen de la fuente (Título)",
+      "options": [
+        { "value": "theme", "label": "Fuente de Shopify" },
+        { "value": "custom", "label": "Fuente personalizada (URL / @font-face)" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Tipografía del Título (Shopify)",
+      "info": "Se usa cuando el origen es 'Fuente de Shopify'. También aporta las fuentes de respaldo.",
+      "default": "helvetica_n7"
+    },
+    {
+      "type": "text",
+      "id": "heading_custom_font_name",
+      "label": "Nombre de la fuente personalizada"
+    },
+    {
+      "type": "url",
+      "id": "heading_custom_font_url",
+      "label": "URL del archivo de fuente",
+      "info": "Sube el .woff2/.woff/.ttf a Contenido → Archivos y pega su URL."
+    },
+    {
+      "type": "select",
+      "id": "heading_custom_font_weight",
+      "label": "Peso real del archivo",
+      "options": [
+        { "value": "auto", "label": "Normal" },
+        { "value": "100", "label": "100" },
+        { "value": "200", "label": "200" },
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" },
+        { "value": "900", "label": "900" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Grosor aplicado (Título)",
+      "info": "Si la familia no incluye ese grosor, se usa el más cercano disponible en lugar de simularlo.",
+      "options": [
+        { "value": "auto", "label": "Automático (según fuente)" },
+        { "value": "100", "label": "100 - Thin" },
+        { "value": "200", "label": "200 - Extra Light" },
+        { "value": "300", "label": "300 - Light" },
+        { "value": "400", "label": "400 - Regular" },
+        { "value": "500", "label": "500 - Medium" },
+        { "value": "600", "label": "600 - Semi Bold" },
+        { "value": "700", "label": "700 - Bold" },
+        { "value": "800", "label": "800 - Extra Bold" },
+        { "value": "900", "label": "900 - Black" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_bold",
+      "label": "Título en Negrita",
+      "info": "Solo se aplica si el grosor está en 'Automático'. Usa la variante negrita real de la fuente, si la familia la tiene.",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size",
+      "label": "Tamaño del Título (Escritorio)",
+      "min": 16,
+      "max": 160,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Tamaño del Título (Mobile)",
+      "min": 12,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subtítulo",
+      "default": "CON SABOR A FELICIDAD"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Color del Subtítulo",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "subheading_font_type",
+      "label": "Origen de la fuente (Subtítulo)",
+      "options": [
+        { "value": "theme", "label": "Fuente de Shopify" },
+        { "value": "custom", "label": "Fuente personalizada (URL / @font-face)" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "font_picker",
+      "id": "subheading_font",
+      "label": "Tipografía del Subtítulo (Shopify)",
+      "default": "helvetica_n7"
+    },
+    {
+      "type": "text",
+      "id": "subheading_custom_font_name",
+      "label": "Nombre de la fuente personalizada"
+    },
+    {
+      "type": "url",
+      "id": "subheading_custom_font_url",
+      "label": "URL del archivo de fuente",
+      "info": "Sube el archivo a Contenido → Archivos y pega su URL."
+    },
+    {
+      "type": "select",
+      "id": "subheading_custom_font_weight",
+      "label": "Peso real del archivo",
+      "options": [
+        { "value": "auto", "label": "Normal" },
+        { "value": "100", "label": "100" },
+        { "value": "200", "label": "200" },
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" },
+        { "value": "900", "label": "900" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "subheading_weight",
+      "label": "Grosor aplicado (Subtítulo)",
+      "info": "Si la familia no incluye ese grosor, se usa el más cercano disponible en lugar de simularlo.",
+      "options": [
+        { "value": "auto", "label": "Automático (según fuente)" },
+        { "value": "100", "label": "100 - Thin" },
+        { "value": "200", "label": "200 - Extra Light" },
+        { "value": "300", "label": "300 - Light" },
+        { "value": "400", "label": "400 - Regular" },
+        { "value": "500", "label": "500 - Medium" },
+        { "value": "600", "label": "600 - Semi Bold" },
+        { "value": "700", "label": "700 - Bold" },
+        { "value": "800", "label": "800 - Extra Bold" },
+        { "value": "900", "label": "900 - Black" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "checkbox",
+      "id": "subheading_bold",
+      "label": "Subtítulo en Negrita",
+      "info": "Solo se aplica si el grosor está en 'Automático'. Usa la variante negrita real de la fuente, si la familia la tiene.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size",
+      "label": "Tamaño del Subtítulo (Escritorio)",
+      "min": 14,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "subheading_font_size_mobile",
+      "label": "Tamaño del Subtítulo (Mobile)",
+      "min": 10,
+      "max": 90,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Descripción",
+      "default": "Endulzamos cada rincón de Tucacas con sabores que te roban sonrisas. Pide con Retiro en tienda o disfruta nuestro Delivery directo a tu puerta."
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Color de la Descripción",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "select",
+      "id": "description_font_type",
+      "label": "Origen de la fuente (Descripción)",
+      "options": [
+        { "value": "theme", "label": "Fuente de Shopify" },
+        { "value": "custom", "label": "Fuente personalizada (URL / @font-face)" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "font_picker",
+      "id": "description_font",
+      "label": "Tipografía de la Descripción (Shopify)",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "text",
+      "id": "description_custom_font_name",
+      "label": "Nombre de la fuente personalizada"
+    },
+    {
+      "type": "url",
+      "id": "description_custom_font_url",
+      "label": "URL del archivo de fuente",
+      "info": "Sube el archivo a Contenido → Archivos y pega su URL."
+    },
+    {
+      "type": "select",
+      "id": "description_custom_font_weight",
+      "label": "Peso real del archivo",
+      "options": [
+        { "value": "auto", "label": "Normal" },
+        { "value": "100", "label": "100" },
+        { "value": "200", "label": "200" },
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" },
+        { "value": "900", "label": "900" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "description_weight",
+      "label": "Grosor aplicado (Descripción)",
+      "info": "Si la familia no incluye ese grosor, se usa el más cercano disponible en lugar de simularlo.",
+      "options": [
+        { "value": "auto", "label": "Automático (según fuente)" },
+        { "value": "100", "label": "100 - Thin" },
+        { "value": "200", "label": "200 - Extra Light" },
+        { "value": "300", "label": "300 - Light" },
+        { "value": "400", "label": "400 - Regular" },
+        { "value": "500", "label": "500 - Medium" },
+        { "value": "600", "label": "600 - Semi Bold" },
+        { "value": "700", "label": "700 - Bold" },
+        { "value": "800", "label": "800 - Extra Bold" },
+        { "value": "900", "label": "900 - Black" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "checkbox",
+      "id": "description_bold",
+      "label": "Descripción en Negrita",
+      "info": "Solo se aplica si el grosor está en 'Automático'. Usa la variante negrita real de la fuente, si la familia la tiene.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "description_font_size",
+      "label": "Tamaño de la Descripción (Escritorio)",
+      "min": 10,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "description_font_size_mobile",
+      "label": "Tamaño de la Descripción (Mobile)",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Configuración del Botón"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Texto del Botón",
+      "default": "ARMA TU HELADO"
+    },
+
+    {
+      "type": "checkbox",
+      "id": "button_bold",
+      "label": "Texto en Negrita",
+      "default": false
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Enlace del Botón"
+    },
+    {
+      "type": "header",
+      "content": "Estilo Glass del Botón"
+    },
+    {
+      "type": "color",
+      "id": "button_glass_background",
+      "label": "Color de Fondo Glass",
+      "info": "Usa el selector de opacidad (canal alfa) para controlar qué tan transparente es el vidrio",
+      "default": "rgba(255, 255, 255, 0.25)"
+    },
+    {
+      "type": "color",
+      "id": "button_glass_border_color",
+      "label": "Color del Borde Glass",
+      "default": "rgba(255, 255, 255, 0.5)"
+    },
+    {
+      "type": "range",
+      "id": "button_glass_blur",
+      "label": "Intensidad del Blur (Glass)",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Color del Texto del Botón",
+      "default": "#FF69B4"
+    },
+    {
+      "type": "select",
+      "id": "button_font_type",
+      "label": "Origen de la fuente (Botón)",
+      "options": [
+        { "value": "theme", "label": "Fuente de Shopify" },
+        { "value": "custom", "label": "Fuente personalizada (URL / @font-face)" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "font_picker",
+      "id": "button_font",
+      "label": "Tipografía del Botón (Shopify)",
+      "default": "helvetica_n4"
+    },
+    {
+      "type": "text",
+      "id": "button_custom_font_name",
+      "label": "Nombre de la fuente personalizada"
+    },
+    {
+      "type": "url",
+      "id": "button_custom_font_url",
+      "label": "URL del archivo de fuente",
+      "info": "Sube el archivo a Contenido → Archivos y pega su URL."
+    },
+    {
+      "type": "select",
+      "id": "button_custom_font_weight",
+      "label": "Peso real del archivo",
+      "options": [
+        { "value": "auto", "label": "Normal" },
+        { "value": "100", "label": "100" },
+        { "value": "200", "label": "200" },
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" },
+        { "value": "900", "label": "900" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "select",
+      "id": "button_weight",
+      "label": "Grosor aplicado (Botón)",
+      "info": "Si la familia no incluye ese grosor, se usa el más cercano disponible en lugar de simularlo.",
+      "options": [
+        { "value": "auto", "label": "Automático (según fuente)" },
+        { "value": "100", "label": "100 - Thin" },
+        { "value": "200", "label": "200 - Extra Light" },
+        { "value": "300", "label": "300 - Light" },
+        { "value": "400", "label": "400 - Regular" },
+        { "value": "500", "label": "500 - Medium" },
+        { "value": "600", "label": "600 - Semi Bold" },
+        { "value": "700", "label": "700 - Bold" },
+        { "value": "800", "label": "800 - Extra Bold" },
+        { "value": "900", "label": "900 - Black" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Tamaño del Texto del Botón (Escritorio)",
+      "min": 10,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_font_size_mobile",
+      "label": "Tamaño del Texto del Botón (Mobile)",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Radio del Borde del Botón",
+      "default": 25
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner Helados",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}

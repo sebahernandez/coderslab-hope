@@ -1,0 +1,199 @@
+{% stylesheet %}
+  .nuestros-imperdibles-section {
+    padding: 0 2rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .content-box {
+    flex: 1;
+  }
+
+  .image-box {
+    flex: 1;
+    text-align: center;
+  }
+
+  .nuestros-imperdibles-section .small-heading {
+    color: #c42c7a;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.06em;
+  }
+
+  .nuestros-imperdibles-section h2 {
+    font-size: 2.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .nuestros-imperdibles-section .description {
+    max-width: 600px;
+    margin: 1rem 0 2rem;
+  }
+
+  .slider-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .slider-wrapper {
+    overflow-x: hidden;
+    flex: 1;
+  }
+
+  .slider-track {
+    display: flex;
+    transition: transform 0.3s ease;
+    gap: 1rem;
+  }
+
+  .product-card {
+    min-width: 260px;
+    max-width: 260px;
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  .product-card img {
+    border-radius: 8px;
+    width: 100%;
+    height: auto;
+  }
+
+  .product-card h3 {
+    margin: 0.8rem 0 0.2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  .product-card p {
+    font-size: 0.95rem;
+    margin: 0.2rem 0;
+  }
+
+  .arrow-button {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+    font-size: 1.2rem;
+    margin: 0 1rem;
+    transition: background 0.2s ease;
+  }
+  .arrow-button:hover {
+    background: #f7f7f7;
+  }
+
+  .featured-image {
+    max-width: 500px;
+  }
+
+  .featured-image img {
+    width: 100%;
+    border-radius: 16px;
+  }
+
+  @media (max-width: 768px) {
+    .nuestros-imperdibles-section {
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .arrow-button {
+      display: none;
+    }
+  }
+{% endstylesheet %}
+
+<div class="section section--page-width">
+  <div class="nuestros-imperdibles-section">
+    <div class="content-box">
+      <p class="small-heading">{{ section.settings.small_heading }}</p>
+      <h2>{{ section.settings.main_heading }}</h2>
+      <p class="description">{{ section.settings.description }}</p>
+      <div class="carouse-products">
+        {% render 'carousel-slider' %}
+      </div>
+    </div>
+
+    <div class="image-box">
+      {% if section.settings.featured_image %}
+        <img src="{{ section.settings.featured_image | image_url: width: 500 }}" alt="Helado destacado">
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+
+{% schema %}
+  {
+    "name": "Imperdibles Slider",
+    "tag": "section",
+    "class": "nuestros-imperdibles-section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "small_heading",
+        "label": "Encabezado pequeño",
+        "default": "DULCES QUE CONQUISTAN CORAZONES"
+      }, {
+        "type": "text",
+        "id": "main_heading",
+        "label": "Título principal",
+        "default": "Nuestros imperdibles"
+      }, {
+        "type": "richtext",
+        "id": "description",
+        "label": "Descripción",
+        "default": "<p><strong>Elige tu base favorita</strong>, añade entre <strong>2 y 3 toppings básicos</strong> y, si quieres llevarlo al siguiente nivel, súmale un <strong>topping premium</strong> como frutas, sirope, galletas o trocitos de torta.</p>"
+      }, {
+        "type": "image_picker",
+        "id": "featured_image",
+        "label": "Imagen destacada"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "product_card",
+        "name": "Producto",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "product_image",
+            "label": "Imagen"
+          }, {
+            "type": "text",
+            "id": "product_name",
+            "label": "Nombre",
+            "default": "Fiesta Pop"
+          }, {
+            "type": "text",
+            "id": "product_price",
+            "label": "Precio",
+            "default": "$00,00"
+          }, {
+            "type": "textarea",
+            "id": "product_description",
+            "label": "Descripción",
+            "default": "Base de vainilla con topping de gomitas, mini marshmallows y confites. Un carnaval en cada bocado."
+          }
+        ]
+      }
+    ],
+    "max_blocks": 12,
+    "presets": [
+      {
+        "name": "Nuestros Imperdibles Slider",
+        "category": "Productos"
+      }
+    ]
+  }
+{% endschema %}

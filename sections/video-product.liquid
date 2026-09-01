@@ -1,0 +1,577 @@
+<style>
+  .hope-section {
+    background-color: #f5b2d1;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.16' fill-rule='evenodd'/%3E%3C/svg%3E");
+    background-attachment: fixed;
+    background-size: 300px 300px;
+    color: white;
+    padding: 16rem 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .wave-1{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+  .wave-2{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(180deg);
+  }
+
+  .hope-container {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hope-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    padding:0px 10px;
+  }
+
+  .hope-description {
+    max-width: 700px;
+    margin: 0 auto 3rem;
+    font-size: 1rem;
+    padding:0px 10px;
+    text-wrap: balance;
+  }
+
+  .hope-video-wrapper {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    padding: 50px 0;
+  }
+
+  .video-circle {
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: transparent;
+    position: relative;
+    z-index: 5;
+  }
+
+  /* Círculos de borde dashed */
+  .border-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px dashed rgba(255, 255, 255, 0.4);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .border-circle-1 {
+    width: 580px;
+    height: 580px;
+    z-index: 2;
+  }
+
+  .border-circle-2 {
+    width: 540px;
+    height: 540px;
+    z-index: 1;
+    border-width: 1px;
+    opacity: 0.6;
+  }
+
+  .border-circle-3 {
+    width: 500px;
+    height: 500px;
+    z-index: 0;
+    border-width: 1px;
+    opacity: 0.6;
+  }
+
+  .video-circle video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  .video-circle iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 50%;
+  }
+
+  /* Texto flotante para pantallas grandes */
+  .hope-text {
+    position: absolute;
+    width: 30%;
+    max-width: 300px;
+    font-size: 0.9rem;
+    text-align: left;
+    z-index: 25;
+  }
+
+  .hope-text-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    line-height: 1.2;
+    position: relative;
+    display: inline-block;
+    z-index: 30;
+  }
+
+  .hope-text h3 {
+    margin: 0 0 8px 0;
+    padding: 0;
+  }
+
+  .hope-text p {
+    margin: 0;
+    padding: 0;
+  
+  }
+
+  .hope-text p:not(:last-child) {
+    margin-bottom: 8px;
+  }
+
+  .hope-left-top {
+    top: 45%;
+    left: 5%;
+    transform: translateY(-100%);
+  }
+  .hope-left-bottom {
+    top: 65%;
+    left: 5%;
+  }
+  .hope-right-top {
+    top: 40%;
+    right: 5%;
+    transform: translateY(-100%);
+  }
+  .hope-right-bottom {
+    top: 75%;
+    right: 5%;
+  }
+
+/* Líneas para títulos de la IZQUIERDA (apuntan hacia la derecha/video) */
+    /* Línea principal - Izquierda TOP */
+    .hope-left-top .hope-text-title::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 5px);
+      width: 350px;
+      height: 2px;
+      background: white;
+      transform: translateY(-50%);
+      z-index: 30;
+    }
+    
+    /* Flecha - Izquierda TOP */
+    .hope-left-top .hope-text-title::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 355px);
+      width: 20px;
+      height: 2px;
+      background: #fff;
+      transform: translateY(-50%) rotate(45deg);
+      transform-origin: left center;
+      z-index: 30;
+    }
+
+    /* Círculo - Izquierda TOP */
+    .hope-left-top .hope-text-title .circle-left-top::after {
+      content: "";
+      position: absolute;
+      top: calc(50% + 14px);
+      left: calc(100% + 365px);
+      width: 12px;
+      height: 12px;
+      background: rgb(255, 255, 255);
+      border: 1px solid #f5b2d1;
+      border-radius: 50%;
+      z-index: 30;
+    }
+
+    /* Línea principal - Izquierda BOTTOM */
+    .hope-left-bottom .hope-text-title::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 5px);
+      width: 205px;
+      height: 2px;
+      background: white;
+      transform: translateY(-50%);
+      z-index: 30;
+    }
+    
+    /* Flecha - Izquierda BOTTOM */
+    .hope-left-bottom .hope-text-title::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: calc(100% + 210px);
+      width: 20px;
+      height: 2px;
+      background: #fff;
+      transform: translateY(-50%) rotate(45deg);
+      transform-origin: left center;
+      z-index: 30;
+    }
+
+    /* Círculo - Izquierda BOTTOM */
+    .hope-left-bottom .hope-text-title .circle-left-bottom::after {
+      content: "";
+      position: absolute;
+      top: calc(50% + 14px);
+      left: calc(100% + 220px);
+      width: 12px;
+      height: 12px;
+      background: rgb(255, 255, 255);
+      border: 1px solid #f5b2d1;
+      border-radius: 50%;
+      z-index: 30;
+    }
+
+    /* Líneas para títulos de la DERECHA (apuntan hacia la izquierda/video) */
+    /* Línea principal - Derecha TOP */
+    .hope-right-top .hope-text-title::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: calc(100% + 5px);
+      width: 140px;
+      height: 2px;
+      background: white;
+      transform: translateY(-50%);
+      z-index: 30;
+    }
+    
+    /* Flecha - Derecha TOP */
+    .hope-right-top .hope-text-title::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: calc(100% + 145px);
+      width: 20px;
+      height: 2px;
+      background: white;
+      transform: translateY(-50%) rotate(-45deg);
+      transform-origin: right center;
+      z-index: 30;
+    }
+
+    /* Círculo - Derecha TOP */
+    .hope-right-top .hope-text-title .circle-right-top::after {
+      content: "";
+      position: absolute;
+      top: calc(50% + 14px);
+      right: calc(100% + 160px);
+      width: 12px;
+      height: 12px;
+      background: white;
+      border: 1px solid #f5b2d1;
+      border-radius: 50%;
+      z-index: 30;
+    }
+
+    /* Línea principal - Derecha BOTTOM */
+    .hope-right-bottom .hope-text-title::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: calc(100% + 5px);
+      width: 140px;
+      height: 2px;
+      background: white;
+      transform: translateY(-50%);
+      z-index: 30;
+    }
+    
+    /* Flecha - Derecha BOTTOM */
+    .hope-right-bottom .hope-text-title::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      right: calc(100% + 145px);
+      width: 20px;
+      height: 2px;
+      background: white;
+      transform: translateY(-50%) rotate(-45deg);
+      transform-origin: right center;
+      z-index: 30;
+    }
+
+    /* Círculo - Derecha BOTTOM */
+    .hope-right-bottom .hope-text-title .circle-right-bottom::after {
+      content: "";
+      position: absolute;
+      top: calc(50% + 14px);
+      right: calc(100% + 160px);
+      width: 12px;
+      height: 12px;
+      background: white;
+      border: 1px solid #f5b2d1;
+      border-radius: 50%;
+      z-index: 30;
+    }
+
+
+  /* Responsive: en móviles todo se apila */
+  @media (max-width: 768px) {
+
+  .hope-video-wrapper{
+    padding:10px 0;
+  }
+
+    /* Ocultar todas las líneas, flechas y círculos en móviles */
+    .hope-left-top .hope-text-title::after,
+    .hope-left-top .hope-text-title::before,
+    .hope-left-top .hope-text-title .circle-left-top::after,
+    .hope-left-bottom .hope-text-title::after,
+    .hope-left-bottom .hope-text-title::before,
+    .hope-left-bottom .hope-text-title .circle-left-bottom::after,
+    .hope-right-top .hope-text-title::after,
+    .hope-right-top .hope-text-title::before,
+    .hope-right-top .hope-text-title .circle-right-top::after,
+    .hope-right-bottom .hope-text-title::after,
+    .hope-right-bottom .hope-text-title::before,
+    .hope-right-bottom .hope-text-title .circle-right-bottom::after {
+      display: none;
+    }
+
+    .hope-section {
+      background: #f5b2d1;
+      color: white;
+      padding: 6rem 0;
+      text-align: center;
+      position: relative;
+    }
+
+    .hope-text {
+      position: relative;
+      width: 100%;
+      max-width: none;
+      text-align: center;
+      margin: 2rem 0;
+      padding:0px 10px;
+    
+    }
+
+    .hope-left-top,
+    .hope-left-bottom,
+    .hope-right-top,
+    .hope-right-bottom {
+      top: auto;
+      left: auto;
+      right: auto;
+      transform: none;
+    }
+
+    .video-circle {
+      width: 200px;
+      height: 200px;
+    }
+
+    .border-circle-1 {
+      width: 230px;
+      height: 230px;
+    }
+
+    .border-circle-2 {
+      width: 260px;
+      height: 260px;
+    }
+
+    .border-circle-3 {
+      width: 290px;
+      height: 290px;
+    }
+  }
+</style>
+
+<section class="hope-section">
+  <div class="wave-1">
+    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1000 100"><path d="M0 0v90.2C49.7 99.9 105 82 160 65c75.5-23.3 145.5-22.4 222-3 63 16 119 14 173-8 79.5-32.4 156.2-27.6 240-10 82.6 17.4 143-1 205-31.7V0H0Z" fill="#FFFFFF"></path></svg>
+  </div>
+  <div class="hope-container">
+    <h2 class="hope-title">{{ section.settings.title }}</h2>
+    <p class="hope-description">{{ section.settings.description }}</p>
+
+    <div class="hope-video-wrapper">
+      <!-- Círculos de borde dashed -->
+      <div class="border-circle border-circle-1"></div>
+      <div class="border-circle border-circle-2"></div>
+      <div class="border-circle border-circle-3"></div>
+
+      <div class="video-circle">
+        {% if section.settings.icecream_video %}
+          {{ section.settings.icecream_video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false }}
+        {% else %}
+          <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: white; font-size: 14px; text-align: center;">
+            Selecciona un video desde el administrador
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="hope-text hope-left-top" style="font-size: {{ section.settings.paragraph_font_size }}px;">
+      {% if section.settings.left_top_title != blank %}
+        <h3 class="hope-text-title" style="font-size: {{ section.settings.title_font_size }}px;">
+          <span class="circle-left-top">{{ section.settings.left_top_title }}</span>
+        </h3>
+      {% endif %}
+      {% if section.settings.left_top != blank %}
+      {{ section.settings.left_top }}
+      {% endif %}
+    </div>
+    <div class="hope-text hope-left-bottom" style="font-size: {{ section.settings.paragraph_font_size }}px;">
+      {% if section.settings.left_bottom_title != blank %}
+        <h3 class="hope-text-title" style="font-size: {{ section.settings.title_font_size }}px;">
+          <span class="circle-left-bottom">{{ section.settings.left_bottom_title }}</span>
+        </h3>
+      {% endif %}
+      {% if section.settings.left_bottom != blank %}
+        {{ section.settings.left_bottom }}
+      {% endif %} 
+    </div>
+    <div class="hope-text hope-right-top" style="font-size: {{ section.settings.paragraph_font_size }}px;">
+      {% if section.settings.right_top_title != blank %}
+        <h3 class="hope-text-title" style="font-size: {{ section.settings.title_font_size }}px;">
+          <span class="circle-right-top">{{ section.settings.right_top_title }}</span>
+        </h3>
+      {% endif %}
+      {% if section.settings.right_top != blank %}
+      {{ section.settings.right_top }}
+      {% endif %}
+    </div>
+    <div class="hope-text hope-right-bottom" style="font-size: {{ section.settings.paragraph_font_size }}px;">
+      {% if section.settings.right_bottom_title != blank %}
+        <h3 class="hope-text-title" style="font-size: {{ section.settings.title_font_size }}px;">
+          <span class="circle-right-bottom">{{ section.settings.right_bottom_title }}</span>
+        </h3>
+      {% endif %}
+      {% if section.settings.right_bottom != blank %}
+        {{ section.settings.right_bottom }}
+      {% endif %}
+    </div>
+  </div>
+  <div class="wave-2">
+    <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1000 100"><path d="M0 0v90.2C49.7 99.9 105 82 160 65c75.5-23.3 145.5-22.4 222-3 63 16 119 14 173-8 79.5-32.4 156.2-27.6 240-10 82.6 17.4 143-1 205-31.7V0H0Z" fill="#FFFFFF"></path></svg>
+  </div>
+</section>
+
+
+{% schema %}
+  {
+    "name": "Helado Hope Especial",
+    "tag": "section",
+    "settings": [
+      {
+        "type": "video",
+        "id": "icecream_video",
+        "label": "Video del helado"
+
+      },
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Título principal",
+        "default": "¿Qué hace tan especial a un helado Hope?"
+      },
+      {
+        "type": "textarea",
+        "id": "description",
+        "label": "Descripción corta",
+        "default": "Cada cucharada es una mezcla de amor, sabor y color..."
+      },
+      {
+        "type": "text",
+        "id": "left_top_title",
+        "label": "Título izquierdo arriba",
+        "default": "Crema base suave"
+      },
+      {
+        "type": "richtext",
+        "id": "left_top",
+        "label": "Texto izquierdo arriba",
+        "default": "<p>Batida con cariño y perfección. Cremosa, fresca y con un sabor que derrite el corazón.</p>"
+      },
+      {
+        "type": "text",
+        "id": "left_bottom_title",
+        "label": "Título izquierdo abajo",
+        "default": "Topping de frutas naturales"
+      },
+      {
+        "type": "richtext",
+        "id": "left_bottom",
+        "label": "Texto izquierdo abajo",
+        "default": "<p>Seleccionamos frutas reales, jugosas y dulces, para que cada combinación sea 100% natural.</p>"
+      },
+      {
+        "type": "text",
+        "id": "right_top_title",
+        "label": "Título derecho arriba",
+        "default": "Salsas artesanales"
+      },
+      {
+        "type": "richtext",
+        "id": "right_top",
+        "label": "Texto derecho arriba",
+        "default": "<p>Caramelo, chocolate, frutos rojos... nuestras salsas son hechas a mano, sin apuros, con sabor casero.</p>"
+      },
+      {
+        "type": "text",
+        "id": "right_bottom_title",
+        "label": "Título derecho abajo",
+        "default": "Vasito biodegradable personalizado"
+      },
+      {
+        "type": "richtext",
+        "id": "right_bottom",
+        "label": "Texto derecho abajo",
+        "default": "<p>Porque creemos en el sabor y en cuidar el planeta. Nuestro vasito es compostable y lleno de identidad Hope.</p>"
+      },
+      {
+        "type": "range",
+        "id": "title_font_size",
+        "label": "Tamaño de fuente de títulos (px)",
+        "min": 12,
+        "max": 24,
+        "step": 1,
+        "default": 16
+      },
+      {
+        "type": "range",
+        "id": "paragraph_font_size",
+        "label": "Tamaño de fuente de párrafos (px)",
+        "min": 10,
+        "max": 20,
+        "step": 1,
+        "default": 14
+      }
+    ],
+    "presets": [
+      {
+        "name": "Helado Hope Especial"
+      }
+    ]
+  }
+{% endschema %}

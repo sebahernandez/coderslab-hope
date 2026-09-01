@@ -1,0 +1,381 @@
+{% stylesheet %}
+  .testimonial-carousel {
+    background: #fff;
+    text-align: center;
+    overflow: visible;
+    padding: 6rem 0;
+  }
+
+  .testimonial-carousel h2 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .testimonial-carousel p.subtitle {
+    color: #555;
+    margin-bottom: 2rem;
+  }
+
+  .testimonials-swiper .swiper {
+    overflow: visible !important;
+  }
+
+  .testimonial-carousel .testimonials-swiper .swiper {
+    overflow: visible !important;
+  }
+
+  .testimonials-swiper .swiper-wrapper {
+    overflow: visible !important;
+  }
+
+  /* Swiper styles */
+  .testimonials-swiper {
+    width: 100%;
+    padding: 20px 0 70px;
+    overflow: visible;
+    position: relative;
+  }
+
+  .swiper-slide {
+    height: auto;
+    display: flex;
+    justify-content: center;
+    overflow: visible;
+  }
+
+  .swiper-wrapper {
+    padding: 10px 0;
+  }
+
+  .box-rose {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 500px;
+    background-color: #FBE3EE;
+    z-index: 1;
+  }
+
+  @media (max-width: 768px) {
+    .box-rose {
+      width: 90%;
+      height: 500px;
+      bottom: -30px;
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .box-rose {
+      width: 70%;
+      height: 500px;
+      bottom: -60px;
+    }
+  }
+
+  .testimonial-card {
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08)
+    , 0 2px 6px rgba(0, 0, 0, 0.04);
+    padding: 1.2rem;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    transition: box-shadow 0.3s ease
+    , transform 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    margin: 15px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .testimonial-card:hover {
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12)
+    , 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+    z-index: 2;
+  }
+
+  .testimonial-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 0.5rem;
+  }
+
+  .testimonial-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center;
+    margin-bottom: 1rem;
+    border: 2px solid #f0f0f0;
+    flex-shrink: 0;
+  }
+
+  .testimonial-avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    color: #1976d2;
+    font-size: 1.5rem;
+    border: 2px solid #f0f0f0;
+    flex-shrink: 0;
+  }
+
+  .testimonial-name {
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+
+  .testimonial-role {
+    color: #999;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  .testimonial-text {
+    font-size: 1rem;
+    color: #222;
+    flex-grow: 1;
+  }
+
+  /* Custom Swiper pagination */
+  .swiper-pagination {
+    transform: translate3d(0, -50px, 0) !important;
+    z-index: 5 !important;
+  }
+
+  .swiper-pagination-bullet {
+    background: #d1d5db;
+    opacity: 1;
+    width: 8px;
+    height: 8px;
+  }
+
+  .swiper-pagination-bullet-active {
+    background: #c42c7a;
+  }
+
+  /* Responsive breakpoints */
+  @media (max-width: 768px) {
+    .testimonial-card {
+      max-width: 100%;
+    }
+  }
+{% endstylesheet %}
+
+<section class="section section--pagewidth">
+  <div class="testimonial-carousel">
+    <h2>{{ section.settings.title }}</h2>
+    <p class="subtitle">{{ section.settings.subtitle }}</p>
+    <div class="swiper testimonials-swiper">
+      <div class="box-rose"></div>
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+          <div class="swiper-slide">
+            <div class="testimonial-card">
+              <div class="testimonial-avatar">
+                {% if block.settings.image %}
+                  <img
+                    class="testimonial-image"
+                    src="{{ block.settings.image | image_url: width: 120 }}"
+                    alt="Avatar de {{ block.settings.name | escape }}"
+                    width="60"
+                    height="60"
+                    loading="lazy" />
+                {% else %}
+                  <div class="testimonial-avatar-placeholder">
+                    {{ block.settings.name | slice: 0 | upcase | default: "?" }}
+                  </div>
+                {% endif %}
+              </div>
+              <div class="testimonial-name">{{ block.settings.name }}</div>
+              <div class="testimonial-role">{{ block.settings.role }}</div>
+              <div class="testimonial-text">
+                {{ block.settings.description | truncate: 160 }}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+    </div>
+    <!-- Pagination -->
+    <div class="swiper-pagination"></div>
+  </div>
+</section>
+
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const autoplaySpeed = {{ section.settings.autoplay_speed | default: 4000 }};
+    
+    const testimonialsSwiper = new Swiper('.testimonials-swiper', {
+      // Basic settings
+      loop: true,
+      autoplay: {
+        delay: autoplaySpeed,
+        disableOnInteraction: false,
+        pauseOnMouseEnter: true,
+      },
+      speed: 1000,
+      
+      // Responsive breakpoints
+      slidesPerView: 1,
+      spaceBetween: 20,
+      centeredSlides: true,
+      
+      breakpoints: {
+        640: {
+          slidesPerView: 1.2,
+          spaceBetween: 20,
+        },
+        768: {
+          slidesPerView: 2,
+          spaceBetween: 24,
+          centeredSlides: false,
+        },
+        1024: {
+          slidesPerView: 3,
+          spaceBetween: 24,
+          centeredSlides: false,
+        },
+        1280: {
+          slidesPerView: 3,
+          spaceBetween: 30,
+          centeredSlides: false,
+        }
+      },
+      
+      // Pagination
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+        dynamicBullets: false,
+      
+      },
+      
+      // Effects
+      effect: 'slide',
+      
+      // Accessibility
+      a11y: {
+        prevSlideMessage: 'Testimonio anterior',
+        nextSlideMessage: 'Siguiente testimonio',
+        paginationBulletMessage: 'Ir al testimonio {{index}}',
+      },
+      
+      // Touch settings
+      touchRatio: 1,
+      touchAngle: 45,
+      simulateTouch: true,
+      
+      // Performance
+      watchSlidesProgress: true,
+      watchSlidesVisibility: true,
+      
+      // Events
+      on: {
+        init: function () {
+          console.log('Testimonials carousel initialized');
+        },
+        slideChange: function () {
+          // Optional: track analytics or other events
+        }
+      }
+    });
+    
+    // Pause autoplay on hover (additional control)
+    const swiperContainer = document.querySelector('.testimonials-swiper');
+    if (swiperContainer) {
+      swiperContainer.addEventListener('mouseenter', () => {
+        testimonialsSwiper.autoplay.stop();
+      });
+      
+      swiperContainer.addEventListener('mouseleave', () => {
+        testimonialsSwiper.autoplay.start();
+      });
+    }
+  });
+</script>
+
+
+{% schema %}
+  {
+    "name": "Testimonials Carousel",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Título principal",
+        "default": "Lo que dicen quienes ya probaron Hope"
+      }, {
+        "type": "text",
+        "id": "subtitle",
+        "label": "Subtítulo",
+        "default": "Creamos momentos felices que valen la pena repetir."
+      }, {
+        "type": "range",
+        "id": "autoplay_speed",
+        "label": "Velocidad del carrusel (ms)",
+        "default": 4000,
+        "min": 2000,
+        "max": 8000,
+        "step": 500
+      }
+    ],
+    "blocks": [
+      {
+        "type": "testimonial",
+        "name": "Testimonio",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Foto de la persona"
+          }, {
+            "type": "text",
+            "id": "name",
+            "label": "Nombre",
+            "default": "Nombre del cliente"
+          }, {
+            "type": "text",
+            "id": "role",
+            "label": "Descripción corta (rol, cliente frecuente...)",
+            "default": "Cliente"
+          }, {
+            "type": "textarea",
+            "id": "description",
+            "label": "Testimonio (máx. 160 caracteres)",
+            "default": "El helado de Hope me hace feliz. No solo es el sabor, es la experiencia."
+          }
+        ]
+      }
+    ],
+    "max_blocks": 10,
+    "presets": [
+      {
+        "name": "Testimonials Carousel",
+        "category": "Testimonios"
+      }
+    ]
+  }
+{% endschema %}

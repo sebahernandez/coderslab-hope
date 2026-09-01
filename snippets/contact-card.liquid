@@ -1,0 +1,234 @@
+
+<div 
+    class="contact-card"
+    style="
+      background-color: {{ settings.bg_color }};
+      {% if settings.bg_image != blank %}
+        background-image: url({{ settings.bg_image | image_url: width: 1200 }});
+        background-size: cover;
+        background-position: center;
+      {% endif %}
+      min-height: 100%;
+    "
+  >
+    <!-- Overlay -->
+    <div 
+      class="contact-card-overlay"
+      style="background-color: {{ settings.overlay_color }}; opacity: {{ settings.overlay_opacity }};">
+    </div>
+  
+    <div class="contact-card-content" style="color: {{ settings.text_color }}; text-align: {{ settings.text_alignment | default: 'center' }};">
+      
+      <!-- Título -->
+      <h2 class="contact-title" style="font-size: {{ settings.title_size }}px; color: {{ settings.title_color }}; text-align: {{ settings.title_alignment | default: 'center' }};">
+        {{ settings.title }}
+      </h2>
+      
+      <!-- Subtítulo -->
+      <p class="contact-subtitle" style="font-size: {{ settings.subtitle_size }}px; color: {{ settings.subtitle_color }}; text-align: {{ settings.subtitle_alignment | default: 'center' }};">
+        {{ settings.subtitle }}
+      </p>
+  
+      <!-- Información de contacto -->
+      <div class="contact-info-wrapper">
+        <!-- Dirección -->
+        {% if settings.address != blank %}
+          <div class="contact-info-item" style="justify-content: {{ settings.info_alignment | default: 'center' }};">
+            <div class="contact-info-icon" style="color: {{ settings.icon_color }};">
+              {{ settings.icon_address }}
+            </div>
+            <div class="contact-info-text">
+              <p style="font-size: {{ settings.text_size }}px;">{{ settings.address }}</p>
+            </div>
+          </div>
+        {% endif %}
+    
+        <!-- Horarios -->
+        {% if settings.schedule != blank %}
+          <div class="contact-info-item" style="justify-content: {{ settings.info_alignment | default: 'center' }};">
+            <div class="contact-info-icon" style="color: {{ settings.icon_color }};">
+              {{ settings.icon_schedule }}
+            </div>
+            <div class="contact-info-text">
+              <p style="font-size: {{ settings.text_size }}px;">{{ settings.schedule }}</p>
+            </div>
+          </div>
+        {% endif %}
+    
+        <!-- Teléfono -->
+        {% if settings.phone != blank %}
+          <div class="contact-info-item" style="justify-content: {{ settings.info_alignment | default: 'center' }};">
+            <div class="contact-info-icon" style="color: {{ settings.icon_color }};">
+              {{ settings.icon_phone }}
+            </div>
+            <div class="contact-info-text">
+              <p style="font-size: {{ settings.text_size }}px;">{{ settings.phone }}</p>
+            </div>
+          </div>
+        {% endif %}
+    
+        <!-- Email -->
+        {% if settings.email != blank %}
+          <div class="contact-info-item" style="justify-content: {{ settings.info_alignment | default: 'center' }};">
+            <div class="contact-info-icon" style="color: {{ settings.icon_color }};">
+              {{ settings.icon_email }}
+            </div>
+            <div class="contact-info-text">
+              <p style="font-size: {{ settings.text_size }}px;">{{ settings.email }}</p>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+<style>
+  .contact-card {
+    position: relative;
+    border-radius: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .contact-card-overlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .contact-card-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 40px 0;
+  }
+  
+  .contact-title {
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  
+  .contact-subtitle {
+    margin: 0 0 48px 0;
+    font-weight: 400;
+    line-height: 1.5;
+    opacity: 0.8;
+  }
+  
+  .contact-info-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .contact-info-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    transition: opacity 0.2s ease;
+  }
+  
+  .contact-info-item:hover {
+    opacity: 0.8;
+  }
+  
+  .contact-info-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+  
+  .contact-info-icon svg {
+    width: 24px;
+    height: 24px;
+    opacity: 0.9;
+  }
+  
+  .contact-info-text {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .contact-info-text p {
+    margin: 0;
+    font-weight: 400;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+  
+  /* Responsivo */
+  @media (max-width: 1024px) {
+    .contact-card-content {
+      padding: 32px 0;
+    }
+    
+    .contact-info-item {
+      gap: 14px;
+    }
+    
+    .contact-info-icon,
+    .contact-info-icon svg {
+      width: 22px;
+      height: 22px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .contact-card-content {
+      padding: 28px 0;
+    }
+    
+    .contact-card {
+      min-height: 400px !important;
+    }
+    
+    .contact-info-wrapper {
+      gap: 20px;
+    }
+    
+    .contact-info-item {
+      gap: 12px;
+    }
+    
+    .contact-info-icon,
+    .contact-info-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .contact-subtitle {
+      margin-bottom: 40px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .contact-card-content {
+      padding: 24px 0;
+    }
+    
+    .contact-info-wrapper {
+      gap: 18px;
+    }
+    
+    .contact-subtitle {
+      margin-bottom: 32px;
+    }
+  }
+</style>
+  
+  

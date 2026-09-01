@@ -1,0 +1,768 @@
+{%- comment -%}
+  =========================================================
+  Sección: Testimonios + Feed Instagram — Hope Heladería
+  Archivo: sections/hope-testimonios-instagram.liquid
+  ---------------------------------------------------------
+  - Carousel de testimonios: scroll-snap + JS vanilla,
+    dots dinámicos, autoplay configurable, swipe táctil.
+  - Testimonios y tarjetas IG administrables por blocks.
+  - Totalmente responsive: 3 / 2 / 1 tarjetas por vista.
+  =========================================================
+{%- endcomment -%}
+
+{%- liquid
+  assign section_id = 'hope-tsi-' | append: section.id
+  assign testimonios = section.blocks | where: 'type', 'testimonio'
+  assign ig_cards = section.blocks | where: 'type', 'instagram_card'
+-%}
+
+<style>
+  #{{ section_id }} {
+    --hts-bg-1: {{ section.settings.bg_color_1 }};
+    --hts-bg-2: {{ section.settings.bg_color_2 }};
+    --hts-heading: {{ section.settings.heading_color }};
+    --hts-subheading: {{ section.settings.subheading_color }};
+    --hts-card-bg: {{ section.settings.card_bg }};
+    --hts-card-text: {{ section.settings.card_text_color }};
+    --hts-star: {{ section.settings.star_color }};
+    --hts-accent: {{ section.settings.accent_color }};
+    --hts-dot: {{ section.settings.dot_color }};
+    --hts-dot-active: {{ section.settings.dot_active_color }};
+
+    position: relative;
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background:
+      radial-gradient(ellipse 80% 60% at 15% 20%, {{ section.settings.bg_color_2 | color_modify: 'alpha', 0.55 }} 0%, transparent 60%),
+      radial-gradient(ellipse 70% 55% at 85% 75%, {{ section.settings.bg_color_2 | color_modify: 'alpha', 0.45 }} 0%, transparent 60%),
+      linear-gradient(160deg, var(--hts-bg-1) 0%, var(--hts-bg-2) 100%);
+    overflow: hidden;
+    font-family: {{ section.settings.font_body.family }}, {{ section.settings.font_body.fallback_families }};
+  }
+
+  {{ section.settings.font_body | font_face: font_display: 'swap' }}
+  {{ section.settings.font_heading | font_face: font_display: 'swap' }}
+
+  {%- if section.settings.bg_image != blank -%}
+  #{{ section_id }}::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('{{ section.settings.bg_image | image_url: width: 2400 }}') center / cover no-repeat;
+    opacity: {{ section.settings.bg_image_opacity | divided_by: 100.0 }};
+    pointer-events: none;
+  }
+  {%- endif -%}
+
+  #{{ section_id }} .hts__inner {
+    position: relative;
+    z-index: 1;
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* ---------- Encabezado ---------- */
+  #{{ section_id }} .hts__heading {
+    margin: 0 0 14px;
+    text-align: center;
+    color: var(--hts-heading);
+    font-family: {{ section.settings.font_heading.family }}, {{ section.settings.font_heading.fallback_families }};
+    font-weight: {{ section.settings.font_heading.weight | default: 800 }};
+    font-size: clamp(1.75rem, 4.2vw, 3rem);
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  #{{ section_id }} .hts__subheading {
+    margin: 0 auto 40px;
+    max-width: 640px;
+    text-align: center;
+    color: var(--hts-subheading);
+    font-weight: 700;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+  }
+
+  /* ---------- Carousel de testimonios ---------- */
+  #{{ section_id }} .hts__carousel {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 8px 4px 20px;
+  }
+  #{{ section_id }} .hts__carousel::-webkit-scrollbar { display: none; }
+
+  #{{ section_id }} .hts__slide {
+    flex: 0 0 calc((100% - 48px) / 3); /* 3 por vista, gap 24px x2 */
+    scroll-snap-align: start;
+    min-width: 0;
+  }
+
+  #{{ section_id }} .hts__card {
+    height: 100%;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--hts-card-bg);
+    border-radius: 18px;
+    padding: 22px 22px 24px;
+    box-shadow: 0 10px 30px rgba(140, 40, 80, 0.12);
+  }
+
+  #{{ section_id }} .hts__avatar {
+    flex: 0 0 56px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--hts-bg-2);
+  }
+  #{{ section_id }} .hts__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #{{ section_id }} .hts__stars {
+    display: inline-flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    color: var(--hts-star);
+    font-size: 0.95rem;
+    line-height: 1;
+  }
+  #{{ section_id }} .hts__stars .is-empty { opacity: 0.28; }
+
+  #{{ section_id }} .hts__name {
+    margin: 0 0 4px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--hts-card-text);
+  }
+
+  #{{ section_id }} .hts__text {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: var(--hts-card-text);
+    opacity: 0.85;
+  }
+
+  /* ---------- Dots ---------- */
+  #{{ section_id }} .hts__dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 4px 0 48px;
+  }
+  #{{ section_id }} .hts__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    border: 0;
+    padding: 0;
+    background: var(--hts-dot);
+    cursor: pointer;
+    transition: width 0.3s ease, background 0.3s ease;
+  }
+  #{{ section_id }} .hts__dot[aria-current='true'] {
+    width: 26px;
+    background: var(--hts-dot-active);
+  }
+  #{{ section_id }} .hts__dot:focus-visible {
+    outline: 2px solid var(--hts-dot-active);
+    outline-offset: 3px;
+  }
+
+  /* ---------- Grid Instagram ---------- */
+  #{{ section_id }} .hts__ig-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(20px, 3vw, 40px);
+    margin-bottom: 56px;
+  }
+
+  #{{ section_id }} .hts__ig-card {
+    position: relative;
+    display: block;
+    aspect-ratio: 1 / 1.05;
+    border-radius: 22px;
+    transition: transform 0.35s ease;
+  }
+  #{{ section_id }} .hts__ig-card > * {
+    position: relative;
+    z-index: 1;
+  }
+  #{{ section_id }} .hts__ig-card .hts__ig-inner {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 22px;
+    overflow: hidden;
+  }
+  #{{ section_id }} a.hts__ig-card:hover,
+  #{{ section_id }} a.hts__ig-card:focus-visible {
+    transform: translateY(-6px);
+  }
+  #{{ section_id }} .hts__ig-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  #{{ section_id }} .hts__ig-placeholder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(160deg, var(--hts-bg-2), var(--hts-bg-1));
+    color: var(--hts-heading);
+    font-weight: 700;
+  }
+
+  /* ---------- Botón Instagram ---------- */
+  #{{ section_id }} .hts__handle-wrap { text-align: center; }
+  #{{ section_id }} .hts__handle {
+    display: inline-block;
+    padding: 16px 44px;
+    border: 1.5px solid rgba(255, 255, 255, 0.75);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: var(--hts-accent);
+    font-family: {{ section.settings.font_heading.family }}, {{ section.settings.font_heading.fallback_families }};
+    font-weight: 800;
+    font-size: clamp(1.15rem, 2.6vw, 1.7rem);
+    text-decoration: none;
+    transition: transform 0.3s ease, background 0.3s ease;
+  }
+  #{{ section_id }} .hts__handle:hover,
+  #{{ section_id }} .hts__handle:focus-visible {
+    transform: scale(1.04);
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 989px) {
+    #{{ section_id }} .hts__slide {
+      flex-basis: calc((100% - 24px) / 2); /* 2 por vista */
+    }
+    #{{ section_id }} .hts__ig-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    #{{ section_id }} .hts__ig-grid .hts__ig-item:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      max-width: 60%;
+      margin: 0 auto;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 649px) {
+    #{{ section_id }} .hts__slide {
+      flex-basis: 88%; /* 1 por vista con "peek" de la siguiente */
+    }
+    #{{ section_id }} .hts__ig-grid {
+      grid-template-columns: 1fr;
+    }
+    #{{ section_id }} .hts__ig-grid .hts__ig-item:last-child:nth-child(odd) {
+      max-width: 100%;
+    }
+    #{{ section_id }} .hts__card { padding: 18px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #{{ section_id }} .hts__carousel { scroll-behavior: auto; }
+    #{{ section_id }} .hts__ig-card,
+    #{{ section_id }} .hts__handle { transition: none; }
+  }
+</style>
+
+<section id="{{ section_id }}" aria-label="{{ section.settings.heading | escape }}">
+  <div class="hts__inner">
+
+    {%- if section.settings.heading != blank -%}
+      <h2 class="hts__heading">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <p class="hts__subheading">{{ section.settings.subheading }}</p>
+    {%- endif -%}
+
+    {%- comment -%} ===== Carousel de testimonios ===== {%- endcomment -%}
+    {%- if testimonios.size > 0 -%}
+      <div
+        class="hts__carousel"
+        data-hts-carousel
+        data-autoplay="{{ section.settings.autoplay }}"
+        data-autoplay-speed="{{ section.settings.autoplay_speed | times: 1000 }}"
+        role="region"
+        aria-roledescription="carrusel"
+        aria-label="Testimonios de clientes"
+        tabindex="0"
+      >
+        {%- for block in testimonios -%}
+          <div
+            class="hts__slide"
+            data-hts-slide
+            role="group"
+            aria-roledescription="testimonio"
+            aria-label="Testimonio {{ forloop.index }} de {{ testimonios.size }}"
+            {{ block.shopify_attributes }}
+          >
+            <article class="hts__card">
+              <div class="hts__avatar" aria-hidden="true">
+                {%- if block.settings.avatar != blank -%}
+                  {{ block.settings.avatar
+                    | image_url: width: 112, height: 112, crop: 'center'
+                    | image_tag: loading: 'lazy', alt: block.settings.nombre }}
+                {%- else -%}
+                  {{ 'detailed-apparel-1' | placeholder_svg_tag }}
+                {%- endif -%}
+              </div>
+              <div>
+                <div class="hts__stars" role="img" aria-label="{{ block.settings.rating }} de 5 estrellas">
+                  {%- for i in (1..5) -%}
+                    <span {% if i > block.settings.rating %}class="is-empty"{% endif %} aria-hidden="true">&#9733;</span>
+                  {%- endfor -%}
+                </div>
+                <h3 class="hts__name">{{ block.settings.nombre | escape }}:</h3>
+                <p class="hts__text">{{ block.settings.texto | escape }}</p>
+              </div>
+            </article>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      <div class="hts__dots" data-hts-dots role="tablist" aria-label="Ir al grupo de testimonios"></div>
+    {%- endif -%}
+
+    {%- comment -%} ===== Grid tipo Instagram ===== {%- endcomment -%}
+    {%- if ig_cards.size > 0 -%}
+      <div class="hts__ig-grid">
+        {%- for block in ig_cards -%}
+          {%- liquid
+            assign tag = 'div'
+            if block.settings.link != blank
+              assign tag = 'a'
+            endif
+          -%}
+          <div class="hts__ig-item" {{ block.shopify_attributes }}>
+            <{{ tag }}
+              class="hts__ig-card"
+              {% if block.settings.imagen != blank %}style="--ig-img: url('{{ block.settings.imagen | image_url: width: 400 }}');"{% endif %}
+              {% if block.settings.link != blank %}
+                href="{{ block.settings.link }}"
+                target="_blank"
+                rel="noopener"
+                aria-label="{{ block.settings.alt | default: 'Publicación de Instagram' | escape }}"
+              {% endif %}
+            >
+              <span class="hts__ig-inner">
+                {%- if block.settings.imagen != blank -%}
+                  {{ block.settings.imagen
+                    | image_url: width: 900
+                    | image_tag:
+                        loading: 'lazy',
+                        widths: '360, 540, 720, 900',
+                        sizes: '(max-width: 649px) 92vw, (max-width: 989px) 46vw, 30vw',
+                        alt: block.settings.alt }}
+                {%- else -%}
+                  <span class="hts__ig-placeholder">Agrega una imagen</span>
+                {%- endif -%}
+              </span>
+            </{{ tag }}>
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ===== Handle de Instagram ===== {%- endcomment -%}
+    {%- if section.settings.ig_handle != blank -%}
+      <div class="hts__handle-wrap">
+        <a
+          class="hts__handle"
+          href="{{ section.settings.ig_url | default: '#' }}"
+          {% if section.settings.ig_url != blank %}target="_blank" rel="noopener"{% endif %}
+        >
+          {{ section.settings.ig_handle | escape }}
+        </a>
+      </div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.getElementById('{{ section_id }}');
+    if (!root) return;
+
+    var carousel = root.querySelector('[data-hts-carousel]');
+    var dotsWrap = root.querySelector('[data-hts-dots]');
+    if (!carousel || !dotsWrap) return;
+
+    var slides = Array.prototype.slice.call(carousel.querySelectorAll('[data-hts-slide]'));
+    if (!slides.length) return;
+
+    var autoplay = carousel.dataset.autoplay === 'true';
+    var speed = parseInt(carousel.dataset.autoplaySpeed, 10) || 5000;
+    var timer = null;
+    var pages = 1;
+    var currentPage = 0;
+
+    function perView() {
+      var w = carousel.clientWidth;
+      var slideW = slides[0].getBoundingClientRect().width;
+      var gap = parseFloat(getComputedStyle(carousel).columnGap || getComputedStyle(carousel).gap) || 0;
+      return Math.max(1, Math.round((w + gap) / (slideW + gap)));
+    }
+
+    function buildDots() {
+      pages = Math.max(1, Math.ceil(slides.length / perView()));
+      dotsWrap.innerHTML = '';
+      for (var i = 0; i < pages; i++) {
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'hts__dot';
+        dot.setAttribute('role', 'tab');
+        dot.setAttribute('aria-label', 'Ir a la página ' + (i + 1) + ' de ' + pages);
+        dot.dataset.page = i;
+        dot.addEventListener('click', function () {
+          goTo(parseInt(this.dataset.page, 10), true);
+        });
+        dotsWrap.appendChild(dot);
+      }
+      updateDots();
+    }
+
+    function updateDots() {
+      var dots = dotsWrap.children;
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].setAttribute('aria-current', i === currentPage ? 'true' : 'false');
+      }
+    }
+
+    function goTo(page, userInitiated) {
+      currentPage = ((page % pages) + pages) % pages;
+      var index = Math.min(currentPage * perView(), slides.length - 1);
+      carousel.scrollTo({ left: slides[index].offsetLeft - carousel.offsetLeft, behavior: 'smooth' });
+      updateDots();
+      if (userInitiated) restartAutoplay();
+    }
+
+    /* Sincroniza los dots con el scroll manual / swipe */
+    var scrollDebounce;
+    carousel.addEventListener('scroll', function () {
+      clearTimeout(scrollDebounce);
+      scrollDebounce = setTimeout(function () {
+        var pv = perView();
+        var slideW = slides[0].getBoundingClientRect().width;
+        var gap = parseFloat(getComputedStyle(carousel).columnGap || getComputedStyle(carousel).gap) || 0;
+        var approxIndex = Math.round(carousel.scrollLeft / (slideW + gap));
+        currentPage = Math.min(pages - 1, Math.floor(approxIndex / pv));
+        updateDots();
+      }, 80);
+    }, { passive: true });
+
+    /* Autoplay */
+    function startAutoplay() {
+      if (!autoplay || pages <= 1) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      timer = setInterval(function () { goTo(currentPage + 1, false); }, speed);
+    }
+    function stopAutoplay() { if (timer) { clearInterval(timer); timer = null; } }
+    function restartAutoplay() { stopAutoplay(); startAutoplay(); }
+
+    carousel.addEventListener('mouseenter', stopAutoplay);
+    carousel.addEventListener('mouseleave', startAutoplay);
+    carousel.addEventListener('touchstart', stopAutoplay, { passive: true });
+    carousel.addEventListener('touchend', startAutoplay, { passive: true });
+    carousel.addEventListener('focusin', stopAutoplay);
+    carousel.addEventListener('focusout', startAutoplay);
+
+    /* Teclado */
+    carousel.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); goTo(currentPage + 1, true); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(currentPage - 1, true); }
+    });
+
+    /* Recalcular en resize */
+    var resizeDebounce;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeDebounce);
+      resizeDebounce = setTimeout(function () {
+        stopAutoplay();
+        buildDots();
+        goTo(0, false);
+        startAutoplay();
+      }, 150);
+    });
+
+    /* Compatibilidad con el editor de temas de Shopify */
+    document.addEventListener('shopify:section:load', function (e) {
+      if (e.target.contains(root)) { buildDots(); startAutoplay(); }
+    });
+    document.addEventListener('shopify:block:select', function (e) {
+      var slide = e.target.closest ? e.target.closest('[data-hts-slide]') : null;
+      if (slide && carousel.contains(slide)) {
+        stopAutoplay();
+        var pv = perView();
+        var idx = slides.indexOf(slide);
+        goTo(Math.floor(idx / pv), false);
+      }
+    });
+    document.addEventListener('shopify:block:deselect', startAutoplay);
+
+    buildDots();
+    startAutoplay();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Testimonios + Instagram",
+  "tag": "section",
+  "class": "hope-testimonios-instagram",
+  "settings": [
+    { "type": "header", "content": "Contenido" },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "Lo que dicen quienes ya probaron Hope"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subtítulo",
+      "default": "Creamos momentos felices que valen la pena repetir"
+    },
+    { "type": "header", "content": "Carousel de testimonios" },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Reproducción automática",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Velocidad de autoplay (segundos)",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 5
+    },
+    { "type": "header", "content": "Instagram" },
+    {
+      "type": "text",
+      "id": "ig_handle",
+      "label": "Usuario de Instagram",
+      "default": "@hopesweetvzla"
+    },
+    {
+      "type": "url",
+      "id": "ig_url",
+      "label": "Enlace del perfil de Instagram"
+    },
+    { "type": "header", "content": "Colores" },
+    {
+      "type": "color",
+      "id": "bg_color_1",
+      "label": "Fondo (degradado 1)",
+      "default": "#F9A8C9"
+    },
+    {
+      "type": "color",
+      "id": "bg_color_2",
+      "label": "Fondo (degradado 2)",
+      "default": "#BFD9F2"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color del título",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Color del subtítulo",
+      "default": "#8B1E4B"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Fondo de tarjetas",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Texto de tarjetas",
+      "default": "#3D2233"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Color de estrellas",
+      "default": "#E4568B"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Color del botón de Instagram",
+      "default": "#FF6FA5"
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Dots (inactivo)",
+      "default": "#3D2233"
+    },
+    {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Dots (activo)",
+      "default": "#7A1236"
+    },
+    { "type": "header", "content": "Fondo con imagen (opcional)" },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": "Imagen de fondo (nubes)"
+    },
+    {
+      "type": "range",
+      "id": "bg_image_opacity",
+      "label": "Opacidad de la imagen de fondo",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 80,
+      "unit": "%"
+    },
+    { "type": "header", "content": "Tipografía" },
+    {
+      "type": "font_picker",
+      "id": "font_heading",
+      "label": "Fuente de títulos",
+      "default": "poppins_n8"
+    },
+    {
+      "type": "font_picker",
+      "id": "font_body",
+      "label": "Fuente de texto",
+      "default": "poppins_n4"
+    },
+    { "type": "header", "content": "Diseño" },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "default": 1200,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Espaciado superior",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "default": 72,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Espaciado inferior",
+      "min": 0,
+      "max": 140,
+      "step": 4,
+      "default": 72,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonio",
+      "name": "Testimonio",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Foto del cliente"
+        },
+        {
+          "type": "text",
+          "id": "nombre",
+          "label": "Nombre",
+          "default": "Usuario"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Calificación (estrellas)",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "textarea",
+          "id": "texto",
+          "label": "Testimonio",
+          "default": "El helado de Hope es de lo mejor, de mis favoritos por su increíble sabor y calidad. Amo visitarlos, una increíble experiencia."
+        }
+      ]
+    },
+    {
+      "type": "instagram_card",
+      "name": "Tarjeta de Instagram",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "imagen",
+          "label": "Imagen de la publicación"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace de la publicación (opcional)"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Texto alternativo (accesibilidad)"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonios + Instagram",
+      "blocks": [
+        { "type": "testimonio" },
+        { "type": "testimonio" },
+        { "type": "testimonio" },
+        { "type": "testimonio" },
+        { "type": "testimonio" },
+        { "type": "testimonio" },
+        { "type": "instagram_card" },
+        { "type": "instagram_card" },
+        { "type": "instagram_card" }
+      ]
+    }
+  ]
+}
+{% endschema %}
