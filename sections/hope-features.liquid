@@ -38,12 +38,13 @@
     {{ section.settings.feature_description_font | font_face: font_display: 'swap' }}
   {%- endif -%}
 
-  /* Sección padre: rompe el ancho del contenedor del tema
-     y pinta el fondo a todo el ancho del viewport (full-bleed) */
+  /* Sección padre (full-bleed): el wrapper de Horizon es un grid de 3 columnas
+     (margen | contenido | margen). Para pintar el fondo a todo el ancho se
+     ocupan las 3 columnas con grid-column, en lugar de 100vw.
+     100vw incluía el ancho de la barra de scroll vertical y provocaba scroll
+     horizontal; el ancho del grid ya lo excluye. */
   .hope-features {
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
+    grid-column: 1 / -1;
     background-color: var(--color-background);
     color: var(--color-foreground);
     padding-top: var(--hope-padding-top, 0px);

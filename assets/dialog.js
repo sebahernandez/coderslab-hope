@@ -49,12 +49,6 @@ export class DialogComponent extends Component {
     dialog.showModal();
     this.dispatchEvent(new DialogOpenEvent());
 
-    // A tap that lands while the opening (slide-in / fade-in) animation is still running can miss its
-    // target, since hit-testing uses the dialog's current in-transit position rather than its final one.
-    // Finishing the animation on first contact settles the geometry before the resulting click fires,
-    // so the very first tap (e.g. on the drawer's checkout button) lands correctly.
-    this.addEventListener('pointerdown', this.#finishOpeningAnimation, { once: true });
-
     // Wait until the next tick to add the event listeners to avoid race condition
     // when `showDialog` is called within a click event listener.
     setTimeout(() => {
@@ -62,13 +56,6 @@ export class DialogComponent extends Component {
       this.addEventListener('keydown', this.#handleKeyDown);
     });
   }
-
-  /**
-   * Immediately completes any in-flight opening animation on the dialog or its content.
-   */
-  #finishOpeningAnimation = () => {
-    this.refs.dialog.getAnimations({ subtree: true }).forEach((animation) => animation.finish());
-  };
 
   /**
    * Closes the dialog.
@@ -80,12 +67,11 @@ export class DialogComponent extends Component {
 
     this.removeEventListener('click', this.#handleClick);
     this.removeEventListener('keydown', this.#handleKeyDown);
-    this.removeEventListener('pointerdown', this.#finishOpeningAnimation);
 
     dialog.classList.add('dialog-closing');
 
     await onAnimationEnd(dialog, undefined, {
-      subtree: true,
+      subtree: false,
     });
 
     dialog.close();

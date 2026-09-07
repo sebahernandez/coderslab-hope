@@ -156,45 +156,6 @@
     overflow: hidden;
   }
 
-  /* =========================================================
-     Fix: el botón "Pagar" necesitaba dos clics.
-     La animación de apertura movía el propio <dialog> (translateX),
-     que es el elemento contra el que el navegador resuelve el
-     mousedown/touchstart. Un tap justo durante esa animación se
-     resolvía contra la posición todavía en tránsito (o el backdrop),
-     no contra el botón ya asentado, así que el primer clic no
-     llegaba al botón y el segundo sí. Se deja el <dialog> estático
-     y en su tamaño final desde el primer frame, y se anima en su
-     lugar el wrapper interno (mismo efecto visual, hit-test correcto).
-     ========================================================= */
-  .cart-drawer .cart-drawer__dialog {
-    animation: none;
-    background: transparent;
-    box-shadow: none;
-    border-radius: 0;
-  }
-
-  .cart-drawer .cart-drawer__dialog.dialog-closing {
-    animation: none;
-  }
-
-  .cart-drawer .cart-drawer__inner {
-    background-color: var(--color-background);
-    box-shadow: var(--shadow-popover);
-
-    @media screen and (min-width: 750px) {
-      border-radius: var(--style-border-radius-popover);
-    }
-  }
-
-  .cart-drawer .cart-drawer__dialog[open] .cart-drawer__inner {
-    animation: var(--dialog-drawer-opening-animation) var(--animation-speed) var(--animation-easing) forwards;
-  }
-
-  .cart-drawer .cart-drawer__dialog.dialog-closing .cart-drawer__inner {
-    animation: var(--dialog-drawer-closing-animation) var(--animation-speed) var(--animation-easing);
-  }
-
   .cart-drawer__content {
     height: calc(100% - var(--header-height));
     display: flex;

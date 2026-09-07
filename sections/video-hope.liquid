@@ -1,0 +1,539 @@
+{%- comment -%}
+  Video Hope
+  Sección con video de fondo, título/subtítulo editables y 4 callouts con
+  líneas conectoras.
+
+  CLAVE DEL LAYOUT
+  ----------------
+  Todo el contenido vive dentro de la misma caja que el video (.vh), que tiene
+  una relación de aspecto fija. Esa caja es un container CSS, y se define una
+  unidad de diseño --u = 100cqw / 1440. Cada valor en px del schema se
+  multiplica por --u, de modo que se comporta como px a 1440px de ancho y
+  escala proporcionalmente en cualquier otro ancho.
+
+  Regla: dentro de .vh NO se usan px absolutos para posición ni tamaño.
+  Si agregas algo nuevo, exprésalo en cqw o en calc(N * var(--u)).
+
+  ANCHO FULL-BLEED
+  ----------------
+  No se usa 100vw a secas porque incluye el ancho de la barra de scroll
+  vertical y provoca scroll horizontal. Se resta --vh-sb, que el script
+  calcula y mantiene actualizado.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign overlay = s.overlay_opacity | divided_by: 100.0
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} {
+    --vh-title-color: {{ s.title_color }};
+    --vh-subtitle-color: {{ s.subtitle_color }};
+    --vh-badge-bg: {{ s.badge_bg }};
+    --vh-badge-text: {{ s.badge_text_color }};
+    --vh-badge-border: {{ s.badge_border_color }};
+    --vh-desc-color: {{ s.description_color }};
+    --vh-connector-color: {{ s.connector_color }};
+    --vh-overlay: {{ overlay }};
+    --vh-aspect: {{ s.aspect_ratio | default: '16 / 9' }};
+
+    /* Red de seguridad: recorta cualquier desborde horizontal futuro.
+       clip y no hidden, para no romper position:sticky del header. */
+    overflow-x: clip;
+  }
+
+  .vh {
+    /* Ancho real disponible, sin contar la barra de scroll */
+    --vh-w: calc(100vw - var(--vh-sb, 0px));
+
+    position: relative;
+    width: var(--vh-w);
+    margin-left: calc(50% - var(--vh-w) / 2);
+    margin-right: calc(50% - var(--vh-w) / 2);
+    aspect-ratio: var(--vh-aspect);
+    overflow: hidden;
+
+    /* Habilita las unidades cqw: 1cqw = 1% del ancho de .vh */
+    container-type: inline-size;
+
+    /* Unidad de diseño. 1440 es el ancho de referencia del diseño original:
+       un valor de 44px del schema mide 44px reales a 1440 y escala desde ahí. */
+    --u: calc(100cqw / 1440);
+  }
+
+  /* ---------- Fondo ---------- */
+  .vh__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    {%- if s.video_fit == 'contain' -%}
+    background: {{ s.video_pillarbox_color | default: '#000000' }};
+    {%- endif -%}
+  }
+  .vh__bg video,
+  .vh__bg img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: {{ s.video_fit | default: 'cover' }};
+    object-position: center;
+    display: block;
+  }
+
+  .vh__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: {{ s.overlay_color }};
+    opacity: var(--vh-overlay);
+    pointer-events: none;
+  }
+
+  /* ---------- Stage ----------
+     Coincide exactamente con el video. Sin max-width: si el stage se topara
+     antes que el video, los porcentajes dejarían de apuntar al mismo lugar. */
+  .vh__stage {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  /* ---------- Encabezado ---------- */
+  .vh__head {
+    position: absolute;
+    top: 3.5cqw;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 57cqw;              /* ≈820px a 1440 */
+    text-align: center;
+  }
+  .vh__title {
+    margin: 0;
+    color: var(--vh-title-color);
+    font-size: calc({{ s.title_size }} * var(--u));
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: calc(-0.5 * var(--u));
+  }
+  .vh__subtitle {
+    margin: calc(14 * var(--u)) auto 0;
+    color: var(--vh-subtitle-color);
+    font-size: calc({{ s.subtitle_size }} * var(--u));
+    line-height: 1.35;
+    font-weight: 700;
+  }
+
+  /* ---------- Board ---------- */
+  .vh__board {
+    position: absolute;
+    inset: {{ s.board_top }}cqw 0 0 0;
+  }
+
+  .vh__center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 46%;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .vh__center img { width: 100%; height: auto; display: block; }
+
+  /* ---------- Callout ---------- */
+  .vh__feature {
+    position: absolute;
+    z-index: 3;
+    /* --reach: hasta dónde llega la línea, medido desde el borde del callout.
+       --drop: altura del codo. */
+    --drop: 3cqw;
+  }
+  .vh__text { width: 21cqw; }   /* ≈300px a 1440 */
+
+  .vh__badge {
+    display: inline-block;
+    background: var(--vh-badge-bg);
+    color: var(--vh-badge-text);
+    border: calc(2 * var(--u)) solid var(--vh-badge-border);
+    border-radius: 999px;
+    padding: calc(10 * var(--u)) calc(20 * var(--u));
+    font-size: calc({{ s.badge_size }} * var(--u));
+    font-weight: 700;
+    line-height: 1.1;
+    white-space: nowrap;
+    box-shadow: 0 calc(6 * var(--u)) calc(18 * var(--u)) rgba(0,0,0,0.08);
+  }
+  .vh__desc {
+    margin: calc(12 * var(--u)) 0 0;
+    color: var(--vh-desc-color);
+    font-size: calc({{ s.description_size }} * var(--u));
+    line-height: 1.45;
+    font-weight: 500;
+  }
+
+  /* ---------- Conector ----------
+     El badge y la línea son hermanos en un flex row de ancho --reach.
+     La línea es flex:1, así que siempre arranca justo donde termina el badge,
+     sin importar cuánto texto escriba el merchant en el theme editor. */
+  .vh__row {
+    display: flex;
+    align-items: flex-start;
+    width: var(--reach);
+  }
+  .vh__feature--tr .vh__row,
+  .vh__feature--br .vh__row {
+    flex-direction: row-reverse;
+    margin-left: auto;
+  }
+
+  .vh__line {
+    flex: 1 1 auto;
+    height: var(--drop);
+    border-color: var(--vh-connector-color);
+    border-style: solid;
+    border-width: 0;
+    position: relative;
+    pointer-events: none;
+  }
+
+  /* Codos hacia abajo (callouts superiores):
+     margin-top alinea el borde superior con el centro vertical del badge.
+     margin-bottom negativo (= -drop) evita que el codo, que baja por debajo del
+     badge, infle la altura de la fila. Sin esto, la fila mide más y la
+     descripción queda más abajo que en los callouts inferiores. El codo sigue
+     dibujándose hacia abajo; solo se descuenta su aporte a la altura. */
+  .vh__feature--tl .vh__line,
+  .vh__feature--tr .vh__line {
+    margin-top: calc(({{ s.badge_size }} * 1.1 / 2 + 11) * var(--u));
+    margin-bottom: calc(-1 * var(--drop));
+  }
+  .vh__feature--tl .vh__line { border-top-width: calc(2 * var(--u)); border-right-width: calc(2 * var(--u)); }
+  .vh__feature--tr .vh__line { border-top-width: calc(2 * var(--u)); border-left-width:  calc(2 * var(--u)); }
+
+  /* Codos hacia arriba (callouts inferiores):
+     el borde inferior queda a la altura del centro del badge. */
+  .vh__feature--bl .vh__line,
+  .vh__feature--br .vh__line {
+    margin-top: calc(({{ s.badge_size }} * 1.1 / 2 + 11) * var(--u) - var(--drop));
+  }
+  .vh__feature--bl .vh__line { border-bottom-width: calc(2 * var(--u)); border-right-width: calc(2 * var(--u)); }
+  .vh__feature--br .vh__line { border-bottom-width: calc(2 * var(--u)); border-left-width:  calc(2 * var(--u)); }
+
+  /* Punto en el extremo que apunta al producto */
+  .vh__line::after {
+    content: "";
+    position: absolute;
+    width: calc(10 * var(--u));
+    height: calc(10 * var(--u));
+    border-radius: 50%;
+    background: var(--vh-connector-color);
+  }
+  .vh__feature--tl .vh__line::after { right: 0; bottom: 0; transform: translate(50%, 50%); }
+  .vh__feature--bl .vh__line::after { right: 0; top: 0;    transform: translate(50%, -50%); }
+  .vh__feature--tr .vh__line::after { left: 0;  bottom: 0; transform: translate(-50%, 50%); }
+  .vh__feature--br .vh__line::after { left: 0;  top: 0;    transform: translate(-50%, -50%); }
+
+  /* ---------- Posiciones (editables desde el theme editor) ---------- */
+  .vh__feature--tl { left: {{ s.f1_x }}cqw;  top: {{ s.f1_y }}cqw;  --reach: {{ s.f1_reach }}cqw; }
+  .vh__feature--bl { left: {{ s.f2_x }}cqw;  top: {{ s.f2_y }}cqw;  --reach: {{ s.f2_reach }}cqw; }
+  .vh__feature--tr { right: {{ s.f3_x }}cqw; top: {{ s.f3_y }}cqw;  --reach: {{ s.f3_reach }}cqw; }
+  .vh__feature--br { right: {{ s.f4_x }}cqw; top: {{ s.f4_y }}cqw;  --reach: {{ s.f4_reach }}cqw; }
+
+  .vh__feature--tr .vh__text,
+  .vh__feature--br .vh__text { margin-left: auto; }
+
+  /* ---------- Tablet ----------
+     No se reposiciona nada: el layout ya escala solo. Solo se ocultan las
+     líneas, que a este tamaño estorban más de lo que aportan. */
+  @media screen and (max-width: 1100px) {
+    .vh__line { visibility: hidden; }
+    .vh__row { width: auto; }
+  }
+
+  /* ---------- Móvil ----------
+     Se abandona el overlay: el video pasa a ser un bloque propio y los
+     callouts se apilan debajo con px reales. */
+  @media screen and (max-width: 749px) {
+    .vh {
+      aspect-ratio: auto;
+      container-type: normal;
+      display: flex;
+      flex-direction: column;
+    }
+    .vh__bg {
+      position: relative;
+      aspect-ratio: var(--vh-aspect);
+      flex: 0 0 auto;
+    }
+    .vh__overlay { bottom: auto; aspect-ratio: var(--vh-aspect); }
+    .vh__stage {
+      position: static;
+      padding: 28px 18px 40px;
+    }
+    .vh__head {
+      position: static;
+      transform: none;
+      width: auto;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .vh__title    { font-size: {{ s.title_size | times: 0.62 | round }}px; letter-spacing: -0.5px; }
+    .vh__subtitle { font-size: {{ s.subtitle_size | times: 0.9 | round }}px; margin-top: 12px; }
+    .vh__board {
+      position: static;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      margin-top: 24px;
+    }
+    .vh__center {
+      position: static;
+      transform: none;
+      width: 68%;
+      margin: 0 auto 6px;
+      order: -1;
+    }
+    .vh__feature {
+      position: static;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+    }
+    .vh__row  { width: auto; justify-content: center; flex-direction: row; margin: 0; }
+    .vh__text { width: auto; margin: 0; }
+    .vh__line { display: none; }
+    .vh__badge {
+      border-width: 2px;
+      padding: 10px 20px;
+      font-size: {{ s.badge_size | times: 0.95 | round }}px;
+      white-space: normal;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+    .vh__desc {
+      font-size: {{ s.description_size }}px;
+      margin-top: 10px;
+      text-align: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vh__bg video { display: none; }
+  }
+{% endstyle %}
+
+<div class="vh" data-vh>
+  <div class="vh__bg">
+    {%- if s.background_video != blank -%}
+      {{
+        s.background_video
+        | video_tag:
+          poster: nil,
+          autoplay: true,
+          loop: true,
+          controls: false,
+          muted: true,
+          preload: 'metadata',
+          image_size: '1920x'
+      }}
+    {%- elsif s.background_video_url != blank -%}
+      <video autoplay loop muted playsinline preload="metadata"
+        {% if s.fallback_image != blank %}poster="{{ s.fallback_image | image_url: width: 1920 }}"{% endif %}>
+        <source src="{{ s.background_video_url }}" type="video/mp4">
+      </video>
+    {%- elsif s.fallback_image != blank -%}
+      {{ s.fallback_image | image_url: width: 1920 | image_tag: alt: s.fallback_image.alt, loading: 'lazy' }}
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag: 'vh__placeholder' }}
+    {%- endif -%}
+  </div>
+  <div class="vh__overlay"></div>
+
+  <div class="vh__stage">
+    <div class="vh__head">
+      {%- if s.title != blank -%}<h2 class="vh__title">{{ s.title }}</h2>{%- endif -%}
+      {%- if s.subtitle != blank -%}<p class="vh__subtitle">{{ s.subtitle }}</p>{%- endif -%}
+    </div>
+
+    <div class="vh__board">
+      {%- if s.center_image != blank -%}
+        <div class="vh__center">
+          {{ s.center_image | image_url: width: 1000 | image_tag: alt: s.center_image.alt, loading: 'lazy' }}
+        </div>
+      {%- endif -%}
+
+      {%- assign positions = 'tl,bl,tr,br' | split: ',' -%}
+      {%- for pos in positions -%}
+        {%- assign i = forloop.index -%}
+        {%- assign title_key = 'feature_' | append: i | append: '_title' -%}
+        {%- assign text_key = 'feature_' | append: i | append: '_text' -%}
+        {%- assign f_title = s[title_key] -%}
+        {%- assign f_text = s[text_key] -%}
+        {%- if f_title != blank or f_text != blank -%}
+          <div class="vh__feature vh__feature--{{ pos }}">
+            <div class="vh__row">
+              {%- if f_title != blank -%}<span class="vh__badge">{{ f_title }}</span>{%- endif -%}
+              <span class="vh__line"></span>
+            </div>
+            {%- if f_text != blank -%}
+              <div class="vh__text"><p class="vh__desc">{{ f_text }}</p></div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{%- comment -%}
+  1. --vh-sb: ancho real de la barra de scroll vertical. Evita el scroll
+     horizontal que produce usar 100vw a secas.
+  2. --vh-aspect: se ajusta a la proporción real del archivo de video, así
+     nunca hay recorte aunque suban un video que no coincida con la opción
+     elegida en el theme editor.
+{%- endcomment -%}
+<script>
+  (function () {
+    /* --- 1. Barra de scroll (global, una sola vez por página) --- */
+    if (!window.__vhScrollbarSync) {
+      window.__vhScrollbarSync = true;
+
+      var raf;
+      function syncScrollbar() {
+        var sb = window.innerWidth - document.documentElement.clientWidth;
+        document.documentElement.style.setProperty('--vh-sb', (sb > 0 ? sb : 0) + 'px');
+      }
+      function onResize() {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(syncScrollbar);
+      }
+
+      syncScrollbar();
+      window.addEventListener('resize', onResize);
+      window.addEventListener('load', syncScrollbar);
+    }
+
+    /* --- 2. Proporción real del video (por sección) --- */
+    var root = document.querySelector('#shopify-section-{{ section.id }} [data-vh]');
+    if (!root) return;
+
+    var video = root.querySelector('video');
+    if (!video) return;
+
+    function syncAspect() {
+      if (!video.videoWidth || !video.videoHeight) return;
+      root.style.setProperty('--vh-aspect', video.videoWidth + ' / ' + video.videoHeight);
+    }
+
+    if (video.readyState >= 1) syncAspect();
+    video.addEventListener('loadedmetadata', syncAspect);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Video Hope",
+  "tag": "section",
+  "class": "section-video-hope",
+  "settings": [
+    { "type": "header", "content": "Fondo (video)" },
+    { "type": "video", "id": "background_video", "label": "Video de fondo (Shopify)" },
+    {
+      "type": "url",
+      "id": "background_video_url",
+      "label": "URL de video MP4 (alternativa)",
+      "info": "Usar si el video está alojado externamente. Se ignora si cargas un video de Shopify."
+    },
+    { "type": "image_picker", "id": "fallback_image", "label": "Imagen de respaldo / poster" },
+    {
+      "type": "select",
+      "id": "video_fit",
+      "label": "Ajuste del video",
+      "info": "Con la relación de aspecto correcta ambos se ven igual. Usa 'Ajustar completo' si tu video no es 16:9 y prefieres franjas antes que recorte.",
+      "options": [
+        { "value": "cover", "label": "Llenar (cover)" },
+        { "value": "contain", "label": "Ajustar completo (contain)" }
+      ],
+      "default": "cover"
+    },
+    { "type": "color", "id": "video_pillarbox_color", "label": "Color de franjas", "default": "#000000" },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Relación de aspecto",
+      "info": "Valor inicial. Al cargar la página se corrige sola con la proporción real del video.",
+      "options": [
+        { "value": "16 / 9", "label": "16:9 (panorámico)" },
+        { "value": "21 / 9", "label": "21:9 (ultra panorámico)" },
+        { "value": "4 / 3", "label": "4:3" },
+        { "value": "3 / 2", "label": "3:2" },
+        { "value": "1 / 1", "label": "1:1 (cuadrado)" }
+      ],
+      "default": "16 / 9"
+    },
+    { "type": "range", "id": "overlay_opacity", "label": "Opacidad de superposición", "min": 0, "max": 100, "step": 5, "unit": "%", "default": 0 },
+    { "type": "color", "id": "overlay_color", "label": "Color de superposición", "default": "#000000" },
+    {
+      "type": "image_picker",
+      "id": "center_image",
+      "label": "Imagen central del producto (opcional)",
+      "info": "Útil si el video no incluye el producto."
+    },
+
+    { "type": "header", "content": "Encabezado" },
+    { "type": "text", "id": "title", "label": "Título", "default": "¿Qué hace tan especial un helado de Hope?" },
+    { "type": "color", "id": "title_color", "label": "Color del título", "default": "#ffffff" },
+    { "type": "range", "id": "title_size", "label": "Tamaño del título", "min": 24, "max": 64, "step": 2, "unit": "px", "default": 44 },
+    { "type": "text", "id": "subtitle", "label": "Subtítulo", "default": "Cada cucharada fue una mezcla de amor, sabor y color..." },
+    { "type": "color", "id": "subtitle_color", "label": "Color del subtítulo", "default": "#3d1f2b" },
+    { "type": "range", "id": "subtitle_size", "label": "Tamaño del subtítulo", "min": 14, "max": 32, "step": 1, "unit": "px", "default": 20 },
+    {
+      "type": "range",
+      "id": "board_top",
+      "label": "Inicio de los callouts",
+      "info": "Distancia desde el borde superior, en % del ancho de la sección.",
+      "min": 8, "max": 30, "step": 1, "unit": "%", "default": 14
+    },
+
+    { "type": "header", "content": "Estilo de callouts" },
+    { "type": "color", "id": "badge_bg", "label": "Fondo de etiqueta", "default": "#f7c7d8" },
+    { "type": "color", "id": "badge_text_color", "label": "Texto de etiqueta", "default": "#3d1f2b" },
+    { "type": "color", "id": "badge_border_color", "label": "Borde de etiqueta", "default": "#3d1f2b" },
+    { "type": "range", "id": "badge_size", "label": "Tamaño de texto de etiqueta", "min": 12, "max": 22, "step": 1, "unit": "px", "default": 16 },
+    { "type": "color", "id": "description_color", "label": "Color de descripción", "default": "#3d1f2b" },
+    { "type": "range", "id": "description_size", "label": "Tamaño de descripción", "min": 12, "max": 20, "step": 1, "unit": "px", "default": 15 },
+    { "type": "color", "id": "connector_color", "label": "Color de líneas conectoras", "default": "#ffffff" },
+
+    { "type": "header", "content": "Callout 1 (superior izquierda)" },
+    { "type": "text", "id": "feature_1_title", "label": "Título", "default": "Crema base suave" },
+    { "type": "textarea", "id": "feature_1_text", "label": "Descripción", "default": "Batida con cariño y perfección. Cremosa, fresca y con un sabor que derrite el corazón." },
+    { "type": "range", "id": "f1_x", "label": "Posición horizontal", "min": 0, "max": 40, "step": 1, "unit": "%", "default": 3 },
+    { "type": "range", "id": "f1_y", "label": "Posición vertical", "min": 0, "max": 45, "step": 1, "unit": "%", "default": 3 },
+    { "type": "range", "id": "f1_reach", "label": "Largo de la línea", "min": 20, "max": 55, "step": 1, "unit": "%", "default": 45 },
+
+    { "type": "header", "content": "Callout 2 (inferior izquierda)" },
+    { "type": "text", "id": "feature_2_title", "label": "Título", "default": "Topping de frutas naturales" },
+    { "type": "textarea", "id": "feature_2_text", "label": "Descripción", "default": "Seleccionamos frutas reales, jugosas y dulces, para que cada combinación sea 100% natural." },
+    { "type": "range", "id": "f2_x", "label": "Posición horizontal", "min": 0, "max": 40, "step": 1, "unit": "%", "default": 3 },
+    { "type": "range", "id": "f2_y", "label": "Posición vertical", "min": 0, "max": 45, "step": 1, "unit": "%", "default": 26 },
+    { "type": "range", "id": "f2_reach", "label": "Largo de la línea", "min": 20, "max": 55, "step": 1, "unit": "%", "default": 37 },
+
+    { "type": "header", "content": "Callout 3 (superior derecha)" },
+    { "type": "text", "id": "feature_3_title", "label": "Título", "default": "Salsas artesanales" },
+    { "type": "textarea", "id": "feature_3_text", "label": "Descripción", "default": "Caramelo, chocolate, frutos rojos... nuestras salsas son hechas a mano, sin apuro, con sabor casero." },
+    { "type": "range", "id": "f3_x", "label": "Posición horizontal", "min": 0, "max": 40, "step": 1, "unit": "%", "default": 3 },
+    { "type": "range", "id": "f3_y", "label": "Posición vertical", "min": 0, "max": 45, "step": 1, "unit": "%", "default": 10 },
+    { "type": "range", "id": "f3_reach", "label": "Largo de la línea", "min": 20, "max": 55, "step": 1, "unit": "%", "default": 34 },
+
+    { "type": "header", "content": "Callout 4 (inferior derecha)" },
+    { "type": "text", "id": "feature_4_title", "label": "Título", "default": "Vasito biodegradable personalizado" },
+    { "type": "textarea", "id": "feature_4_text", "label": "Descripción", "default": "Porque creemos en el sabor y en cuidar el planeta. Nuestro vasito es compostable y lleno de identidad Hope." },
+    { "type": "range", "id": "f4_x", "label": "Posición horizontal", "min": 0, "max": 40, "step": 1, "unit": "%", "default": 3 },
+    { "type": "range", "id": "f4_y", "label": "Posición vertical", "min": 0, "max": 45, "step": 1, "unit": "%", "default": 33 },
+    { "type": "range", "id": "f4_reach", "label": "Largo de la línea", "min": 20, "max": 55, "step": 1, "unit": "%", "default": 30 }
+  ],
+  "presets": [{ "name": "Video Hope" }]
+}
+{% endschema %}
