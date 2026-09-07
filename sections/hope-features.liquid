@@ -51,21 +51,24 @@
     padding-bottom: var(--hope-padding-bottom, 0px);
   }
 
-  /* Contenido: respeta el ancho de página oficial de Shopify y se centra */
+  /* Contenido: la fila ocupa todo el ancho de la ventana. La imagen sangra
+     hasta el borde izquierdo y el panel de texto se mantiene alineado al
+     ancho de página oficial (mismo lugar que un layout centrado). */
   .hope-features__grid {
     display: flex;
     flex-direction: row;
     align-items: stretch;
     width: 100%;
-    max-width: var(--page-width, 1200px);
-    margin-inline: auto;
+    max-width: none;
+    margin-inline: 0;
     min-height: 600px;
   }
 
-  /* Imagen: 50% del ancho, cubre todo el alto del bloque */
+  /* Imagen: rellena todo el espacio a la izquierda del panel, incluido el
+     margen de página que antes quedaba vacío. */
   .hope-features__media {
-    flex: 0 0 50%;
-    max-width: 50%;
+    flex: 1 1 auto;
+    min-width: 0;
     position: relative;
     overflow: hidden;
   }
@@ -90,14 +93,25 @@
     height: 60%;
   }
 
-  /* Panel de contenido: 50%, centrado */
+  /* Panel de contenido: mitad del ancho de página, alineado al borde derecho
+     del ancho de página (deja el margen derecho como gutter). Así conserva su
+     posición original mientras la imagen ocupa el resto hacia la izquierda. */
   .hope-features__content {
-    flex: 0 0 50%;
+    flex: 0 0 auto;
+    width: calc(var(--page-width, 1200px) / 2);
     max-width: 50%;
+    margin-inline-end: max(0px, calc((100% - var(--page-width, 1200px)) / 2));
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     justify-content: center;
     padding: 64px 72px;
+  }
+
+  /* Panel a la izquierda cuando la imagen va a la derecha */
+  .hope-features[data-image-side="right"] .hope-features__content {
+    margin-inline-end: 0;
+    margin-inline-start: max(0px, calc((100% - var(--page-width, 1200px)) / 2));
   }
 
   .hope-features__heading {
@@ -198,9 +212,12 @@
     }
 
     .hope-features__media,
-    .hope-features__content {
+    .hope-features__content,
+    .hope-features[data-image-side="right"] .hope-features__content {
       flex: 1 1 100%;
+      width: 100%;
       max-width: 100%;
+      margin-inline: 0;
     }
 
     .hope-features__media {
@@ -272,7 +289,7 @@
     --hope-padding-bottom: {{ section.settings.padding_bottom }}px;
   "
 >
-  <div class="hope-features__grid section section--page-width">
+  <div class="hope-features__grid">
 
     <div class="hope-features__media">
       {%- if section.settings.image != blank -%}

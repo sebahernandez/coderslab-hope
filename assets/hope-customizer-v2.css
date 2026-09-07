@@ -1,0 +1,153 @@
+/* ==========================================================================
+   Configurador Hope V2 — burbujas flotantes "+1" sobre el helado
+   Complementa la línea gráfica global (.hopecfg / hopecfg__*). Solo añade lo
+   específico de V2, scoped bajo .hopecfg--v2.
+   Paleta: ink #392f36 · hope #ed5d96 · cream #fff8f5
+   ========================================================================== */
+
+/* El escenario ancla las burbujas absolutas */
+.hopecfg--v2 .hopecfg__stage {
+  position: relative;
+}
+
+/* Capa de burbujas sobre el helado */
+.hope2__bubbles {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* Burbuja circular de un extra */
+.hope2__bubble {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 999px;
+  border: 3px solid #fff;
+  background: #fff;
+  box-shadow: 0 10px 22px rgba(113, 57, 79, 0.28);
+  overflow: visible;
+  animation: hope2-pop 0.35s cubic-bezier(0.22, 0.75, 0.25, 1);
+}
+@media (min-width: 1024px) {
+  .hope2__bubble { width: 84px; height: 84px; }
+}
+
+/* Última burbuja añadida: anillo rosa (como el mock) */
+.hope2__bubble.is-last {
+  box-shadow: 0 10px 22px rgba(113, 57, 79, 0.28), 0 0 0 3px #fff, 0 0 0 6px #f7a9c9;
+}
+
+.hope2__bubble-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  object-fit: cover;
+  display: block;
+}
+.hope2__bubble-emoji {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+@media (min-width: 1024px) {
+  .hope2__bubble-emoji { font-size: 2.3rem; }
+}
+
+/* Insignia +1 */
+.hope2__bubble-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  min-width: 26px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--hopecfg-hope, #ed5d96);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 14px rgba(237, 93, 150, 0.45);
+}
+@media (min-width: 1024px) {
+  .hope2__bubble-badge { min-width: 30px; height: 25px; font-size: 13px; top: -9px; right: -9px; }
+}
+
+@keyframes hope2-pop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Mini-stack en la esquina inferior de la vista previa (fotos/emoji) */
+.hopecfg--v2 .hopecfg__extras-inner {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 0.75rem;
+  text-align: left;
+}
+.hope2__extras-copy { display: flex; flex-direction: column; gap: 2px; }
+.hope2__extras-eyebrow {
+  margin: 0;
+  font-size: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #9b7a86;
+}
+.hopecfg--v2 .hopecfg__stack > span > img {
+  width: 100%;
+  height: 100%;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+/* Precio del extra (+$X) en tamaño pequeño, como referencia */
+.hopecfg--v2 .hopecfg__chip-price {
+  margin-left: 0.25rem;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #b39aa4;
+  opacity: 0.9;
+}
+.hopecfg--v2 .hopecfg__choice.is-active .hopecfg__chip-price {
+  color: var(--hopecfg-hope, #ed5d96);
+  opacity: 1;
+}
+@media (min-width: 1024px) {
+  .hopecfg--v2 .hopecfg__chip-price { font-size: 10px; }
+}
+
+/* Banner informativo "cada extra aparece con un +1" */
+.hope2__hint {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+  padding: 0.7rem 0.95rem;
+  border-radius: 14px;
+  background: #ffeaf3;
+  color: #a03c68;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.hope2__hint svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--hopecfg-hope, #ed5d96);
+}
+
+/* En móvil las burbujas se reducen para no tapar el vaso */
+@media (max-width: 1023px) {
+  .hope2__bubble { width: 46px; height: 46px; border-width: 2.5px; }
+  .hope2__bubble-emoji { font-size: 1.3rem; }
+  .hope2__bubble-badge { min-width: 20px; height: 17px; font-size: 9px; top: -6px; right: -6px; }
+}

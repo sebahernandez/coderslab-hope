@@ -1,0 +1,316 @@
+{%- comment -%}
+  Section: custom-product-v2.liquid
+  Tema: Horizon
+  Uso: configurador visual "Crea tu helado Hope" — versión V2.
+
+  Toma la lógica de custom-product-helado.liquid (variante nativa Tamaño × nivel
+  de Extras + line item properties para el carrito nativo), pero cambia la vista
+  previa: el vaso base es fijo y cada extra elegido (topping / premium / sirope)
+  aparece como una BURBUJA circular flotando sobre el helado, con una insignia
+  "+1" (ver mock de referencia).
+
+  Assets propios de V2 (no globales): hope-customizer-v2.css / .js.
+  Mantiene la línea gráfica global (.hopecfg / hopecfg__*) para chips y botones.
+{%- endcomment -%}
+
+{{ 'hope-customizer-v2.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'hope-customizer-v2.js' | asset_url }}" defer></script>
+
+{%- liquid
+  assign p_helado = section.settings.producto_helado | default: closest.product | default: product
+  assign cfg_product = p_helado
+  assign cfg_cats = cfg_product.metafields.custom.opciones_customizador.value.categorias
+  assign cat_sirope = cfg_cats | where: 'nombre', 'Sirope' | first
+
+  assign meta_topping_count = 0
+  if cfg_cats
+    for c in cfg_cats
+      unless c.nombre == 'Sirope'
+        assign meta_topping_count = meta_topping_count | plus: c.items.size
+      endunless
+    endfor
+  endif
+-%}
+
+{%- capture products_json -%}
+{
+  {%- if p_helado -%}
+  "helado": {
+    "id": {{ p_helado.id }},
+    "handle": {{ p_helado.handle | json }},
+    "variants": [
+      {%- for v in p_helado.variants -%}
+        {"id": {{ v.id }}, "option1": {{ v.option1 | json }}, "option2": {{ v.option2 | json }}, "price": {{ v.price }}, "price_formatted": {{ v.price | money | strip_html | json }}, "available": {{ v.available }} }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+  {%- endif -%}
+}
+{%- endcapture -%}
+
+<div
+  class="hopecfg hopecfg--v2"
+  data-hopecfg-v2
+  data-modo="helado"
+  data-money-format="{{ shop.money_format | escape }}"
+  data-cloudinary-account="{{ section.settings.cloudinary_account | default: 'slealu5f' | escape }}"
+  data-cloudinary-folder="{{ section.settings.cloudinary_folder | default: 'hope/catalog' | escape }}"
+  data-base-asset="{{ section.settings.base_asset | default: 'hope-vanilla-cup-cutout-v1' | escape }}"
+>
+  <script type="application/json" data-hopecfg-products>{{ products_json }}</script>
+
+  <div class="hopecfg__frame">
+    {%- comment -%} ===== Panel de vista previa ===== {%- endcomment -%}
+    <section class="hopecfg__preview" id="preview-panel" data-view="2d">
+      {%- if section.settings.logo != blank -%}
+        <div class="hopecfg__brand" id="brand-badge">
+          <img
+            class="hopecfg__brand-logo"
+            src="{{ section.settings.logo | image_url: width: 320 }}"
+            alt="{{ shop.name | escape }}"
+            width="160"
+            loading="eager"
+          >
+        </div>
+      {%- endif -%}
+
+      <div class="hopecfg__stage">
+        <img
+          id="product-preview"
+          class="hopecfg__cup"
+          data-mode="2d"
+          src=""
+          alt="{{ shop.name | escape }}"
+          decoding="async"
+        >
+        {%- comment -%} Capa de burbujas "+1" que el JS rellena según los extras {%- endcomment -%}
+        <div id="hope-bubbles" class="hope2__bubbles" aria-hidden="true"></div>
+      </div>
+
+      <div class="hopecfg__extras" id="extras-panel">
+        <div class="hopecfg__extras-inner">
+          <div class="hope2__extras-copy">
+            <p class="hope2__extras-eyebrow">Tu helado</p>
+            <p id="hope-extras-label" class="hopecfg__extras-label">Aún sin extras</p>
+          </div>
+          <div id="hope-stack" class="hopecfg__stack"></div>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} ===== Panel de configuración ===== {%- endcomment -%}
+    <section class="hopecfg__config" id="config-panel" data-view="2d">
+      <div class="hopecfg__config-scroll">
+        <div class="hopecfg__heading">
+          <p class="hopecfg__eyebrow">{{ section.settings.eyebrow | default: 'Helado de yogurt griego' }}</p>
+          <h2 class="hopecfg__title">{{ section.settings.titulo | default: 'Crea tu helado Hope' }}</h2>
+        </div>
+
+        <div id="hope-options" class="hopecfg__groups">
+          <fieldset id="size-options" class="hopecfg__group" data-group="size">
+            <legend class="hopecfg__legend">1 · Elige tu tamaño</legend>
+            <div class="hopecfg__grid hopecfg__grid--3">
+              <button class="hopecfg__choice hopecfg__choice--size is-active" data-id="small" type="button">
+                <span class="hopecfg__check"></span>
+                <span class="hopecfg__choice-name">Pequeño</span>
+                <span class="hopecfg__choice-sub" data-size-price>4 oz</span>
+              </button>
+              <button class="hopecfg__choice hopecfg__choice--size" data-id="medium" type="button">
+                <span class="hopecfg__check"></span>
+                <span class="hopecfg__choice-name">Mediano</span>
+                <span class="hopecfg__choice-sub" data-size-price>8 oz</span>
+              </button>
+              <button class="hopecfg__choice hopecfg__choice--size" data-id="large" type="button">
+                <span class="hopecfg__check"></span>
+                <span class="hopecfg__choice-name">Grande</span>
+                <span class="hopecfg__choice-sub" data-size-price>12 oz</span>
+              </button>
+            </div>
+          </fieldset>
+
+          {%- comment -%} Toppings normales: obligatorio elegir 2 (incluidos en el precio) {%- endcomment -%}
+          <fieldset id="topping-options" class="hopecfg__group" data-group="topping">
+            <legend class="hopecfg__legend">
+              <span id="topping-title">2 · Elige 2 toppings</span>
+              <span class="hopecfg__legend-count" data-topping-count>0/2</span>
+            </legend>
+            <div class="hopecfg__chips topping-grid">
+              {%- if meta_topping_count > 0 -%}
+                {%- for c in cfg_cats -%}
+                  {%- unless c.nombre == 'Sirope' -%}
+                    {%- for item in c.items -%}
+                      {%- unless item.premium -%}
+                        {%- render 'hope-extra-chip', item: item, tipo: 'topping' -%}
+                      {%- endunless -%}
+                    {%- endfor -%}
+                  {%- endunless -%}
+                {%- endfor -%}
+              {%- else -%}
+                {%- assign toppings = 'strawberry|🍓|Fresa,pineapple|🍍|Piña,banana|🍌|Cambur,mango|🥭|Mango,peanut|🥜|Maní,oreo|🍪|Oreo negra' | split: ',' -%}
+                {%- for t in toppings -%}
+                  {%- assign parts = t | split: '|' -%}
+                  <button class="hopecfg__choice hopecfg__choice--chip" data-id="{{ parts[0] }}" data-label="{{ parts[2] }}" data-emoji="{{ parts[1] }}" data-precio-cents="0" type="button">
+                    <span class="topping-icon">{{ parts[1] }}</span>
+                    <span class="topping-name">{{ parts[2] }}</span>
+                  </button>
+                {%- endfor -%}
+              {%- endif -%}
+            </div>
+          </fieldset>
+
+          {%- comment -%} Toppings premium: opcionales, máximo 1 (+precio) {%- endcomment -%}
+          <fieldset id="premium-options" class="hopecfg__group" data-group="premium">
+            <legend class="hopecfg__legend">
+              Toppings premium <span class="hopecfg__legend-hint">(opcional · máx 1)</span>
+            </legend>
+            <div class="hopecfg__chips">
+              {%- if meta_topping_count > 0 -%}
+                {%- for c in cfg_cats -%}
+                  {%- unless c.nombre == 'Sirope' -%}
+                    {%- for item in c.items -%}
+                      {%- if item.premium -%}
+                        {%- render 'hope-extra-chip', item: item, tipo: 'topping' -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- endunless -%}
+                {%- endfor -%}
+              {%- endif -%}
+            </div>
+          </fieldset>
+
+          <fieldset id="syrup-options" class="hopecfg__group" data-group="syrup">
+            <legend class="hopecfg__legend">3 · Elige 1 sirope <span class="hopecfg__legend-hint">(obligatorio)</span></legend>
+            <div class="hopecfg__chips">
+              {%- if cat_sirope.items.size > 0 -%}
+                {%- for item in cat_sirope.items -%}
+                  {%- render 'hope-extra-chip', item: item, tipo: 'syrup' -%}
+                {%- endfor -%}
+              {%- else -%}
+                {%- assign syrups = 'chocolate|Chocolate|🍫,berries|Frutos rojos|🍓,passion|Maracuyá|🟡,salted-caramel|Caramelo salado|🍯,white-chocolate|Chocolate blanco|🤍' | split: ',' -%}
+                {%- for s in syrups -%}
+                  {%- assign parts = s | split: '|' -%}
+                  <button
+                    class="hopecfg__choice hopecfg__choice--chip"
+                    data-id="{{ parts[0] }}"
+                    data-label="{{ parts[1] }}"
+                    data-emoji="{{ parts[2] }}"
+                    data-precio-cents="0"
+                    type="button"
+                  >
+                    {{ parts[1] }}
+                  </button>
+                {%- endfor -%}
+              {%- endif -%}
+            </div>
+          </fieldset>
+
+          <div class="hope2__hint">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15l-1.9-4.1L5.5 9l4.6-1.4L12 3z"/>
+              <path d="M19 14l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2z"/>
+            </svg>
+            <span>{{ section.settings.hint_text | default: 'Cada extra que eliges aparece sobre tu helado con un +1' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <footer class="hopecfg__footer">
+        <div class="hopecfg__total">
+          <p class="hopecfg__total-label">Total</p>
+          <p id="price" class="hopecfg__price">—</p>
+          <p id="buy-hint" class="hopecfg__buy-hint"></p>
+        </div>
+        <div class="hopecfg__actions">
+          <button id="reset-view" type="button" class="hopecfg__reset" aria-label="Reiniciar" title="Reiniciar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 11a8 8 0 1 0-2.34 5.66" />
+              <path d="M20 4v7h-7" />
+            </svg>
+          </button>
+          <button id="buy" type="button" class="hopecfg__buy">
+            {{ section.settings.texto_boton | default: 'AÑADIR AL CARRITO' }} <span class="hopecfg__buy-arrow">→</span>
+          </button>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+  <div id="toast" class="hopecfg__toast" role="status" aria-live="polite">¡Tu selección fue añadida! ✨</div>
+</div>
+
+{% schema %}
+{
+  "name": "Configurador Hope V2",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Marca y textos"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto superior (eyebrow)",
+      "default": "Helado de yogurt griego"
+    },
+    {
+      "type": "text",
+      "id": "titulo",
+      "label": "Título",
+      "default": "Crea tu helado Hope"
+    },
+    {
+      "type": "text",
+      "id": "texto_boton",
+      "label": "Texto botón carrito",
+      "default": "AÑADIR AL CARRITO"
+    },
+    {
+      "type": "text",
+      "id": "hint_text",
+      "label": "Texto del aviso de extras",
+      "default": "Cada extra que eliges aparece sobre tu helado con un +1"
+    },
+    {
+      "type": "header",
+      "content": "Producto vinculado (carrito real)"
+    },
+    {
+      "type": "product",
+      "id": "producto_helado",
+      "label": "Producto · Helado"
+    },
+    {
+      "type": "header",
+      "content": "Imágenes (Cloudinary)"
+    },
+    {
+      "type": "text",
+      "id": "cloudinary_account",
+      "label": "Cloud name",
+      "default": "slealu5f"
+    },
+    {
+      "type": "text",
+      "id": "cloudinary_folder",
+      "label": "Carpeta del catálogo",
+      "default": "hope/catalog"
+    },
+    {
+      "type": "text",
+      "id": "base_asset",
+      "label": "Imagen base del vaso (Cloudinary)",
+      "default": "hope-vanilla-cup-cutout-v1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Configurador Hope V2"
+    }
+  ]
+}
+{% endschema %}
