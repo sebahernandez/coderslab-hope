@@ -106,7 +106,9 @@
     top: 3.5cqw;
     left: 50%;
     transform: translateX(-50%);
-    width: 57cqw;              /* ≈820px a 1440 */
+    /* Sin ancho fijo: al ser absoluto, se ajusta al contenido (shrink-to-fit),
+       así el título entra en una sola línea. max-width evita tocar los bordes. */
+    max-width: 92cqw;
     text-align: center;
   }
   .vh__title {
@@ -116,6 +118,9 @@
     line-height: 1.1;
     font-weight: 800;
     letter-spacing: calc(-0.5 * var(--u));
+    /* El título va siempre en una línea (escala con cqw, así que cabe en
+       cualquier ancho de escritorio). En móvil se libera más abajo. */
+    white-space: nowrap;
   }
   .vh__subtitle {
     margin: calc(14 * var(--u)) auto 0;
@@ -150,7 +155,13 @@
        --drop: altura del codo. */
     --drop: 3cqw;
   }
-  .vh__text { width: 21cqw; }   /* ≈300px a 1440 */
+  .vh__text {
+    width: 21cqw;   /* ≈300px a 1440 */
+    /* Separación badge → párrafo. Va aquí (contenedor .vh__text, no en el <p>)
+       porque el tema resetea el margen de los <p> a 0. Al estar DESPUÉS de
+       .vh__row, empujar el texto no mueve la línea ni el punto. */
+    margin-top: calc(10 * var(--u));
+  }
 
   .vh__badge {
     display: inline-block;
@@ -166,7 +177,9 @@
     box-shadow: 0 calc(6 * var(--u)) calc(18 * var(--u)) rgba(0,0,0,0.08);
   }
   .vh__desc {
-    margin: calc(12 * var(--u)) 0 0;
+    /* La separación superior la controla .vh__text (el tema resetea el margen
+       del <p>). Aquí se deja en 0 para tener una sola fuente de verdad. */
+    margin: 0;
     color: var(--vh-desc-color);
     font-size: calc({{ s.description_size }} * var(--u));
     line-height: 1.45;
@@ -279,7 +292,7 @@
       max-width: 480px;
       margin: 0 auto;
     }
-    .vh__title    { font-size: {{ s.title_size | times: 0.62 | round }}px; letter-spacing: -0.5px; }
+    .vh__title    { font-size: {{ s.title_size | times: 0.62 | round }}px; letter-spacing: -0.5px; white-space: normal; }
     .vh__subtitle { font-size: {{ s.subtitle_size | times: 0.9 | round }}px; margin-top: 12px; }
     .vh__board {
       position: static;
@@ -388,47 +401,34 @@
 </div>
 
 {%- comment -%}
-  1. --vh-sb: ancho real de la barra de scroll vertical. Evita el scroll
-     horizontal que produce usar 100vw a secas.
-  2. --vh-aspect: se ajusta a la proporción real del archivo de video, así
-     nunca hay recorte aunque suban un video que no coincida con la opción
-     elegida en el theme editor.
+  --vh-sb: ancho real de la barra de scroll vertical. Evita el scroll
+  horizontal que produce usar 100vw a secas.
+
+  La relación de aspecto se FIJA en CSS (--vh-aspect desde el setting
+  aspect_ratio) y NO se sobreescribe con la proporción real del video.
+  Motivo: el diseño y la posición de los puntos dependen de un encuadre
+  estable (16:9 con object-fit: cover). Si se ajustara al ratio del archivo,
+  el recorte cambiaría y las líneas dejarían de coincidir con el helado.
 {%- endcomment -%}
 <script>
   (function () {
-    /* --- 1. Barra de scroll (global, una sola vez por página) --- */
-    if (!window.__vhScrollbarSync) {
-      window.__vhScrollbarSync = true;
+    /* Barra de scroll (global, una sola vez por página). */
+    if (window.__vhScrollbarSync) return;
+    window.__vhScrollbarSync = true;
 
-      var raf;
-      function syncScrollbar() {
-        var sb = window.innerWidth - document.documentElement.clientWidth;
-        document.documentElement.style.setProperty('--vh-sb', (sb > 0 ? sb : 0) + 'px');
-      }
-      function onResize() {
-        cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(syncScrollbar);
-      }
-
-      syncScrollbar();
-      window.addEventListener('resize', onResize);
-      window.addEventListener('load', syncScrollbar);
+    var raf;
+    function syncScrollbar() {
+      var sb = window.innerWidth - document.documentElement.clientWidth;
+      document.documentElement.style.setProperty('--vh-sb', (sb > 0 ? sb : 0) + 'px');
+    }
+    function onResize() {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(syncScrollbar);
     }
 
-    /* --- 2. Proporción real del video (por sección) --- */
-    var root = document.querySelector('#shopify-section-{{ section.id }} [data-vh]');
-    if (!root) return;
-
-    var video = root.querySelector('video');
-    if (!video) return;
-
-    function syncAspect() {
-      if (!video.videoWidth || !video.videoHeight) return;
-      root.style.setProperty('--vh-aspect', video.videoWidth + ' / ' + video.videoHeight);
-    }
-
-    if (video.readyState >= 1) syncAspect();
-    video.addEventListener('loadedmetadata', syncAspect);
+    syncScrollbar();
+    window.addEventListener('resize', onResize);
+    window.addEventListener('load', syncScrollbar);
   })();
 </script>
 

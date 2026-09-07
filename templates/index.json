@@ -394,6 +394,7 @@
       "settings": {
         "background_video": "shopify://files/videos/VideoHeladohope.mp4",
         "background_video_url": "",
+        "aspect_ratio": "16 / 9",
         "overlay_opacity": 0,
         "overlay_color": "#000000",
         "section_height": 100,
@@ -419,10 +420,10 @@
         "feature_3_text": "Caramelo, chocolate, frutos rojos... nuestras salsas son hechas a mano, sin apuro, con sabor casero.",
         "feature_4_title": "Vasito biodegradable personalizado",
         "feature_4_text": "Porque creemos en el sabor y en cuidar el planeta. Nuestro vasito es compostable y lleno de identidad Hope.",
-        "f1_x": 3, "f1_y": 15, "f1_reach": 48,
-        "f2_x": 3, "f2_y": 26, "f2_reach": 45,
-        "f3_x": 3, "f3_y": 11, "f3_reach": 43,
-        "f4_x": 3, "f4_y": 33, "f4_reach": 42
+        "f1_x": 3, "f1_y": 10, "f1_reach": 46,
+        "f2_x": 3, "f2_y": 22, "f2_reach": 46,
+        "f3_x": 3, "f3_y": 9, "f3_reach": 45,
+        "f4_x": 3, "f4_y": 31, "f4_reach": 43
       }
     },
     "testimonials_instagram_nLYQWG": {
