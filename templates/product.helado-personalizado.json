@@ -11,10 +11,7 @@
   "sections": {
     "main": {
       "type": "custom-product-helado",
-      "settings": {
-        "texto_envio": "Reliable shipping",
-        "texto_devoluciones": "Flexible returns"
-      }
+      "settings": {}
     }
   },
   "order": [

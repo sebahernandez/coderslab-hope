@@ -92,7 +92,6 @@
     font-style: var(--hope-heading-style);
     font-size: var(--hope-heading-size, 2.4rem);
     line-height: var(--hope-heading-line-height, 1.2);
-    letter-spacing: var(--hope-heading-letter-spacing, 0px);
     text-transform: var(--hope-heading-transform, none);
     text-align: center;
     margin: 0 0 40px;
@@ -136,7 +135,6 @@
     font-style: var(--hope-feature-title-style);
     font-size: var(--hope-feature-title-size, 1.1rem);
     font-weight: var(--hope-feature-title-weight, 700);
-    letter-spacing: var(--hope-feature-title-letter-spacing, 0px);
     color: var(--hope-feature-title-color, var(--color-foreground));
     margin: 0 0 4px;
   }
@@ -146,7 +144,6 @@
     font-weight: var(--hope-feature-description-weight);
     font-style: var(--hope-feature-description-style);
     font-size: var(--hope-feature-description-size, 0.95rem);
-    letter-spacing: var(--hope-feature-description-letter-spacing, 0px);
     color: var(--hope-feature-description-color, var(--color-foreground));
     line-height: var(--hope-feature-description-line-height, 1.5);
     margin: 0;
@@ -246,7 +243,6 @@
     --hope-heading-style: {{ section.settings.heading_font.style }};
     --hope-heading-size: {{ section.settings.heading_size }}px;
     --hope-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
-    --hope-heading-letter-spacing: {{ section.settings.heading_letter_spacing }}px;
     --hope-heading-line-height: {{ section.settings.heading_line_height }};
     --hope-heading-transform: {{ section.settings.heading_text_transform }};
     {%- comment -%} Familia del título de feature {%- endcomment -%}
@@ -255,7 +251,6 @@
     --hope-feature-title-style: {{ section.settings.feature_title_font.style }};
     --hope-feature-title-size: {{ section.settings.feature_title_size }}px;
     --hope-feature-title-size-mobile: {{ section.settings.feature_title_size_mobile }}px;
-    --hope-feature-title-letter-spacing: {{ section.settings.feature_title_letter_spacing }}px;
     --hope-feature-title-color: {{ section.settings.feature_title_color }};
     {%- comment -%} Familia de la descripción {%- endcomment -%}
     --hope-feature-description-family: {{ section.settings.feature_description_font.family }}, {{ section.settings.feature_description_font.fallback_families }};
@@ -263,7 +258,6 @@
     --hope-feature-description-style: {{ section.settings.feature_description_font.style }};
     --hope-feature-description-size: {{ section.settings.feature_description_size }}px;
     --hope-feature-description-size-mobile: {{ section.settings.feature_description_size_mobile }}px;
-    --hope-feature-description-letter-spacing: {{ section.settings.feature_description_letter_spacing }}px;
     --hope-feature-description-line-height: {{ section.settings.feature_description_line_height }};
     --hope-feature-description-color: {{ section.settings.feature_description_color }};
     --hope-padding-top: {{ section.settings.padding_top }}px;
@@ -452,16 +446,6 @@
       "default": 1.2
     },
     {
-      "type": "range",
-      "id": "heading_letter_spacing",
-      "label": "Espaciado entre letras (título)",
-      "min": -5,
-      "max": 20,
-      "step": 0.5,
-      "unit": "px",
-      "default": 0
-    },
-    {
       "type": "select",
       "id": "heading_text_transform",
       "label": "Transformación del texto (título)",
@@ -520,16 +504,6 @@
       "step": 1,
       "unit": "px",
       "default": 16
-    },
-    {
-      "type": "range",
-      "id": "feature_title_letter_spacing",
-      "label": "Espaciado entre letras",
-      "min": -5,
-      "max": 20,
-      "step": 0.5,
-      "unit": "px",
-      "default": 0
     },
     {
       "type": "color",
@@ -593,16 +567,6 @@
       "max": 2.5,
       "step": 0.1,
       "default": 1.5
-    },
-    {
-      "type": "range",
-      "id": "feature_description_letter_spacing",
-      "label": "Espaciado entre letras",
-      "min": -5,
-      "max": 20,
-      "step": 0.5,
-      "unit": "px",
-      "default": 0
     },
     {
       "type": "color",
