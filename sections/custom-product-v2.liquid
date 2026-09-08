@@ -30,6 +30,32 @@
       endunless
     endfor
   endif
+
+  assign is_mixo = false
+  if p_helado.title
+    assign p_title_down = p_helado.title | downcase
+    if p_title_down contains 'mixo hope'
+      assign is_mixo = true
+    endif
+  endif
+
+  assign titulo_dinamico = section.settings.titulo
+  if titulo_dinamico == blank
+    if p_helado.title
+      assign titulo_dinamico = 'Crea tu ' | append: p_helado.title
+    else
+      assign titulo_dinamico = 'Crea tu helado Hope'
+    endif
+  endif
+
+  assign base_asset_val = section.settings.base_asset
+  if base_asset_val == blank
+    if is_mixo
+      assign base_asset_val = 'hope-mixo-fixed-default-v1'
+    else
+      assign base_asset_val = 'hope-vanilla-cup-cutout-v1'
+    endif
+  endif
 -%}
 
 {%- capture products_json -%}
@@ -55,7 +81,7 @@
   data-money-format="{{ shop.money_format | escape }}"
   data-cloudinary-account="{{ section.settings.cloudinary_account | default: 'slealu5f' | escape }}"
   data-cloudinary-folder="{{ section.settings.cloudinary_folder | default: 'hope/catalog' | escape }}"
-  data-base-asset="{{ section.settings.base_asset | default: 'hope-vanilla-cup-cutout-v1' | escape }}"
+  data-base-asset="{{ base_asset_val | escape }}"
 >
   <script type="application/json" data-hopecfg-products>{{ products_json }}</script>
 
@@ -103,8 +129,20 @@
       <div class="hopecfg__config-scroll">
         <div class="hopecfg__heading">
           <p class="hopecfg__eyebrow">{{ section.settings.eyebrow | default: 'Helado de yogurt griego' }}</p>
-          <h2 class="hopecfg__title">{{ section.settings.titulo | default: 'Crea tu helado Hope' }}</h2>
+          <h2 class="hopecfg__title">{{ titulo_dinamico }}</h2>
         </div>
+
+        {%- if is_mixo -%}
+          <div class="hope2__delivery-notice" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1 3h15v13H1z" />
+              <path d="M16 8h4l3 3v5h-7V8z" />
+              <circle cx="5.5" cy="18.5" r="2.5" />
+              <circle cx="18.5" cy="18.5" r="2.5" />
+            </svg>
+            <span>Este producto es solo para delivery</span>
+          </div>
+        {%- endif -%}
 
         <div id="hope-options" class="hopecfg__groups">
           <fieldset id="size-options" class="hopecfg__group" data-group="size">
@@ -260,8 +298,8 @@
     {
       "type": "text",
       "id": "titulo",
-      "label": "Título",
-      "default": "Crea tu helado Hope"
+      "label": "Título (opcional)",
+      "info": "Si se deja vacío, se usa \"Crea tu \" + el nombre del producto."
     },
     {
       "type": "text",
@@ -303,8 +341,8 @@
     {
       "type": "text",
       "id": "base_asset",
-      "label": "Imagen base del vaso (Cloudinary)",
-      "default": "hope-vanilla-cup-cutout-v1"
+      "label": "Imagen base del vaso (Cloudinary) — opcional",
+      "info": "Si se deja vacío: Helado Hope usa hope-vanilla-cup-cutout-v1 y Mixo Hope usa hope-mixo-fixed-default-v1."
     }
   ],
   "presets": [

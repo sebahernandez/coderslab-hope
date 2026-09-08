@@ -1,42 +1,8 @@
 {% style %}
-  {%- comment -%} Título: fuente de tema o personalizada por URL {%- endcomment -%}
-  {%- if section.settings.heading_font_type == 'custom' and section.settings.heading_custom_font_url != blank -%}
-    @font-face {
-      font-family: '{{ section.settings.heading_custom_font_name }}';
-      src: url('{{ section.settings.heading_custom_font_url }}');
-      font-weight: {% if section.settings.heading_custom_font_weight == 'auto' %}normal{% else %}{{ section.settings.heading_custom_font_weight }}{% endif %};
-      font-style: normal;
-      font-display: swap;
-    }
-  {%- else -%}
-    {{ section.settings.heading_font | font_face: font_display: 'swap' }}
-  {%- endif -%}
-
-  {%- comment -%} Título de feature {%- endcomment -%}
-  {%- if section.settings.feature_title_font_type == 'custom' and section.settings.feature_title_custom_font_url != blank -%}
-    @font-face {
-      font-family: '{{ section.settings.feature_title_custom_font_name }}';
-      src: url('{{ section.settings.feature_title_custom_font_url }}');
-      font-weight: {% if section.settings.feature_title_custom_font_weight == 'auto' %}normal{% else %}{{ section.settings.feature_title_custom_font_weight }}{% endif %};
-      font-style: normal;
-      font-display: swap;
-    }
-  {%- else -%}
-    {{ section.settings.feature_title_font | font_face: font_display: 'swap' }}
-  {%- endif -%}
-
-  {%- comment -%} Descripción {%- endcomment -%}
-  {%- if section.settings.feature_description_font_type == 'custom' and section.settings.feature_description_custom_font_url != blank -%}
-    @font-face {
-      font-family: '{{ section.settings.feature_description_custom_font_name }}';
-      src: url('{{ section.settings.feature_description_custom_font_url }}');
-      font-weight: {% if section.settings.feature_description_custom_font_weight == 'auto' %}normal{% else %}{{ section.settings.feature_description_custom_font_weight }}{% endif %};
-      font-style: normal;
-      font-display: swap;
-    }
-  {%- else -%}
-    {{ section.settings.feature_description_font | font_face: font_display: 'swap' }}
-  {%- endif -%}
+  {%- comment -%} Fuentes de tema con font_face para precargar {%- endcomment -%}
+  {{ section.settings.heading_font | font_face: font_display: 'swap' }}
+  {{ section.settings.feature_title_font | font_face: font_display: 'swap' }}
+  {{ section.settings.feature_description_font | font_face: font_display: 'swap' }}
 
   /* Sección padre (full-bleed): el wrapper de Horizon es un grid de 3 columnas
      (margen | contenido | margen). Para pintar el fondo a todo el ancho se
@@ -61,7 +27,10 @@
     width: 100%;
     max-width: none;
     margin-inline: 0;
-    min-height: 600px;
+    /* height (no min-height) para que el control de vh gobierne en ambos
+       sentidos: subir Y bajar el slider cambia la altura real del contenedor. */
+    height: var(--hope-container-height, 60vh);
+    min-height: var(--hope-container-height, 60vh);
   }
 
   /* Imagen: rellena todo el espacio a la izquierda del panel, incluido el
@@ -106,6 +75,9 @@
     flex-direction: column;
     justify-content: center;
     padding: 64px 72px;
+    /* Si la altura fijada en vh es menor que el contenido, se hace scroll
+       interno en lugar de recortar el texto. */
+    overflow-y: auto;
   }
 
   /* Panel a la izquierda cuando la imagen va a la derecha */
@@ -208,24 +180,31 @@
     .hope-features__grid,
     .hope-features[data-image-side="right"] .hope-features__grid {
       flex-direction: column;
+      /* En móvil el contenido apilado define la altura total; el control de
+         vh móvil se aplica a la imagen (abajo). */
+      height: auto;
       min-height: 0;
     }
 
     .hope-features__media,
     .hope-features__content,
     .hope-features[data-image-side="right"] .hope-features__content {
-      flex: 1 1 100%;
+      flex: 0 0 auto;
       width: 100%;
       max-width: 100%;
       margin-inline: 0;
     }
 
     .hope-features__media {
-      min-height: 320px;
+      /* La altura de la imagen en móvil la gobierna el control de vh móvil. */
+      height: var(--hope-container-height-mobile, 45vh);
+      min-height: 0;
     }
 
     .hope-features__content {
       padding: 40px 24px;
+      /* En móvil no se recorta: el texto fluye completo bajo la imagen. */
+      overflow-y: visible;
     }
 
     .hope-features__heading {
@@ -259,27 +238,29 @@
     --color-background: {{ section.settings.background_color }};
     --color-foreground: {{ section.settings.text_color }};
     --color-heading: {{ section.settings.heading_color }};
-    {%- comment -%} Familia del título: personalizada o de tema {%- endcomment -%}
-    --hope-heading-family: {% if section.settings.heading_font_type == 'custom' and section.settings.heading_custom_font_name != blank %}'{{ section.settings.heading_custom_font_name }}', {{ section.settings.heading_font.fallback_families }}{% else %}{{ section.settings.heading_font.family }}, {{ section.settings.heading_font.fallback_families }}{% endif %};
-    --hope-heading-weight: {% if section.settings.heading_weight != 'auto' %}{{ section.settings.heading_weight }}{% elsif section.settings.heading_bold %}700{% else %}{{ section.settings.heading_font.weight }}{% endif %};
-    --hope-heading-style: {% if section.settings.heading_font_type == 'custom' %}normal{% else %}{{ section.settings.heading_font.style }}{% endif %};
+    --hope-container-height: {{ section.settings.container_height }}vh;
+    --hope-container-height-mobile: {{ section.settings.container_height_mobile }}vh;
+    {%- comment -%} Familia del título {%- endcomment -%}
+    --hope-heading-family: {{ section.settings.heading_font.family }}, {{ section.settings.heading_font.fallback_families }};
+    --hope-heading-weight: {% if section.settings.heading_weight != 'auto' %}{{ section.settings.heading_weight }}{% else %}{{ section.settings.heading_font.weight }}{% endif %};
+    --hope-heading-style: {{ section.settings.heading_font.style }};
     --hope-heading-size: {{ section.settings.heading_size }}px;
     --hope-heading-size-mobile: {{ section.settings.heading_size_mobile }}px;
     --hope-heading-letter-spacing: {{ section.settings.heading_letter_spacing }}px;
     --hope-heading-line-height: {{ section.settings.heading_line_height }};
     --hope-heading-transform: {{ section.settings.heading_text_transform }};
     {%- comment -%} Familia del título de feature {%- endcomment -%}
-    --hope-feature-title-family: {% if section.settings.feature_title_font_type == 'custom' and section.settings.feature_title_custom_font_name != blank %}'{{ section.settings.feature_title_custom_font_name }}', {{ section.settings.feature_title_font.fallback_families }}{% else %}{{ section.settings.feature_title_font.family }}, {{ section.settings.feature_title_font.fallback_families }}{% endif %};
-    --hope-feature-title-weight: {% if section.settings.feature_title_weight != 'auto' %}{{ section.settings.feature_title_weight }}{% elsif section.settings.feature_title_bold %}700{% else %}{{ section.settings.feature_title_font.weight }}{% endif %};
-    --hope-feature-title-style: {% if section.settings.feature_title_font_type == 'custom' %}normal{% else %}{{ section.settings.feature_title_font.style }}{% endif %};
+    --hope-feature-title-family: {{ section.settings.feature_title_font.family }}, {{ section.settings.feature_title_font.fallback_families }};
+    --hope-feature-title-weight: {% if section.settings.feature_title_weight != 'auto' %}{{ section.settings.feature_title_weight }}{% else %}{{ section.settings.feature_title_font.weight }}{% endif %};
+    --hope-feature-title-style: {{ section.settings.feature_title_font.style }};
     --hope-feature-title-size: {{ section.settings.feature_title_size }}px;
     --hope-feature-title-size-mobile: {{ section.settings.feature_title_size_mobile }}px;
     --hope-feature-title-letter-spacing: {{ section.settings.feature_title_letter_spacing }}px;
     --hope-feature-title-color: {{ section.settings.feature_title_color }};
     {%- comment -%} Familia de la descripción {%- endcomment -%}
-    --hope-feature-description-family: {% if section.settings.feature_description_font_type == 'custom' and section.settings.feature_description_custom_font_name != blank %}'{{ section.settings.feature_description_custom_font_name }}', {{ section.settings.feature_description_font.fallback_families }}{% else %}{{ section.settings.feature_description_font.family }}, {{ section.settings.feature_description_font.fallback_families }}{% endif %};
-    --hope-feature-description-weight: {% if section.settings.feature_description_weight != 'auto' %}{{ section.settings.feature_description_weight }}{% elsif section.settings.feature_description_bold %}700{% else %}{{ section.settings.feature_description_font.weight }}{% endif %};
-    --hope-feature-description-style: {% if section.settings.feature_description_font_type == 'custom' %}normal{% else %}{{ section.settings.feature_description_font.style }}{% endif %};
+    --hope-feature-description-family: {{ section.settings.feature_description_font.family }}, {{ section.settings.feature_description_font.fallback_families }};
+    --hope-feature-description-weight: {% if section.settings.feature_description_weight != 'auto' %}{{ section.settings.feature_description_weight }}{% else %}{{ section.settings.feature_description_font.weight }}{% endif %};
+    --hope-feature-description-style: {{ section.settings.feature_description_font.style }};
     --hope-feature-description-size: {{ section.settings.feature_description_size }}px;
     --hope-feature-description-size-mobile: {{ section.settings.feature_description_size_mobile }}px;
     --hope-feature-description-letter-spacing: {{ section.settings.feature_description_letter_spacing }}px;
@@ -381,6 +362,30 @@
     },
     {
       "type": "header",
+      "content": "Altura del contenedor"
+    },
+    {
+      "type": "range",
+      "id": "container_height",
+      "label": "Altura en escritorio",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "container_height_mobile",
+      "label": "Altura en móvil",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "default": 60
+    },
+    {
+      "type": "header",
       "content": "Contenido"
     },
     {
@@ -394,52 +399,10 @@
       "content": "Tipografía — Título"
     },
     {
-      "type": "select",
-      "id": "heading_font_type",
-      "label": "Origen de la fuente",
-      "options": [
-        { "value": "theme", "label": "Fuente de Shopify" },
-        { "value": "custom", "label": "Fuente personalizada (URL / @font-face)" }
-      ],
-      "default": "theme"
-    },
-    {
       "type": "font_picker",
       "id": "heading_font",
-      "label": "Fuente del título (Shopify)",
-      "info": "Se usa cuando el origen es 'Fuente de Shopify'. También aporta las fuentes de respaldo.",
+      "label": "Fuente del título",
       "default": "work_sans_n7"
-    },
-    {
-      "type": "text",
-      "id": "heading_custom_font_name",
-      "label": "Nombre de la fuente personalizada",
-      "info": "Ej: 'MiFuente'. Se usa como font-family."
-    },
-    {
-      "type": "url",
-      "id": "heading_custom_font_url",
-      "label": "URL del archivo de fuente",
-      "info": "Sube el .woff2/.woff/.ttf a Contenido → Archivos y pega su URL. Se usa cuando el origen es 'personalizada'."
-    },
-    {
-      "type": "select",
-      "id": "heading_custom_font_weight",
-      "label": "Peso real del archivo de fuente",
-      "info": "Peso con el que se registra el @font-face de la fuente personalizada.",
-      "options": [
-        { "value": "auto", "label": "Normal" },
-        { "value": "100", "label": "100" },
-        { "value": "200", "label": "200" },
-        { "value": "300", "label": "300" },
-        { "value": "400", "label": "400" },
-        { "value": "500", "label": "500" },
-        { "value": "600", "label": "600" },
-        { "value": "700", "label": "700" },
-        { "value": "800", "label": "800" },
-        { "value": "900", "label": "900" }
-      ],
-      "default": "auto"
     },
     {
       "type": "select",
@@ -458,13 +421,6 @@
         { "value": "900", "label": "900 - Black" }
       ],
       "default": "auto"
-    },
-    {
-      "type": "checkbox",
-      "id": "heading_bold",
-      "label": "Título en negrita",
-      "info": "Solo se aplica si el grosor está en 'Automático'.",
-      "default": false
     },
     {
       "type": "range",
@@ -522,49 +478,10 @@
       "content": "Tipografía — Título de feature"
     },
     {
-      "type": "select",
-      "id": "feature_title_font_type",
-      "label": "Origen de la fuente",
-      "options": [
-        { "value": "theme", "label": "Fuente de Shopify" },
-        { "value": "custom", "label": "Fuente personalizada (URL / @font-face)" }
-      ],
-      "default": "theme"
-    },
-    {
       "type": "font_picker",
       "id": "feature_title_font",
-      "label": "Fuente del título de feature (Shopify)",
+      "label": "Fuente del título de feature",
       "default": "work_sans_n7"
-    },
-    {
-      "type": "text",
-      "id": "feature_title_custom_font_name",
-      "label": "Nombre de la fuente personalizada"
-    },
-    {
-      "type": "url",
-      "id": "feature_title_custom_font_url",
-      "label": "URL del archivo de fuente",
-      "info": "Sube el archivo a Contenido → Archivos y pega su URL."
-    },
-    {
-      "type": "select",
-      "id": "feature_title_custom_font_weight",
-      "label": "Peso real del archivo de fuente",
-      "options": [
-        { "value": "auto", "label": "Normal" },
-        { "value": "100", "label": "100" },
-        { "value": "200", "label": "200" },
-        { "value": "300", "label": "300" },
-        { "value": "400", "label": "400" },
-        { "value": "500", "label": "500" },
-        { "value": "600", "label": "600" },
-        { "value": "700", "label": "700" },
-        { "value": "800", "label": "800" },
-        { "value": "900", "label": "900" }
-      ],
-      "default": "auto"
     },
     {
       "type": "select",
@@ -583,13 +500,6 @@
         { "value": "900", "label": "900 - Black" }
       ],
       "default": "auto"
-    },
-    {
-      "type": "checkbox",
-      "id": "feature_title_bold",
-      "label": "Título de feature en negrita",
-      "info": "Solo se aplica si el grosor está en 'Automático'.",
-      "default": true
     },
     {
       "type": "range",
@@ -632,49 +542,10 @@
       "content": "Tipografía — Descripción"
     },
     {
-      "type": "select",
-      "id": "feature_description_font_type",
-      "label": "Origen de la fuente",
-      "options": [
-        { "value": "theme", "label": "Fuente de Shopify" },
-        { "value": "custom", "label": "Fuente personalizada (URL / @font-face)" }
-      ],
-      "default": "theme"
-    },
-    {
       "type": "font_picker",
       "id": "feature_description_font",
-      "label": "Fuente de la descripción (Shopify)",
+      "label": "Fuente de la descripción",
       "default": "work_sans_n4"
-    },
-    {
-      "type": "text",
-      "id": "feature_description_custom_font_name",
-      "label": "Nombre de la fuente personalizada"
-    },
-    {
-      "type": "url",
-      "id": "feature_description_custom_font_url",
-      "label": "URL del archivo de fuente",
-      "info": "Sube el archivo a Contenido → Archivos y pega su URL."
-    },
-    {
-      "type": "select",
-      "id": "feature_description_custom_font_weight",
-      "label": "Peso real del archivo de fuente",
-      "options": [
-        { "value": "auto", "label": "Normal" },
-        { "value": "100", "label": "100" },
-        { "value": "200", "label": "200" },
-        { "value": "300", "label": "300" },
-        { "value": "400", "label": "400" },
-        { "value": "500", "label": "500" },
-        { "value": "600", "label": "600" },
-        { "value": "700", "label": "700" },
-        { "value": "800", "label": "800" },
-        { "value": "900", "label": "900" }
-      ],
-      "default": "auto"
     },
     {
       "type": "select",
@@ -693,13 +564,6 @@
         { "value": "900", "label": "900 - Black" }
       ],
       "default": "auto"
-    },
-    {
-      "type": "checkbox",
-      "id": "feature_description_bold",
-      "label": "Descripción en negrita",
-      "info": "Solo se aplica si el grosor está en 'Automático'.",
-      "default": false
     },
     {
       "type": "range",
