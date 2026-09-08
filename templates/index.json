@@ -126,8 +126,8 @@
       "settings": {
         "image": "shopify://shop_images/bg-love-hope.webp",
         "image_side": "left",
-        "container_height": 60,
-        "container_height_mobile": 60,
+        "container_height": 55,
+        "container_height_mobile": 40,
         "heading": "<p>¿Por qué todos <strong>aman</strong> HOPE?</p>",
         "heading_font": "poppins_n4",
         "heading_weight": "600",

@@ -27,10 +27,6 @@
     width: 100%;
     max-width: none;
     margin-inline: 0;
-    /* height (no min-height) para que el control de vh gobierne en ambos
-       sentidos: subir Y bajar el slider cambia la altura real del contenedor. */
-    height: var(--hope-container-height, 60vh);
-    min-height: var(--hope-container-height, 60vh);
   }
 
   /* Imagen: rellena todo el espacio a la izquierda del panel, incluido el
@@ -40,9 +36,17 @@
     min-width: 0;
     position: relative;
     overflow: hidden;
+    /* Altura de la imagen definida por el control (vh). Si el texto es más
+       alto, la fila iguala al texto y la imagen se estira para llenar. */
+    min-height: var(--hope-img-height, 55vh);
   }
 
+  /* La imagen se posiciona en absoluto y llena el contenedor por completo.
+     Así se adapta a cualquier altura del contenedor (definida por el setting)
+     sin deformarse: object-fit: cover recorta sin distorsionar la relación. */
   .hope-features__image {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -75,9 +79,6 @@
     flex-direction: column;
     justify-content: center;
     padding: 64px 72px;
-    /* Si la altura fijada en vh es menor que el contenido, se hace scroll
-       interno en lugar de recortar el texto. */
-    overflow-y: auto;
   }
 
   /* Panel a la izquierda cuando la imagen va a la derecha */
@@ -193,15 +194,11 @@
     }
 
     .hope-features__media {
-      /* La altura de la imagen en móvil la gobierna el control de vh móvil. */
-      height: var(--hope-container-height-mobile, 45vh);
-      min-height: 0;
+      min-height: var(--hope-img-height-mobile, 40vh);
     }
 
     .hope-features__content {
       padding: 40px 24px;
-      /* En móvil no se recorta: el texto fluye completo bajo la imagen. */
-      overflow-y: visible;
     }
 
     .hope-features__heading {
@@ -235,8 +232,8 @@
     --color-background: {{ section.settings.background_color }};
     --color-foreground: {{ section.settings.text_color }};
     --color-heading: {{ section.settings.heading_color }};
-    --hope-container-height: {{ section.settings.container_height }}vh;
-    --hope-container-height-mobile: {{ section.settings.container_height_mobile }}vh;
+    --hope-img-height: {{ section.settings.container_height }}vh;
+    --hope-img-height-mobile: {{ section.settings.container_height_mobile }}vh;
     {%- comment -%} Familia del título {%- endcomment -%}
     --hope-heading-family: {{ section.settings.heading_font.family }}, {{ section.settings.heading_font.fallback_families }};
     --hope-heading-weight: {% if section.settings.heading_weight != 'auto' %}{{ section.settings.heading_weight }}{% else %}{{ section.settings.heading_font.weight }}{% endif %};
@@ -356,27 +353,28 @@
     },
     {
       "type": "header",
-      "content": "Altura del contenedor"
+      "content": "Altura de la imagen"
     },
     {
       "type": "range",
       "id": "container_height",
-      "label": "Altura en escritorio",
+      "label": "Altura de la imagen (escritorio)",
+      "info": "Alto de la foto en vh. Si el texto es más alto, la fila iguala al texto.",
       "min": 20,
-      "max": 100,
+      "max": 90,
       "step": 5,
       "unit": "vh",
-      "default": 60
+      "default": 55
     },
     {
       "type": "range",
       "id": "container_height_mobile",
-      "label": "Altura en móvil",
+      "label": "Altura de la imagen (móvil)",
       "min": 20,
-      "max": 100,
+      "max": 90,
       "step": 5,
       "unit": "vh",
-      "default": 60
+      "default": 40
     },
     {
       "type": "header",
