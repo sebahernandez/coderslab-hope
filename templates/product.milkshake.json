@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "main": {
+      "type": "custom-product-milkshake",
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

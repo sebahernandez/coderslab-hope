@@ -1,0 +1,272 @@
+{%- comment -%}
+  Section: custom-product-milkshake.liquid
+  Tema: Horizon
+  Uso: armador dedicado del producto "Milkshake" — combos pre-armados (opción única).
+
+  A diferencia de custom-product-helado / custom-product-v2 (helado configurable con
+  tamaño × extras, 2 toppings + sirope), aquí el cliente NO elige toppings ni siropes:
+  solo elige 1 combo ya armado, que se resuelve a una variante nativa del producto y se
+  agrega al carrito. La presentación de cada combo (emoji, ingredientes, gramos, imagen
+  Cloudinary) viene del metafield custom.milkshake_combos del producto vinculado.
+
+  Assets propios (no globales): milkshake-customizer.css / .js.
+  Mantiene la línea gráfica global (.hopecfg / hopecfg__*) para heredar el layout base.
+  Usa el atributo data-hopecfg-ms (no data-hopecfg) para que el toppings-customizer.js
+  global NO inicialice esta raíz.
+{%- endcomment -%}
+
+{{ 'milkshake-customizer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'milkshake-customizer.js' | asset_url }}" defer></script>
+
+{%- liquid
+  assign p_milkshake = section.settings.producto_milkshake | default: closest.product | default: product
+  assign ms_combos = p_milkshake.metafields.custom.milkshake_combos.value
+
+  assign titulo_dinamico = section.settings.titulo
+  if titulo_dinamico == blank
+    if p_milkshake.title
+      assign titulo_dinamico = 'Crea tu ' | append: p_milkshake.title
+    else
+      assign titulo_dinamico = 'Crea tu Milkshake'
+    endif
+  endif
+
+  assign base_asset_val = section.settings.base_asset
+  if base_asset_val == blank
+    assign base_asset_val = 'hope-milkshake-strawberry-cutout-v3'
+  endif
+-%}
+
+{%- capture products_json -%}
+{
+  {%- if p_milkshake -%}
+  "milkshake": {
+    "id": {{ p_milkshake.id }},
+    "handle": {{ p_milkshake.handle | json }},
+    "variants": [
+      {%- for v in p_milkshake.variants -%}
+        {"id": {{ v.id }}, "option1": {{ v.option1 | json }}, "option2": {{ v.option2 | json }}, "price": {{ v.price }}, "price_formatted": {{ v.price | money | strip_html | json }}, "available": {{ v.available }} }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  }
+  {%- endif -%}
+}
+{%- endcapture -%}
+
+<div
+  class="hopecfg hopecfg--milkshake"
+  data-hopecfg-ms
+  data-modo="milkshake"
+  data-money-format="{{ shop.money_format | escape }}"
+  data-cloudinary-account="{{ section.settings.cloudinary_account | default: 'slealu5f' | escape }}"
+  data-cloudinary-folder="{{ section.settings.cloudinary_folder | default: 'hope/catalog' | escape }}"
+  data-base-asset="{{ base_asset_val | escape }}"
+>
+  <script type="application/json" data-hopecfg-products>{{ products_json }}</script>
+
+  <div class="hopecfg__frame">
+    {%- comment -%} ===== Panel de vista previa ===== {%- endcomment -%}
+    <section class="hopecfg__preview" id="preview-panel" data-view="milkshake">
+      {%- if section.settings.logo != blank -%}
+        <div class="hopecfg__brand" id="brand-badge">
+          <img
+            class="hopecfg__brand-logo"
+            src="{{ section.settings.logo | image_url: width: 320 }}"
+            alt="{{ shop.name | escape }}"
+            width="160"
+            loading="eager"
+          >
+        </div>
+      {%- endif -%}
+
+      <div class="hopecfg__stage">
+        <img
+          id="product-preview"
+          class="hopecfg__cup"
+          data-mode="milkshake"
+          src=""
+          alt="{{ p_milkshake.title | default: shop.name | escape }}"
+          decoding="async"
+        >
+      </div>
+
+      <div class="hopecfg__extras" id="extras-panel">
+        <div class="hopecfg__extras-inner">
+          <div class="ms__preview-copy">
+            <p class="ms__preview-eyebrow">Tu milkshake</p>
+            <p id="ms-combo-label" class="hopecfg__extras-label">—</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    {%- comment -%} ===== Panel de configuración ===== {%- endcomment -%}
+    <section class="hopecfg__config" id="config-panel" data-view="milkshake">
+      <div class="hopecfg__config-scroll">
+        <div class="hopecfg__heading">
+          <p class="hopecfg__eyebrow">{{ section.settings.eyebrow | default: 'Milkshake de yogurt griego' }}</p>
+          <h2 class="hopecfg__title">{{ titulo_dinamico }}</h2>
+        </div>
+
+        {%- if section.settings.solo_delivery -%}
+          <div class="hope2__delivery-notice" role="note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M1 3h15v13H1z" />
+              <path d="M16 8h4l3 3v5h-7V8z" />
+              <circle cx="5.5" cy="18.5" r="2.5" />
+              <circle cx="18.5" cy="18.5" r="2.5" />
+            </svg>
+            <span>{{ section.settings.delivery_text | default: 'Este producto es solo para delivery' }}</span>
+          </div>
+        {%- endif -%}
+
+        <div id="hope-options" class="hopecfg__groups">
+          <fieldset id="combo-options" class="hopecfg__group" data-group="combo">
+            <legend class="hopecfg__legend">Elige tu combo</legend>
+            <div class="ms__grid">
+              {%- if ms_combos and ms_combos.size > 0 -%}
+                {%- for combo in ms_combos -%}
+                  <button
+                    class="hopecfg__choice ms__choice{% if forloop.first %} is-active{% endif %}"
+                    data-id="{{ combo.combo | escape }}"
+                    data-label="{{ combo.combo | escape }}"
+                    data-emoji="{{ combo.emoji | escape }}"
+                    data-asset="{{ combo.asset | escape }}"
+                    type="button"
+                  >
+                    <span class="hopecfg__check"></span>
+                    <span class="ms__thumb">
+                      {%- if combo.asset != blank -%}
+                        <img class="ms__img" data-combo-img alt="{{ combo.combo | escape }}" loading="lazy" width="54" height="54">
+                      {%- else -%}
+                        <span class="ms__emoji">{{ combo.emoji }}</span>
+                      {%- endif -%}
+                    </span>
+                    <span class="ms__body">
+                      <span class="ms__name">{{ combo.combo }}</span>
+                      <span class="ms__ingredientes">{{ combo.ingredientes }}</span>
+                    </span>
+                    <span class="ms__meta">
+                      {%- if combo.gramos != blank -%}<span class="ms__gramos">{{ combo.gramos }}</span>{%- endif -%}
+                      <span class="ms__price" data-combo-price></span>
+                    </span>
+                  </button>
+                {%- endfor -%}
+              {%- else -%}
+                <p class="ms__empty">Este producto no tiene combos configurados. Añádelos en el metafield <code>custom.milkshake_combos</code>.</p>
+              {%- endif -%}
+            </div>
+          </fieldset>
+        </div>
+      </div>
+
+      <footer class="hopecfg__footer">
+        <div class="hopecfg__total">
+          <p class="hopecfg__total-label">Total</p>
+          <p id="price" class="hopecfg__price">—</p>
+          <p id="buy-hint" class="hopecfg__buy-hint"></p>
+        </div>
+        <div class="hopecfg__actions">
+          <button id="reset-view" type="button" class="hopecfg__reset" aria-label="Reiniciar" title="Reiniciar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 11a8 8 0 1 0-2.34 5.66" />
+              <path d="M20 4v7h-7" />
+            </svg>
+          </button>
+          <button id="buy" type="button" class="hopecfg__buy">
+            {{ section.settings.texto_boton | default: 'AÑADIR AL CARRITO' }} <span class="hopecfg__buy-arrow">→</span>
+          </button>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+  <div id="toast" class="hopecfg__toast" role="status" aria-live="polite">¡Tu selección fue añadida! ✨</div>
+</div>
+
+{% schema %}
+{
+  "name": "Armador Milkshake",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Marca y textos"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto superior (eyebrow)",
+      "default": "Milkshake de yogurt griego"
+    },
+    {
+      "type": "text",
+      "id": "titulo",
+      "label": "Título (opcional)",
+      "info": "Si se deja vacío, se usa \"Crea tu \" + el nombre del producto."
+    },
+    {
+      "type": "text",
+      "id": "texto_boton",
+      "label": "Texto botón carrito",
+      "default": "AÑADIR AL CARRITO"
+    },
+    {
+      "type": "header",
+      "content": "Aviso de delivery"
+    },
+    {
+      "type": "checkbox",
+      "id": "solo_delivery",
+      "label": "Mostrar aviso \"solo para delivery\"",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "delivery_text",
+      "label": "Texto del aviso de delivery",
+      "default": "Este producto es solo para delivery"
+    },
+    {
+      "type": "header",
+      "content": "Producto vinculado (carrito real)"
+    },
+    {
+      "type": "product",
+      "id": "producto_milkshake",
+      "label": "Producto · Milkshake"
+    },
+    {
+      "type": "header",
+      "content": "Imágenes (Cloudinary)"
+    },
+    {
+      "type": "text",
+      "id": "cloudinary_account",
+      "label": "Cloud name",
+      "default": "slealu5f"
+    },
+    {
+      "type": "text",
+      "id": "cloudinary_folder",
+      "label": "Carpeta del catálogo",
+      "default": "hope/catalog"
+    },
+    {
+      "type": "text",
+      "id": "base_asset",
+      "label": "Imagen base del vaso (Cloudinary) — opcional",
+      "info": "Si se deja vacío se usa la imagen del primer combo, o hope-milkshake-strawberry-cutout-v3."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Armador Milkshake"
+    }
+  ]
+}
+{% endschema %}

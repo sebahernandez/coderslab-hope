@@ -1,0 +1,154 @@
+/* ==========================================================================
+   Armador Milkshake — combos pre-armados (opción única)
+   Complementa la línea gráfica global (.hopecfg / hopecfg__*). Solo añade lo
+   específico del milkshake, scoped bajo .hopecfg--milkshake.
+   Paleta: ink #392f36 · hope #ed5d96 · cream #fff8f5
+   ========================================================================== */
+
+/* Grilla de cards de combo */
+.hopecfg--milkshake .ms__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+}
+@media (min-width: 1024px) {
+  .hopecfg--milkshake .ms__grid { gap: 0.75rem; }
+}
+
+/* Card de combo (fila: emoji · cuerpo · meta) */
+.hopecfg--milkshake .ms__choice {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.85rem 2rem 0.85rem 0.9rem;
+  border-radius: 16px;
+  text-align: left;
+}
+
+.hopecfg--milkshake .ms__thumb {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid #ffe0ee;
+  overflow: hidden;
+}
+.hopecfg--milkshake .ms__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.hopecfg--milkshake .ms__emoji {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.hopecfg--milkshake .ms__body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.hopecfg--milkshake .ms__name {
+  font-size: 0.95rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+.hopecfg--milkshake .ms__ingredientes {
+  font-size: 11px;
+  line-height: 1.25;
+  color: #8c7881;
+}
+
+.hopecfg--milkshake .ms__meta {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-align: right;
+}
+.hopecfg--milkshake .ms__gramos {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #b39aa4;
+}
+.hopecfg--milkshake .ms__price {
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: var(--hopecfg-ink, #392f36);
+}
+.hopecfg--milkshake .ms__choice.is-active .ms__price {
+  color: var(--hopecfg-hope, #ed5d96);
+}
+
+/* Estado vacío (sin combos en el metafield) */
+.hopecfg--milkshake .ms__empty {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  background: #fff0f6;
+  color: #a03c68;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.hopecfg--milkshake .ms__empty code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+}
+
+/* Copy del combo elegido en la vista previa */
+.hopecfg--milkshake .hopecfg__extras-inner {
+  flex-direction: row;
+  justify-content: flex-start;
+  text-align: left;
+}
+.hopecfg--milkshake .ms__preview-copy { display: flex; flex-direction: column; gap: 2px; }
+.hopecfg--milkshake .ms__preview-eyebrow {
+  margin: 0;
+  font-size: 8px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #9b7a86;
+}
+
+/* Aviso: producto solo disponible para delivery (copiado de hope-customizer-v2.css,
+   ya que .hope2__delivery-notice no es una clase global). */
+.hope2__delivery-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0 0.25rem;
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  border: 1.5px solid #f7b7d0;
+  background: #fff0f6;
+  color: #a03c68;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+.hope2__delivery-notice svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--hopecfg-hope, #ed5d96);
+}
+
+@media (min-width: 1024px) {
+  .hopecfg--milkshake .ms__thumb { width: 62px; height: 62px; }
+  .hopecfg--milkshake .ms__emoji { font-size: 1.9rem; }
+  .hopecfg--milkshake .ms__name { font-size: 1.05rem; }
+  .hopecfg--milkshake .ms__ingredientes { font-size: 12px; }
+  .hopecfg--milkshake .ms__price { font-size: 1rem; }
+}

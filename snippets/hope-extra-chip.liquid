@@ -5,26 +5,42 @@
   y elegir la variante nativa "nivel de precio" del producto (no hay producto add-on).
 
   @param {object} item - Item del metafield custom.opciones_customizador
-                         { id, nombre, emoji, precio_cents, premium }
+                         { id, nombre, emoji, precio_cents, premium, imagen }
   @param {string} tipo - 'topping' | 'syrup'
+
+  Si el item trae `imagen` (URL Cloudinary del ingrediente), se muestra esa imagen
+  en el chip; si no, se usa el emoji como respaldo. `data-image` la expone al JS
+  (burbujas / mini-stack de la vista previa).
 {%- endcomment -%}
 
 {%- assign vcents = item.precio_cents | default: 0 -%}
 <button
-  class="hopecfg__choice hopecfg__choice--chip"
+  class="hopecfg__choice hopecfg__choice--chip{% if item.imagen != blank %} has-img{% endif %}"
   data-id="{{ item.id }}"
   data-label="{{ item.nombre | escape }}"
   data-emoji="{{ item.emoji }}"
+  data-image="{{ item.imagen }}"
   data-precio-cents="{{ vcents }}"
   type="button"
 >
   {%- if tipo == 'topping' -%}
-    <span class="topping-icon">{{ item.emoji }}</span>
+    <span class="topping-icon">
+      {%- if item.imagen != blank -%}
+        <img class="topping-img" src="{{ item.imagen }}" alt="{{ item.nombre | escape }}" loading="lazy" width="44" height="44">
+      {%- else -%}
+        {{- item.emoji -}}
+      {%- endif -%}
+    </span>
     <span class="topping-name">
       {{- item.nombre -}}
       {%- if item.premium %} <span class="hopecfg__star">★</span>{% endif -%}
     </span>
   {%- else -%}
+    {%- if item.imagen != blank -%}
+      <span class="topping-icon">
+        <img class="topping-img" src="{{ item.imagen }}" alt="{{ item.nombre | escape }}" loading="lazy" width="36" height="36">
+      </span>
+    {%- endif -%}
     {{- item.nombre -}}
     {%- if item.premium %} <span class="hopecfg__star">★</span>{% endif -%}
   {%- endif -%}

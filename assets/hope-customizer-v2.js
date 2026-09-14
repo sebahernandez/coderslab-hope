@@ -94,7 +94,12 @@
 
     var SIZE_NAME = { small: "Pequeño", medium: "Mediano", large: "Grande" };
 
-    // ---- Resolución de variante nativa (Tamaño × nivel de Extras) ----
+    // ---- Resolución de variante nativa (Tamaño × tramo de Extras) ----
+    // El precio se cobra con variantes nativas por tramo: option1 = tamaño,
+    // option2 = "$X.XX" = total de extras elegidos (2 toppings + máx 1 premium + 1 sirope).
+    // El total de extras se calcula sumando el precio de cada item seleccionado
+    // (data-precio-cents, que viene del metafield) y se mapea a la variante cuyo
+    // option2 coincide. Así funciona en cualquier plan (sin Functions ni add-ons).
     function heladoMinCents(sizeName) {
       var p = PRODUCTS.helado;
       if (!p || !p.variants) return null;
@@ -104,18 +109,31 @@
       });
       return min;
     }
-    function heladoLevel() { return state.premium ? "Con premium" : "Estándar"; }
-    function findHeladoVariant(sizeName, level) {
+    function centsOf(group, id) {
+      if (!id) return 0;
+      var sel = window.CSS && CSS.escape ? CSS.escape(id) : id;
+      var el = $("[data-group='" + group + "'] [data-id='" + sel + "']");
+      return el ? parseInt(el.dataset.precioCents || "0", 10) : 0;
+    }
+    function extrasCents() {
+      var total = 0;
+      state.toppings.forEach(function (id) { total += centsOf("topping", id); });
+      if (state.premium) total += centsOf("premium", state.premium);
+      if (state.syrup) total += centsOf("syrup", state.syrup);
+      return total;
+    }
+    function extrasLabel() { return "$" + (extrasCents() / 100).toFixed(2); }
+    function findVariant(sizeName, extraLabel) {
       var p = PRODUCTS.helado;
       if (!p || !p.variants) return null;
       for (var i = 0; i < p.variants.length; i++) {
         var v = p.variants[i];
-        if (v.option1 === sizeName && v.option2 === level) return v;
+        if (v.option1 === sizeName && v.option2 === extraLabel) return v;
       }
       return null;
     }
     function variantForState() {
-      return findHeladoVariant(SIZE_NAME[state.size] || state.size, heladoLevel());
+      return findVariant(SIZE_NAME[state.size] || state.size, extrasLabel());
     }
 
     // ---- Lectura de datos de los chips ----
@@ -203,9 +221,9 @@
 
     // ---- Precios y gating del botón ----
     function updatePrice() {
+      var variant = variantForState();
       var priceEl = $("#price");
       if (priceEl) {
-        var variant = variantForState();
         priceEl.textContent = variant ? variant.price_formatted : "—";
       }
       $$("#size-options .hopecfg__choice").forEach(function (btn) {
@@ -220,9 +238,11 @@
       var hintEl = $("#buy-hint");
       if (buyBtn) {
         var valid = isValidSelection();
-        buyBtn.disabled = !valid;
-        buyBtn.classList.toggle("is-disabled", !valid);
-        if (hintEl) hintEl.textContent = valid ? "" : "Falta: " + missingMessage();
+        var hasVariant = !!variant;
+        var ok = valid && hasVariant;
+        buyBtn.disabled = !ok;
+        buyBtn.classList.toggle("is-disabled", !ok);
+        if (hintEl) hintEl.textContent = valid ? (hasVariant ? "" : "Combinación no disponible") : "Falta: " + missingMessage();
       }
     }
 
