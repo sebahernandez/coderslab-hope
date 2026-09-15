@@ -195,7 +195,13 @@
 
     function buildProperties() {
       var props = {};
-      if (state.combo) props["Combo"] = readLabel(state.combo);
+      if (state.combo) {
+        props["Combo"] = readLabel(state.combo);
+        // Imagen del combo (cutout Cloudinary) para mostrarla como miniatura de la
+        // línea del carrito. Property oculta (prefijo "_") → no aparece en el detalle.
+        var asset = readAsset(state.combo);
+        if (asset) props["_imagen"] = catalogUrl(asset, 400);
+      }
       return props;
     }
 

@@ -120,7 +120,13 @@
                   role="cell"
                   headers="productImage"
                 >
-                  {% if item.image -%}
+                  {%- comment -%}
+                    Imagen personalizada del armador (Milkshake): la property oculta `_imagen`
+                    trae la URL Cloudinary del combo elegido. Si existe, se usa como miniatura
+                    de la línea (con <img> directo, porque image_url no acepta URLs externas).
+                  {%- endcomment -%}
+                  {%- assign custom_img = item.properties['_imagen'] -%}
+                  {% if custom_img != blank or item.image -%}
                     {% liquid
                       assign ratio = 1
                       assign border_opacity = settings.cart_thumbnail_border_opacity | divided_by: 100.0
@@ -131,7 +137,7 @@
                       endif
                       if block.settings.image_ratio == 'portrait'
                         assign ratio = 0.8
-                      elsif block.settings.image_ratio == 'adapt'
+                      elsif block.settings.image_ratio == 'adapt' and custom_img == blank
                         assign ratio = item.image.aspect_ratio
                       endif
                     %}
@@ -140,9 +146,20 @@
                       class="cart-items__media-container"
                       style="--ratio:{{ ratio }};"
                     >
-                      {%- liquid
-                        echo item.image | image_url: width: 250 | image_tag: class: 'cart-items__media-image border-style', style: border_override
-                      -%}
+                      {%- if custom_img != blank -%}
+                        <img
+                          src="{{ custom_img }}"
+                          alt="{{ item.product.title | escape }}"
+                          class="cart-items__media-image border-style"
+                          style="{{ border_override }}"
+                          width="250"
+                          loading="lazy"
+                        >
+                      {%- else -%}
+                        {%- liquid
+                          echo item.image | image_url: width: 250 | image_tag: class: 'cart-items__media-image border-style', style: border_override
+                        -%}
+                      {%- endif -%}
                     </a>
                   {%- endif %}
                 </td>
