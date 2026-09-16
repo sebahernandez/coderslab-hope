@@ -1,0 +1,25 @@
+{%- comment -%}
+  Section: addon-redirect.liquid
+  Los productos add-on (tag `addon`, templateSuffix `addon`) NO se venden por
+  separado: se añaden automáticamente desde el armador de helados. Si alguien
+  llega a la URL directa del add-on, se redirige al armador y se marca noindex.
+{%- endcomment -%}
+<meta name="robots" content="noindex, nofollow">
+<div style="max-width:560px;margin:4rem auto;padding:0 1.25rem;text-align:center;font-family:inherit;">
+  <h1 style="font-size:1.4rem;margin:0 0 .5rem;">Este producto es un complemento</h1>
+  <p style="opacity:.8;margin:0 0 1.5rem;">
+    Los extras se agregan automáticamente desde el armador de helados. Te llevamos allí…
+  </p>
+  <a href="/products/helado-hope" style="display:inline-block;padding:.75rem 1.25rem;border-radius:999px;background:#ed5d96;color:#fff;font-weight:800;text-decoration:none;">
+    Ir a crear tu helado
+  </a>
+</div>
+<script>
+  (function () {
+    try { window.location.replace("/products/helado-hope"); } catch (e) {}
+  })();
+</script>
+
+{% schema %}
+{ "name": "Add-on redirect", "settings": [] }
+{% endschema %}

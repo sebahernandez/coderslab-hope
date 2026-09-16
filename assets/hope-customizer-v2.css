@@ -145,6 +145,55 @@
   color: var(--hopecfg-hope, #ed5d96);
 }
 
+/* Marca de "Incluido" (verde suave) vs "con costo extra" (rosa) en los chips */
+.hopecfg--v2 .hopecfg__chip-price.is-included {
+  color: #2f9e6f;
+  opacity: 1;
+  font-weight: 800;
+}
+.hopecfg--v2 .hopecfg__chip-price.is-extra-cost {
+  color: var(--hopecfg-hope, #ed5d96);
+  opacity: 1;
+  font-weight: 800;
+}
+/* Chip estándar seleccionado por encima de los incluidos: contorno rosa punteado */
+.hopecfg--v2 .hopecfg__choice.is-extra-cost {
+  box-shadow: 0 0 0 2px #f7a9c9 inset;
+}
+
+/* Aviso de costo adicional por toppings (regla UX) */
+.hope2__cost-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0 0 0.6rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 12px;
+  border: 1.5px solid #f6c14d;
+  background: #fff7e6;
+  color: #8a5a00;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.3;
+  animation: hope2-pop 0.25s cubic-bezier(0.22, 0.75, 0.25, 1);
+}
+.hope2__cost-warning[hidden] { display: none; }
+.hope2__cost-warning svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: #e0a020;
+}
+
+/* Desglose de extras bajo el precio total */
+.hopecfg--v2 .hopecfg__extras-breakdown {
+  margin: 2px 0 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--hopecfg-hope, #ed5d96);
+}
+.hopecfg--v2 .hopecfg__extras-breakdown:empty { display: none; }
+
 /* Aviso: producto solo disponible para delivery (Mixo Hope) */
 .hope2__delivery-notice {
   display: flex;

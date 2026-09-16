@@ -56,6 +56,27 @@
       assign base_asset_val = 'hope-vanilla-cup-cutout-v1'
     endif
   endif
+
+  comment
+    Producto add-on "Extras personalizados" ($0.10/u). Todos los extras pagados se
+    cobran en 1 sola línea = variante add-on × (total de extras / 0.10). Si no se
+    elige en el tema, se usa la variante por defecto creada vía CLI.
+  endcomment
+  assign p_extras = section.settings.producto_extras
+  assign extras_variant_id = ''
+  if p_extras
+    assign ev = p_extras.selected_or_first_available_variant | default: p_extras.variants.first
+    if ev
+      assign extras_variant_id = ev.id
+    endif
+  endif
+  if extras_variant_id == blank
+    assign extras_variant_id = 51331832971516
+  endif
+
+  assign free_toppings = section.settings.free_toppings | default: 2
+  assign extra_topping_cents = section.settings.extra_topping_cents | default: 100
+  assign free_syrups = section.settings.free_syrups | default: 1
 -%}
 
 {%- capture products_json -%}
@@ -82,6 +103,10 @@
   data-cloudinary-account="{{ section.settings.cloudinary_account | default: 'slealu5f' | escape }}"
   data-cloudinary-folder="{{ section.settings.cloudinary_folder | default: 'hope/catalog' | escape }}"
   data-base-asset="{{ base_asset_val | escape }}"
+  data-extras-variant-id="{{ extras_variant_id }}"
+  data-free-toppings="{{ free_toppings }}"
+  data-extra-topping-cents="{{ extra_topping_cents }}"
+  data-free-syrups="{{ free_syrups }}"
 >
   <script type="application/json" data-hopecfg-products>{{ products_json }}</script>
 
@@ -166,12 +191,20 @@
             </div>
           </fieldset>
 
-          {%- comment -%} Toppings normales: obligatorio elegir 2 (incluidos en el precio) {%- endcomment -%}
+          {%- comment -%} Toppings estándar: los primeros 2 van incluidos; cada extra +$1.00 {%- endcomment -%}
           <fieldset id="topping-options" class="hopecfg__group" data-group="topping">
             <legend class="hopecfg__legend">
-              <span id="topping-title">2 · Elige 2 toppings</span>
-              <span class="hopecfg__legend-count" data-topping-count>0/2</span>
+              <span id="topping-title">2 · Elige tus toppings <span class="hopecfg__legend-hint">({{ free_toppings }} incluidos)</span></span>
+              <span class="hopecfg__legend-count" data-topping-count>0/{{ free_toppings }}</span>
             </legend>
+            <div id="topping-warning" class="hope2__cost-warning" role="note" hidden>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 8v5" />
+                <path d="M12 16h.01" />
+              </svg>
+              <span>Los primeros {{ free_toppings }} toppings están incluidos. Cada topping adicional tiene un costo de {{ extra_topping_cents | money }}.</span>
+            </div>
             <div class="hopecfg__chips topping-grid">
               {%- if meta_topping_count > 0 -%}
                 {%- for c in cfg_cats -%}
@@ -196,10 +229,10 @@
             </div>
           </fieldset>
 
-          {%- comment -%} Toppings premium: opcionales, máximo 1 (+precio) {%- endcomment -%}
+          {%- comment -%} Toppings premium: opcionales, sin límite, cada uno +su precio {%- endcomment -%}
           <fieldset id="premium-options" class="hopecfg__group" data-group="premium">
             <legend class="hopecfg__legend">
-              Toppings premium <span class="hopecfg__legend-hint">(opcional · máx 1)</span>
+              Toppings premium <span class="hopecfg__legend-hint">(opcional · cada uno con costo)</span>
             </legend>
             <div class="hopecfg__chips">
               {%- if meta_topping_count > 0 -%}
@@ -217,7 +250,7 @@
           </fieldset>
 
           <fieldset id="syrup-options" class="hopecfg__group" data-group="syrup">
-            <legend class="hopecfg__legend">3 · Elige 1 sirope <span class="hopecfg__legend-hint">(obligatorio)</span></legend>
+            <legend class="hopecfg__legend">3 · Elige tu sirope <span class="hopecfg__legend-hint">({{ free_syrups }} incluido · cada extra con costo)</span></legend>
             <div class="hopecfg__chips">
               {%- if cat_sirope.items.size > 0 -%}
                 {%- for item in cat_sirope.items -%}
@@ -256,6 +289,7 @@
         <div class="hopecfg__total">
           <p class="hopecfg__total-label">Total</p>
           <p id="price" class="hopecfg__price">—</p>
+          <p id="extras-breakdown" class="hopecfg__extras-breakdown"></p>
           <p id="buy-hint" class="hopecfg__buy-hint"></p>
         </div>
         <div class="hopecfg__actions">
@@ -321,6 +355,41 @@
       "type": "product",
       "id": "producto_helado",
       "label": "Producto · Helado"
+    },
+    {
+      "type": "product",
+      "id": "producto_extras",
+      "label": "Producto · Extras personalizados (add-on $0.10)",
+      "info": "Todos los extras pagados se cobran en 1 línea = este add-on × (total de extras / 0.10). Si se deja vacío, se usa el add-on por defecto."
+    },
+    {
+      "type": "header",
+      "content": "Reglas de precio de extras"
+    },
+    {
+      "type": "range",
+      "id": "free_toppings",
+      "label": "Toppings estándar incluidos",
+      "min": 0,
+      "max": 5,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "number",
+      "id": "extra_topping_cents",
+      "label": "Costo por topping estándar adicional (centavos)",
+      "default": 100,
+      "info": "100 = $1.00 por cada topping estándar después de los incluidos."
+    },
+    {
+      "type": "range",
+      "id": "free_syrups",
+      "label": "Siropes incluidos",
+      "min": 0,
+      "max": 3,
+      "step": 1,
+      "default": 1
     },
     {
       "type": "header",

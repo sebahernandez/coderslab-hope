@@ -663,3 +663,88 @@
   // Modelo nativo: el carrito, la burbuja y la cantidad los maneja Horizon.
   // (Se retiran setupOrphanCleanup / setupHopeBadge / setupBundleQuantity del modelo bundle.)
 })();
+
+/**
+ * Utilidad GLOBAL para las líneas add-on "Extras personalizados" del armador V2
+ * (hope-customizer-v2.js). Se carga en todo el sitio vía layout/theme.liquid.
+ *  - Limpieza de huérfanos: si se elimina la línea del helado, se elimina también
+ *    su línea de extras asociada (comparten la property oculta `_hope_ext`).
+ *  - Contador del carrito: la burbuja cuenta solo las líneas principales (las que
+ *    NO tienen la property `Para`), para no contar la línea de extras como un ítem.
+ */
+(function () {
+  "use strict";
+  var CLEAN_SOURCE = "hopecfg-cleanup";
+
+  function getCart() {
+    return fetch("/cart.js", { headers: { Accept: "application/json" } }).then(function (r) { return r.json(); });
+  }
+  function sectionIds() {
+    var ids = [];
+    document.querySelectorAll("cart-items-component[data-section-id]").forEach(function (el) {
+      var id = el.dataset.sectionId;
+      if (id && ids.indexOf(id) === -1) ids.push(id);
+    });
+    return ids;
+  }
+  function isAddon(item) { return !!(item.properties && item.properties["Para"]); }
+  function grupoOf(item) { return item.properties && item.properties["_hope_ext"]; }
+  function mainCount(cart) {
+    var n = 0;
+    (cart.items || []).forEach(function (it) { if (!isAddon(it)) n += it.quantity; });
+    return n;
+  }
+  function updateBadge(cart) {
+    var n = mainCount(cart);
+    document.querySelectorAll(".cart-bubble__text-count").forEach(function (el) {
+      el.textContent = n;
+      el.classList.toggle("hidden", n === 0);
+    });
+  }
+  function cleanupOrphans(cart) {
+    var items = cart.items || [];
+    var mains = {};
+    items.forEach(function (it) { if (!isAddon(it)) { var g = grupoOf(it); if (g) mains[g] = true; } });
+    var updates = {};
+    var found = false;
+    items.forEach(function (it) {
+      if (isAddon(it)) { var g = grupoOf(it); if (g && !mains[g]) { updates[it.key] = 0; found = true; } }
+    });
+    if (!found) return Promise.resolve(false);
+    var payload = { updates: updates };
+    var sids = sectionIds();
+    if (sids.length) { payload.sections = sids.join(","); payload.sections_url = window.location.pathname; }
+    return fetch("/cart/update.js", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(payload),
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (newCart) {
+        document.dispatchEvent(new CustomEvent("cart:update", {
+          bubbles: true,
+          detail: {
+            resource: newCart,
+            sourceId: CLEAN_SOURCE,
+            data: { source: CLEAN_SOURCE, itemCount: mainCount(newCart), sections: newCart.sections },
+          },
+        }));
+        updateBadge(newCart);
+        return true;
+      })
+      .catch(function () { return false; });
+  }
+  function run() {
+    getCart().then(function (cart) {
+      cleanupOrphans(cart).then(function (cleaned) { if (!cleaned) updateBadge(cart); });
+    }).catch(function () {});
+  }
+  document.addEventListener("cart:update", function (e) {
+    if (e && e.detail && e.detail.sourceId === CLEAN_SOURCE) return; // evita bucle
+    setTimeout(run, 60);
+    setTimeout(function () { getCart().then(updateBadge).catch(function () {}); }, 320);
+  });
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run);
+  else run();
+  document.addEventListener("shopify:section:load", run);
+})();

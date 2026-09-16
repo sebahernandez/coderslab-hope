@@ -1,14 +1,24 @@
 /**
- * hope-customizer-v2.js — Configurador Hope V2 ("Crea tu helado Hope")
+ * hope-customizer-v2.js — Configurador Hope V2 ("Crea tu helado")
  *
- * Variante del configurador enfocada solo en el Helado Hope (modo 2d), con una
- * diferencia visual clave respecto a custom-product-helado:
- *  - El vaso base es fijo (no se intercambian composiciones Cloudinary).
- *  - Cada extra elegido (topping / premium / sirope) aparece como una burbuja
- *    circular flotando sobre el helado, con una insignia "+1", tal como el mock.
+ * Reglas de negocio (Helado Hope / Mixo Hope):
+ *  - Tamaño: Pequeño/Mediano/Grande = precio base ($5/$7/$9), variante nativa.
+ *  - Toppings estándar: los primeros 2 van INCLUIDOS en el precio base; cada
+ *    topping estándar adicional cuesta $1.00 (fijo). Sin límite superior.
+ *  - Toppings premium: sin límite; cada uno cobra su precio individual; NO
+ *    consumen los 2 estándar incluidos.
+ *  - Siropes: el primero va INCLUIDO; cada sirope adicional cobra su precio
+ *    individual. Sin límite (acumulativo).
  *
- * Reutiliza la línea gráfica global (.hopecfg / hopecfg__*) y la lógica de
- * carrito nativo (variante Tamaño × nivel de Extras + line item properties).
+ * Cobro (tienda no-Plus, sin Functions): el helado se añade como 1 línea nativa
+ * (variante de tamaño = precio base) y TODOS los extras pagados se cobran en una
+ * ÚNICA línea "Extras personalizados" (producto add-on de $0.10 × cantidad =
+ * total de extras en centésimas de $0.10). El desglose legible va como line item
+ * properties en la línea del helado. Ambas líneas comparten un `_hope_ext` oculto
+ * para la limpieza de huérfanos (ver toppings-customizer.js, listener global).
+ * NOTA: se usa `_hope_ext` (no `_grupo`) a propósito, para NO activar el viejo
+ * Cart Transform (hope-functions) que fusiona líneas con `_grupo` — ese modelo es
+ * solo-Plus y debe quedar inerte; aquí el cobro es 100% nativo por add-on.
  *
  * Es idempotente y solo actúa sobre raíces [data-hopecfg-v2].
  */
@@ -17,7 +27,6 @@
   "use strict";
 
   // Posiciones (en % del escenario) donde caen las burbujas sobre el helado.
-  // Pensadas para agruparse alrededor del remolino superior del vaso.
   var BUBBLE_ANCHORS = [
     { top: 32, left: 31 },
     { top: 26, left: 62 },
@@ -47,6 +56,13 @@
     var FOLDER = root.dataset.cloudinaryFolder || "hope/catalog";
     var MONEY_FORMAT = root.dataset.moneyFormat || "${{amount}}";
     var BASE_ASSET = root.dataset.baseAsset || "hope-vanilla-cup-cutout-v1";
+
+    // ---- Reglas de negocio (configurables por data-attr) ----
+    var FREE_TOPPINGS = parseInt(root.dataset.freeToppings || "2", 10);      // estándar incluidos
+    var EXTRA_TOPPING_CENTS = parseInt(root.dataset.extraToppingCents || "100", 10); // c/topping estándar extra
+    var FREE_SYRUPS = parseInt(root.dataset.freeSyrups || "1", 10);          // siropes incluidos
+    var EXTRAS_UNIT_CENTS = 10;                                              // precio unitario del add-on ($0.10)
+    var EXTRAS_VARIANT_ID = parseInt(root.dataset.extrasVariantId || "0", 10) || 0;
 
     function catalogUrl(asset, width) {
       width = width || 1000;
@@ -84,56 +100,56 @@
     }
 
     // ---- Estado ----
+    // Arreglos ordenados por orden de selección (para decidir cuáles van incluidos).
     var state = {
       size: "small",
-      toppings: new Set(), // exactamente 2
-      premium: null,       // opcional, máx 1
-      syrup: null,         // obligatorio, 1
-      lastKey: null,       // último extra elegido (para resaltar su burbuja)
+      toppings: [], // estándar, sin límite (primeros FREE_TOPPINGS incluidos)
+      premium: [],  // premium, sin límite (cada uno con precio)
+      syrups: [],   // siropes, sin límite (primeros FREE_SYRUPS incluidos)
+      lastKey: null,
     };
 
     var SIZE_NAME = { small: "Pequeño", medium: "Mediano", large: "Grande" };
 
-    // ---- Resolución de variante nativa (Tamaño × tramo de Extras) ----
-    // El precio se cobra con variantes nativas por tramo: option1 = tamaño,
-    // option2 = "$X.XX" = total de extras elegidos (2 toppings + máx 1 premium + 1 sirope).
-    // El total de extras se calcula sumando el precio de cada item seleccionado
-    // (data-precio-cents, que viene del metafield) y se mapea a la variante cuyo
-    // option2 coincide. Así funciona en cualquier plan (sin Functions ni add-ons).
-    function heladoMinCents(sizeName) {
+    // ---- Variante nativa (solo por Tamaño) = precio base ----
+    function findSizeVariant(sizeName) {
       var p = PRODUCTS.helado;
       if (!p || !p.variants) return null;
-      var min = null;
-      p.variants.forEach(function (v) {
-        if (v.option1 === sizeName && (min === null || v.price < min)) min = v.price;
-      });
-      return min;
+      for (var i = 0; i < p.variants.length; i++) {
+        if (p.variants[i].option1 === sizeName) return p.variants[i];
+      }
+      return null;
     }
+    function variantForState() { return findSizeVariant(SIZE_NAME[state.size] || state.size); }
+    function baseCents() {
+      var v = variantForState();
+      return v ? v.price : null;
+    }
+
     function centsOf(group, id) {
       if (!id) return 0;
       var sel = window.CSS && CSS.escape ? CSS.escape(id) : id;
       var el = $("[data-group='" + group + "'] [data-id='" + sel + "']");
       return el ? parseInt(el.dataset.precioCents || "0", 10) : 0;
     }
-    function extrasCents() {
-      var total = 0;
-      state.toppings.forEach(function (id) { total += centsOf("topping", id); });
-      if (state.premium) total += centsOf("premium", state.premium);
-      if (state.syrup) total += centsOf("syrup", state.syrup);
-      return total;
+
+    // ---- Cálculo de extras (en centavos) ----
+    function standardExtraCount() { return Math.max(0, state.toppings.length - FREE_TOPPINGS); }
+    function standardExtraCents() { return standardExtraCount() * EXTRA_TOPPING_CENTS; }
+    function premiumCents() {
+      var t = 0;
+      state.premium.forEach(function (id) { t += centsOf("premium", id); });
+      return t;
     }
-    function extrasLabel() { return "$" + (extrasCents() / 100).toFixed(2); }
-    function findVariant(sizeName, extraLabel) {
-      var p = PRODUCTS.helado;
-      if (!p || !p.variants) return null;
-      for (var i = 0; i < p.variants.length; i++) {
-        var v = p.variants[i];
-        if (v.option1 === sizeName && v.option2 === extraLabel) return v;
-      }
-      return null;
+    function syrupExtraCents() {
+      var t = 0;
+      state.syrups.forEach(function (id, i) { if (i >= FREE_SYRUPS) t += centsOf("syrup", id); });
+      return t;
     }
-    function variantForState() {
-      return findVariant(SIZE_NAME[state.size] || state.size, extrasLabel());
+    function extrasCents() { return standardExtraCents() + premiumCents() + syrupExtraCents(); }
+    function totalCents() {
+      var b = baseCents();
+      return b == null ? null : b + extrasCents();
     }
 
     // ---- Lectura de datos de los chips ----
@@ -150,24 +166,19 @@
       return el ? (el.dataset.image || "") : "";
     }
 
-    // ---- Validación (2 toppings + 1 sirope) ----
-    function isValidSelection() { return state.toppings.size === 2 && !!state.syrup; }
+    // ---- Validación: al menos 1 sirope (obligatorio, el incluido) ----
+    function isValidSelection() { return state.syrups.length >= 1; }
     function missingMessage() {
-      var faltan = [];
-      var n = state.toppings.size;
-      if (n < 2) faltan.push("elige " + (2 - n) + " topping" + (2 - n === 1 ? "" : "s"));
-      if (!state.syrup) faltan.push("elige 1 sirope");
-      return faltan.join(" y ");
+      if (state.syrups.length < 1) return "elige 1 sirope";
+      return "";
     }
 
-    // ---- Lista ordenada de extras seleccionados ----
+    // ---- Lista ordenada de extras seleccionados (para burbujas/stack) ----
     function selectedExtras() {
       var out = [];
-      state.toppings.forEach(function (id) {
-        out.push({ key: "topping:" + id, group: "topping", id: id });
-      });
-      if (state.premium) out.push({ key: "premium:" + state.premium, group: "premium", id: state.premium });
-      if (state.syrup) out.push({ key: "syrup:" + state.syrup, group: "syrup", id: state.syrup });
+      state.toppings.forEach(function (id) { out.push({ key: "topping:" + id, group: "topping", id: id }); });
+      state.premium.forEach(function (id) { out.push({ key: "premium:" + id, group: "premium", id: id }); });
+      state.syrups.forEach(function (id) { out.push({ key: "syrup:" + id, group: "syrup", id: id }); });
       return out;
     }
 
@@ -196,7 +207,7 @@
       }).join("");
     }
 
-    // ---- Render mini-stack (esquina inferior de la vista previa) ----
+    // ---- Render mini-stack ----
     function renderStack() {
       var extras = selectedExtras();
       var stack = $("#hope-stack");
@@ -219,26 +230,78 @@
       }
     }
 
-    // ---- Precios y gating del botón ----
-    function updatePrice() {
-      var variant = variantForState();
-      var priceEl = $("#price");
-      if (priceEl) {
-        priceEl.textContent = variant ? variant.price_formatted : "—";
+    // ---- Marca de costo en los chips (Incluido / +$) ----
+    function setChipPrice(btn, text, extra) {
+      var s = btn.querySelector(".hopecfg__chip-price");
+      if (!s) {
+        s = document.createElement("span");
+        s.className = "hopecfg__chip-price";
+        btn.appendChild(s);
       }
-      $$("#size-options .hopecfg__choice").forEach(function (btn) {
-        var min = heladoMinCents(SIZE_NAME[btn.dataset.id]);
-        var sub = btn.querySelector("[data-size-price]");
-        if (sub && min != null) sub.textContent = formatMoney(min);
+      s.textContent = text;
+      s.classList.toggle("is-extra-cost", !!extra);
+      s.classList.toggle("is-included", !extra && text === "Incluido");
+    }
+
+    function renderChipPrices() {
+      // Toppings estándar: primeros FREE_TOPPINGS "Incluido"; extras "+$1.00".
+      $$("[data-group='topping'] .hopecfg__choice").forEach(function (b) {
+        var idx = state.toppings.indexOf(b.dataset.id);
+        if (idx === -1) { setChipPrice(b, "", false); return; }
+        if (idx < FREE_TOPPINGS) setChipPrice(b, "Incluido", false);
+        else setChipPrice(b, "+" + formatMoney(EXTRA_TOPPING_CENTS), true);
       });
+      // Premium: siempre su precio individual.
+      $$("[data-group='premium'] .hopecfg__choice").forEach(function (b) {
+        var c = parseInt(b.dataset.precioCents || "0", 10);
+        setChipPrice(b, c > 0 ? "+" + formatMoney(c) : "", state.premium.indexOf(b.dataset.id) !== -1);
+      });
+      // Siropes: primeros FREE_SYRUPS "Incluido"; el resto su precio.
+      $$("[data-group='syrup'] .hopecfg__choice").forEach(function (b) {
+        var c = parseInt(b.dataset.precioCents || "0", 10);
+        var idx = state.syrups.indexOf(b.dataset.id);
+        if (idx !== -1 && idx < FREE_SYRUPS) { setChipPrice(b, "Incluido", false); return; }
+        setChipPrice(b, c > 0 ? "+" + formatMoney(c) : "", idx >= FREE_SYRUPS && idx !== -1);
+      });
+    }
+
+    // ---- Aviso de costo adicional por toppings (regla UX) ----
+    function renderWarning() {
+      var warn = $("#topping-warning");
+      if (warn) warn.hidden = state.toppings.length <= FREE_TOPPINGS;
+    }
+
+    // ---- Precio y gating del botón ----
+    function updatePrice() {
+      var priceEl = $("#price");
+      var total = totalCents();
+      if (priceEl) priceEl.textContent = total == null ? "—" : formatMoney(total);
+
+      $$("#size-options .hopecfg__choice").forEach(function (btn) {
+        var v = findSizeVariant(SIZE_NAME[btn.dataset.id]);
+        var sub = btn.querySelector("[data-size-price]");
+        if (sub && v) sub.textContent = formatMoney(v.price);
+      });
+
       var countEl = $("[data-topping-count]");
-      if (countEl) countEl.textContent = state.toppings.size + "/2";
+      if (countEl) {
+        var n = state.toppings.length;
+        var extra = standardExtraCount();
+        countEl.textContent = extra > 0 ? n + " (" + extra + " con costo)" : n + "/" + FREE_TOPPINGS;
+      }
+
+      // Desglose de extras bajo el total.
+      var breakEl = $("#extras-breakdown");
+      if (breakEl) {
+        var e = extrasCents();
+        breakEl.textContent = e > 0 ? "Incluye " + formatMoney(e) + " en extras" : "";
+      }
 
       var buyBtn = $("#buy");
       var hintEl = $("#buy-hint");
       if (buyBtn) {
         var valid = isValidSelection();
-        var hasVariant = !!variant;
+        var hasVariant = !!variantForState();
         var ok = valid && hasVariant;
         buyBtn.disabled = !ok;
         buyBtn.classList.toggle("is-disabled", !ok);
@@ -256,18 +319,31 @@
         b.classList.toggle("is-active", b.dataset.id === state.size);
       });
       $$("[data-group='topping'] .hopecfg__choice").forEach(function (b) {
-        b.classList.toggle("is-active", state.toppings.has(b.dataset.id));
+        var idx = state.toppings.indexOf(b.dataset.id);
+        b.classList.toggle("is-active", idx !== -1);
+        b.classList.toggle("is-extra-cost", idx >= FREE_TOPPINGS);
       });
       $$("[data-group='premium'] .hopecfg__choice").forEach(function (b) {
-        b.classList.toggle("is-active", state.premium === b.dataset.id);
+        b.classList.toggle("is-active", state.premium.indexOf(b.dataset.id) !== -1);
       });
       $$("[data-group='syrup'] .hopecfg__choice").forEach(function (b) {
-        b.classList.toggle("is-active", state.syrup === b.dataset.id);
+        var idx = state.syrups.indexOf(b.dataset.id);
+        b.classList.toggle("is-active", idx !== -1);
+        b.classList.toggle("is-extra-cost", idx >= FREE_SYRUPS && idx !== -1);
       });
 
+      renderChipPrices();
+      renderWarning();
       renderBubbles();
       renderStack();
       updatePrice();
+    }
+
+    // ---- Utilidad: alternar id en un arreglo ordenado ----
+    function toggleInArray(arr, id) {
+      var i = arr.indexOf(id);
+      if (i === -1) { arr.push(id); return true; }
+      arr.splice(i, 1); return false;
     }
 
     // ---- Eventos de selección ----
@@ -281,20 +357,14 @@
         if (group === "size") {
           state.size = id;
         } else if (group === "topping") {
-          if (state.toppings.has(id)) {
-            state.toppings.delete(id);
-            if (state.lastKey === "topping:" + id) state.lastKey = null;
-          } else {
-            if (state.toppings.size >= 2) return;
-            state.toppings.add(id);
-            state.lastKey = "topping:" + id;
-          }
+          var added = toggleInArray(state.toppings, id);
+          state.lastKey = added ? "topping:" + id : (state.lastKey === "topping:" + id ? null : state.lastKey);
         } else if (group === "premium") {
-          state.premium = state.premium === id ? null : id;
-          state.lastKey = state.premium ? "premium:" + id : null;
+          var addedP = toggleInArray(state.premium, id);
+          state.lastKey = addedP ? "premium:" + id : (state.lastKey === "premium:" + id ? null : state.lastKey);
         } else if (group === "syrup") {
-          state.syrup = state.syrup === id ? null : id;
-          state.lastKey = state.syrup ? "syrup:" + id : null;
+          var addedS = toggleInArray(state.syrups, id);
+          state.lastKey = addedS ? "syrup:" + id : (state.lastKey === "syrup:" + id ? null : state.lastKey);
         }
         render();
       });
@@ -304,9 +374,9 @@
     if (resetBtn) {
       resetBtn.addEventListener("click", function () {
         state.size = "small";
-        state.toppings.clear();
-        state.premium = null;
-        state.syrup = null;
+        state.toppings = [];
+        state.premium = [];
+        state.syrups = [];
         state.lastKey = null;
         render();
       });
@@ -325,13 +395,29 @@
       toast._t = setTimeout(function () { toast.classList.remove("is-visible"); }, 2200);
     }
 
-    function buildProperties() {
+    function groupId() {
+      // Id único (sin Date.now/random dependencias problemáticas): timestamp + contador.
+      return "hope-" + Date.now().toString(36) + "-" + Math.floor(Math.random() * 1e6).toString(36);
+    }
+
+    function buildMainProperties(grupo) {
       var props = {};
-      var tnames = [];
-      state.toppings.forEach(function (id) { tnames.push(readLabel("topping", id)); });
-      if (tnames.length) props["Toppings"] = tnames.join(", ");
-      if (state.premium) props["Premium"] = readLabel("premium", state.premium);
-      if (state.syrup) props["Sirope"] = readLabel("syrup", state.syrup);
+      var incl = state.toppings.slice(0, FREE_TOPPINGS).map(function (id) { return readLabel("topping", id); });
+      var adic = state.toppings.slice(FREE_TOPPINGS).map(function (id) { return readLabel("topping", id); });
+      if (incl.length) props["Toppings incluidos"] = incl.join(", ");
+      if (adic.length) props["Toppings adicionales"] = adic.join(", ") + " (+" + formatMoney(standardExtraCents()) + ")";
+      if (state.premium.length) {
+        props["Premium"] = state.premium.map(function (id) {
+          return readLabel("premium", id) + " (+" + formatMoney(centsOf("premium", id)) + ")";
+        }).join(", ");
+      }
+      var sInc = state.syrups.slice(0, FREE_SYRUPS).map(function (id) { return readLabel("syrup", id); });
+      var sAdd = state.syrups.slice(FREE_SYRUPS).map(function (id) {
+        return readLabel("syrup", id) + " (+" + formatMoney(centsOf("syrup", id)) + ")";
+      });
+      if (sInc.length) props["Sirope incluido"] = sInc.join(", ");
+      if (sAdd.length) props["Siropes adicionales"] = sAdd.join(", ");
+      if (grupo) props["_hope_ext"] = grupo;
       return props;
     }
 
@@ -389,10 +475,30 @@
         if (!variant) { showToast("Este producto aún no está vinculado. Configúralo en el tema.", true); return; }
         if (variant.available === false) { showToast("Sin stock para esta opción.", true); return; }
 
+        var grupo = groupId();
+        var extras = extrasCents();
+        var product = PRODUCTS.helado || null;
+
+        // La línea del helado va AL FINAL para que quede arriba en el carrito
+        // (Horizon muestra lo último añadido primero). Los extras primero.
+        var items = [];
+        if (extras > 0 && EXTRAS_VARIANT_ID) {
+          items.push({
+            id: EXTRAS_VARIANT_ID,
+            quantity: Math.round(extras / EXTRAS_UNIT_CENTS),
+            properties: { "Para": (product && product.title) || "Helado", "_hope_ext": grupo },
+          });
+        }
+        items.push({ id: variant.id, quantity: 1, properties: buildMainProperties(extras > 0 ? grupo : null) });
+
+        if (extras > 0 && !EXTRAS_VARIANT_ID) {
+          showToast("Falta vincular el producto de extras en el tema.", true);
+          return;
+        }
+
         var routes = (window.Theme && window.Theme.routes) || {};
         var addUrl = routes.cart_add_url || "/cart/add.js";
-        var product = PRODUCTS.helado || null;
-        var payload = { items: [{ id: variant.id, quantity: 1, properties: buildProperties() }] };
+        var payload = { items: items };
         var sectionIds = cartSectionIds();
         if (sectionIds.length) {
           payload.sections = sectionIds.join(",");
@@ -436,20 +542,9 @@
       });
     }
 
-    // Etiqueta de referencia "Incluido" en toppings gratuitos (0 cents),
-    // para que muestren su precio como Premium/Sirope (que sí tienen costo extra).
-    $$("[data-group='topping'] .hopecfg__choice").forEach(function (b) {
-      if ((b.dataset.precioCents || "0") === "0" && !b.querySelector(".hopecfg__chip-price")) {
-        var s = document.createElement("span");
-        s.className = "hopecfg__chip-price";
-        s.textContent = "Incluido";
-        b.appendChild(s);
-      }
-    });
-
     // ---- Arranque ----
-    var cup = $("#product-preview");
-    if (cup && !cup.getAttribute("src")) cup.src = catalogUrl(BASE_ASSET);
+    var cupEl = $("#product-preview");
+    if (cupEl && !cupEl.getAttribute("src")) cupEl.src = catalogUrl(BASE_ASSET);
     render();
   }
 
