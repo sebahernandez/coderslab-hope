@@ -58,9 +58,11 @@
   endif
 
   comment
-    Producto add-on "Extras personalizados" ($0.10/u). Todos los extras pagados se
-    cobran en 1 sola línea = variante add-on × (total de extras / 0.10). Si no se
-    elige en el tema, se usa la variante por defecto creada vía CLI.
+    Producto add-on "Extras personalizados" ($0.10/u). Solo cobra PREMIUM y SIROPES
+    adicionales (precio variable) = variante add-on × (total / 0.10). Los toppings
+    estándar extra ($1 c/u) van bakeados en la variante Tamaño × Toppings extra del
+    helado, no en esta línea. Si no se elige en el tema, se usa la variante por
+    defecto creada vía CLI.
   endcomment
   assign p_extras = section.settings.producto_extras
   assign extras_variant_id = ''
@@ -77,6 +79,7 @@
   assign free_toppings = section.settings.free_toppings | default: 2
   assign extra_topping_cents = section.settings.extra_topping_cents | default: 100
   assign free_syrups = section.settings.free_syrups | default: 1
+  assign max_extra_toppings = section.settings.max_extra_toppings | default: 12
 -%}
 
 {%- capture products_json -%}
@@ -107,6 +110,7 @@
   data-free-toppings="{{ free_toppings }}"
   data-extra-topping-cents="{{ extra_topping_cents }}"
   data-free-syrups="{{ free_syrups }}"
+  data-max-extra-toppings="{{ max_extra_toppings }}"
 >
   <script type="application/json" data-hopecfg-products>{{ products_json }}</script>
 
@@ -380,7 +384,14 @@
       "id": "extra_topping_cents",
       "label": "Costo por topping estándar adicional (centavos)",
       "default": 100,
-      "info": "100 = $1.00 por cada topping estándar después de los incluidos."
+      "info": "100 = $1.00 por cada topping estándar después de los incluidos. Este costo va bakeado en la variante del helado (Tamaño × Toppings extra)."
+    },
+    {
+      "type": "number",
+      "id": "max_extra_toppings",
+      "label": "Máx. de toppings estándar extra con cobro",
+      "default": 12,
+      "info": "Debe coincidir con la cantidad de valores de la opción \"Toppings extra\" del producto (0..N). Por defecto 12."
     },
     {
       "type": "range",

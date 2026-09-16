@@ -10,12 +10,18 @@
  *  - Siropes: el primero va INCLUIDO; cada sirope adicional cobra su precio
  *    individual. Sin límite (acumulativo).
  *
- * Cobro (tienda no-Plus, sin Functions): el helado se añade como 1 línea nativa
- * (variante de tamaño = precio base) y TODOS los extras pagados se cobran en una
- * ÚNICA línea "Extras personalizados" (producto add-on de $0.10 × cantidad =
- * total de extras en centésimas de $0.10). El desglose legible va como line item
- * properties en la línea del helado. Ambas líneas comparten un `_hope_ext` oculto
- * para la limpieza de huérfanos (ver toppings-customizer.js, listener global).
+ * Cobro (tienda no-Plus, sin Functions):
+ *  - El costo de los toppings estándar extra ($1 c/u a partir del 3.º) va BAKEADO
+ *    en el precio de la variante del helado. El producto tiene variantes
+ *    Tamaño × "Toppings extra" (0..MAX_EXTRA_TOPPINGS); el JS elige la que
+ *    corresponde a (tamaño, nº de toppings extra). NO se genera línea aparte por
+ *    estos. Así "el extra no es un producto": se ve solo el helado con su precio.
+ *  - Premium y siropes adicionales tienen precio VARIABLE (no bakeables en
+ *    variantes), así que se cobran en la línea add-on "Extras personalizados"
+ *    ($0.10 × cantidad). Esta línea solo aparece si hay premium/siropes extra.
+ * El desglose legible va como line item properties en la línea del helado. Ambas
+ * líneas comparten un `_hope_ext` oculto para la limpieza de huérfanos (ver
+ * toppings-customizer.js, listener global).
  * NOTA: se usa `_hope_ext` (no `_grupo`) a propósito, para NO activar el viejo
  * Cart Transform (hope-functions) que fusiona líneas con `_grupo` — ese modelo es
  * solo-Plus y debe quedar inerte; aquí el cobro es 100% nativo por add-on.
@@ -61,6 +67,10 @@
     var FREE_TOPPINGS = parseInt(root.dataset.freeToppings || "2", 10);      // estándar incluidos
     var EXTRA_TOPPING_CENTS = parseInt(root.dataset.extraToppingCents || "100", 10); // c/topping estándar extra
     var FREE_SYRUPS = parseInt(root.dataset.freeSyrups || "1", 10);          // siropes incluidos
+    // Máx. de toppings estándar extra que soportan las variantes del helado.
+    // El costo de estos ($1 c/u) va BAKEADO en el precio de la variante
+    // (Tamaño × Toppings extra), no en la línea add-on.
+    var MAX_EXTRA_TOPPINGS = parseInt(root.dataset.maxExtraToppings || "12", 10);
     var EXTRAS_UNIT_CENTS = 10;                                              // precio unitario del add-on ($0.10)
     var EXTRAS_VARIANT_ID = parseInt(root.dataset.extrasVariantId || "0", 10) || 0;
 
@@ -111,16 +121,28 @@
 
     var SIZE_NAME = { small: "Pequeño", medium: "Mediano", large: "Grande" };
 
-    // ---- Variante nativa (solo por Tamaño) = precio base ----
-    function findSizeVariant(sizeName) {
+    // ---- Nº de toppings estándar extra (más allá de los incluidos) ----
+    // Total sin límite en la UI, pero para el cobro se topa a MAX_EXTRA_TOPPINGS
+    // porque es lo que soportan las variantes (Tamaño × Toppings extra).
+    function standardExtraCount() { return Math.max(0, state.toppings.length - FREE_TOPPINGS); }
+    function cappedExtraCount() { return Math.min(standardExtraCount(), MAX_EXTRA_TOPPINGS); }
+
+    // ---- Variante nativa (Tamaño × Toppings extra) = base + $1·nºextra ----
+    function findVariant(sizeName, extraCount) {
       var p = PRODUCTS.helado;
       if (!p || !p.variants) return null;
+      var target = String(extraCount);
       for (var i = 0; i < p.variants.length; i++) {
-        if (p.variants[i].option1 === sizeName) return p.variants[i];
+        var v = p.variants[i];
+        if (v.option1 === sizeName && String(v.option2) === target) return v;
       }
       return null;
     }
-    function variantForState() { return findSizeVariant(SIZE_NAME[state.size] || state.size); }
+    function findSizeVariant(sizeName) { return findVariant(sizeName, 0); }
+    function variantForState() {
+      return findVariant(SIZE_NAME[state.size] || state.size, cappedExtraCount());
+    }
+    // Precio de la variante seleccionada (ya incluye los toppings extra bakeados).
     function baseCents() {
       var v = variantForState();
       return v ? v.price : null;
@@ -134,8 +156,10 @@
     }
 
     // ---- Cálculo de extras (en centavos) ----
-    function standardExtraCount() { return Math.max(0, state.toppings.length - FREE_TOPPINGS); }
-    function standardExtraCents() { return standardExtraCount() * EXTRA_TOPPING_CENTS; }
+    // Toppings estándar extra: su costo ($1 c/u) va BAKEADO en el precio de la
+    // variante del helado, NO en la línea add-on. Aquí se calcula solo para
+    // mostrarlo en el desglose.
+    function standardExtraCents() { return cappedExtraCount() * EXTRA_TOPPING_CENTS; }
     function premiumCents() {
       var t = 0;
       state.premium.forEach(function (id) { t += centsOf("premium", id); });
@@ -146,10 +170,14 @@
       state.syrups.forEach(function (id, i) { if (i >= FREE_SYRUPS) t += centsOf("syrup", id); });
       return t;
     }
-    function extrasCents() { return standardExtraCents() + premiumCents() + syrupExtraCents(); }
+    // Extras que SÍ se cobran por la línea add-on ($0.10/u): premium + siropes
+    // adicionales (precio variable que no se puede bakear en variantes).
+    function addonExtrasCents() { return premiumCents() + syrupExtraCents(); }
+    // Total de extras (para mostrar): bakeados + add-on.
+    function extrasCents() { return standardExtraCents() + addonExtrasCents(); }
     function totalCents() {
       var b = baseCents();
-      return b == null ? null : b + extrasCents();
+      return b == null ? null : b + addonExtrasCents();
     }
 
     // ---- Lectura de datos de los chips ----
@@ -476,22 +504,24 @@
         if (variant.available === false) { showToast("Sin stock para esta opción.", true); return; }
 
         var grupo = groupId();
-        var extras = extrasCents();
+        // Los toppings estándar extra ya van bakeados en el precio de la variante.
+        // La línea add-on solo cobra premium + siropes adicionales (precio variable).
+        var addonCents = addonExtrasCents();
         var product = PRODUCTS.helado || null;
 
         // La línea del helado va AL FINAL para que quede arriba en el carrito
         // (Horizon muestra lo último añadido primero). Los extras primero.
         var items = [];
-        if (extras > 0 && EXTRAS_VARIANT_ID) {
+        if (addonCents > 0 && EXTRAS_VARIANT_ID) {
           items.push({
             id: EXTRAS_VARIANT_ID,
-            quantity: Math.round(extras / EXTRAS_UNIT_CENTS),
+            quantity: Math.round(addonCents / EXTRAS_UNIT_CENTS),
             properties: { "Para": (product && product.title) || "Helado", "_hope_ext": grupo },
           });
         }
-        items.push({ id: variant.id, quantity: 1, properties: buildMainProperties(extras > 0 ? grupo : null) });
+        items.push({ id: variant.id, quantity: 1, properties: buildMainProperties(addonCents > 0 ? grupo : null) });
 
-        if (extras > 0 && !EXTRAS_VARIANT_ID) {
+        if (addonCents > 0 && !EXTRAS_VARIANT_ID) {
           showToast("Falta vincular el producto de extras en el tema.", true);
           return;
         }
