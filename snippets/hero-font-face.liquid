@@ -1,0 +1,44 @@
+{%- doc -%}
+  Emite la declaracion `@font-face` de un texto del Hero Banner: la rama custom usa la URL
+  subida a Archivos; la rama theme usa el filtro `font_face` sobre la variante resuelta de la
+  fuente de Shopify. DEBE renderizarse dentro de un tag `{% style %}` (el filtro `font_face`
+  imprime CSS, no HTML).
+
+  @param {string} font_type - 'theme' o 'custom'.
+  @param {font} font - Objeto font de Shopify (font_picker).
+  @param {string} [custom_name] - Nombre de la fuente personalizada.
+  @param {string} [custom_url] - URL del archivo de fuente subido a Archivos.
+  @param {string} [custom_weight] - Peso real del archivo ('auto' o 100..900).
+  @param {string} weight - Grosor aplicado ('auto' o 100..900).
+  @param {boolean} [bold] - Negrita cuando el grosor está en 'auto'.
+
+  @example
+  {% style %}
+    {% render 'hero-font-face', font_type: block.settings.font_type, font: block.settings.font,
+       custom_name: block.settings.custom_font_name, custom_url: block.settings.custom_font_url,
+       custom_weight: block.settings.custom_font_weight, weight: block.settings.weight,
+       bold: block.settings.bold %}
+  {% endstyle %}
+{%- enddoc -%}
+{%- liquid
+  assign variant = false
+  unless font_type == 'custom'
+    if weight != 'auto'
+      assign variant = font | font_modify: 'weight', weight
+    elsif bold
+      assign variant = font | font_modify: 'weight', 'bolder'
+    endif
+  endunless
+  assign applied = variant | default: font
+-%}
+{%- if font_type == 'custom' and custom_url != blank -%}
+@font-face {
+  font-family: '{{ custom_name }}';
+  src: url('{{ custom_url }}');
+  font-weight: {% if custom_weight == 'auto' %}normal{% else %}{{ custom_weight }}{% endif %};
+  font-style: normal;
+  font-display: swap;
+}
+{%- elsif font -%}
+{{ applied | font_face: font_display: 'swap' }}
+{%- endif -%}
