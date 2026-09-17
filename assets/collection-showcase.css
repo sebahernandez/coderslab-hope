@@ -1,0 +1,150 @@
+/*
+ * Vitrina de colección — CSS estático.
+ * Los valores dinámicos llegan como CSS vars inline desde sections/collection-showcase.liquid
+ * (--cs-columns, --cs-columns-mobile, --cs-grid-gap, --cs-ratio).
+ */
+
+.collection-showcase {
+  --cs-columns: 3;
+  --cs-columns-mobile: 1;
+  --cs-grid-gap: 24px;
+  --cs-ratio: 3 / 4;
+}
+
+/* Fondo rosa suave para toda la página de colección, el mismo del armador de
+   helados (body:has(.hopecfg) en toppings-customizer.css). Solo afecta a las
+   páginas que contienen esta sección. */
+body:has(.section-collection-showcase) {
+  background-color: #ffeef4;
+}
+
+/* Encabezado */
+.cs-heading {
+  margin: 0 0 var(--margin-md, 1rem);
+  text-align: center;
+}
+
+/* ---------- Chips de filtro ---------- */
+.cs-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--gap-2xs, 0.5rem);
+  margin-block-end: var(--margin-lg, 1.5rem);
+}
+
+.cs-chip {
+  appearance: none;
+  cursor: pointer;
+  border: var(--style-border-width, 1px) solid var(--color-border);
+  background: transparent;
+  color: var(--color-foreground);
+  border-radius: var(--style-border-radius-pills, 999px);
+  padding: 0.5rem 1.25rem;
+  font-family: var(--font-body--family);
+  font-size: var(--font-size--sm, 0.875rem);
+  line-height: 1;
+  letter-spacing: var(--letter-spacing-sm, 0);
+  transition: background-color var(--animation-speed, 0.125s) var(--animation-easing, ease-in-out),
+    color var(--animation-speed, 0.125s) var(--animation-easing, ease-in-out),
+    border-color var(--animation-speed, 0.125s) var(--animation-easing, ease-in-out);
+}
+
+.cs-chip:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.cs-chip.is-active {
+  background: var(--color-primary-button-background, var(--color-primary));
+  color: var(--color-primary-button-text, var(--color-background));
+  border-color: var(--color-primary-button-background, var(--color-primary));
+}
+
+.cs-chip:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ---------- Grid ---------- */
+.cs-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--cs-columns-mobile, 1), minmax(0, 1fr));
+  gap: var(--cs-grid-gap, 24px);
+}
+
+@media screen and (min-width: 750px) {
+  .cs-grid {
+    grid-template-columns: repeat(var(--cs-columns, 3), minmax(0, 1fr));
+  }
+}
+
+/* ---------- Tarjeta ---------- */
+.cs-card {
+  min-width: 0;
+  transition: opacity var(--animation-speed, 0.125s) var(--animation-easing, ease-in-out),
+    transform var(--animation-speed, 0.125s) var(--animation-easing, ease-in-out);
+}
+
+/* Oculta la tarjeta cuando no coincide con el filtro activo */
+.cs-card--hidden {
+  display: none;
+}
+
+.cs-card__link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-2xs, 0.5rem);
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.cs-card__media {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--style-border-radius-md, 8px);
+  aspect-ratio: var(--cs-ratio, 3 / 4);
+  background: var(--color-border);
+}
+
+.cs-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cs-card__title {
+  margin: var(--margin-2xs, 0.5rem) 0 0;
+  font-size: var(--font-size--md, 1rem);
+  font-weight: var(--font-h6--weight, 500);
+  color: var(--color-foreground-heading, var(--color-foreground));
+}
+
+/* El precio lo renderiza snippets/price.liquid */
+.cs-card .price {
+  color: var(--color-foreground);
+}
+
+.cs-card__cta {
+  margin-block-start: var(--margin-2xs, 0.5rem);
+  align-self: flex-start;
+  text-align: center;
+  pointer-events: none; /* el enlace de la tarjeta ya cubre el clic */
+}
+
+.cs-card--placeholder .cs-card__cta {
+  pointer-events: none;
+}
+
+/* ---------- Accesibilidad de movimiento ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .cs-card,
+  .cs-chip {
+    transition: none;
+  }
+}
