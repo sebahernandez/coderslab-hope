@@ -1,0 +1,293 @@
+{%- doc -%}
+  Botón "glass" del Hero Banner. Reúne su enlace, estilo glassmorphism y tipografía en un solo
+  block reutilizable. Los valores dinámicos viajan como variables CSS; el CSS estático (glass,
+  hover, fallback) vive en `{% stylesheet %}`.
+{%- enddoc -%}
+{%- liquid
+  assign self_align = block.settings.alignment | replace: 'left', 'flex-start' | replace: 'right', 'flex-end'
+  assign self_align_mobile = block.settings.alignment_mobile | replace: 'left', 'flex-start' | replace: 'right', 'flex-end'
+-%}
+<div
+  class="hero-button-wrapper"
+  style="{% render 'hero-font-vars', prefix: 'button', font: block.settings.font, font_type: block.settings.font_type, custom_name: block.settings.custom_font_name, custom_weight: block.settings.custom_font_weight, weight: block.settings.weight, bold: block.settings.bold, include_style: false %}
+         --button-spacing-top: {{ block.settings.spacing_top }}px;
+         --button-size: {{ block.settings.font_size }}px;
+         --button-size-mobile: {{ block.settings.font_size_mobile }}px;
+         --button-self: {{ self_align }};
+         --button-self-mobile: {{ self_align_mobile }};"
+  {{ block.shopify_attributes }}
+>
+  <a
+    href="{{ block.settings.link }}"
+    class="hero-button hero-button--glass"
+    style="background: {{ block.settings.glass_background }};
+           color: {{ block.settings.text_color }};
+           border-radius: {{ block.settings.border_radius }}px;
+           border: 1px solid {{ block.settings.glass_border_color }};
+           backdrop-filter: blur({{ block.settings.glass_blur }}px);
+           -webkit-backdrop-filter: blur({{ block.settings.glass_blur }}px);"
+  >
+    {{ block.settings.label }}
+  </a>
+</div>
+
+{% style %}
+  {% render 'hero-font-face', font_type: block.settings.font_type, font: block.settings.font, custom_name: block.settings.custom_font_name, custom_url: block.settings.custom_font_url, custom_weight: block.settings.custom_font_weight, weight: block.settings.weight, bold: block.settings.bold %}
+{% endstyle %}
+
+{% stylesheet %}
+.hero-button-wrapper {
+  margin-top: var(--button-spacing-top, 20px);
+  align-self: var(--button-self, flex-start);
+}
+
+.hero-button {
+  display: inline-block;
+  padding: 15px 40px;
+  font-size: var(--button-size, 1rem);
+  font-family: var(--button-font-family);
+  font-weight: var(--button-font-weight);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.hero-button--glass {
+  position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.hero-button--glass:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  filter: brightness(1.08);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hero-button--glass {
+    background: rgba(255, 255, 255, 0.35) !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .hero-button-wrapper {
+    align-self: var(--button-self-mobile, var(--button-self, flex-start));
+  }
+
+  .hero-button {
+    font-size: var(--button-size-mobile, var(--button-size, 1rem));
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-button {
+    padding: 12px 30px;
+  }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Botón del Hero",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Texto del botón",
+      "default": "ARMA TU HELADO"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Enlace del botón"
+    },
+    {
+      "type": "range",
+      "id": "spacing_top",
+      "label": "Espacio superior",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 20,
+      "info": "Separación entre el botón y el texto de arriba. Ponlo en 0 para pegarlo."
+    },
+    {
+      "type": "header",
+      "content": "Estilo Glass"
+    },
+    {
+      "type": "color",
+      "id": "glass_background",
+      "label": "Color de fondo glass",
+      "info": "Usa el canal alfa para controlar la transparencia del vidrio.",
+      "default": "rgba(255, 255, 255, 0.25)"
+    },
+    {
+      "type": "color",
+      "id": "glass_border_color",
+      "label": "Color del borde glass",
+      "default": "rgba(255, 255, 255, 0.5)"
+    },
+    {
+      "type": "range",
+      "id": "glass_blur",
+      "label": "Intensidad del blur",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del texto",
+      "default": "#FF69B4"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Radio del borde",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Tipografía"
+    },
+    {
+      "type": "select",
+      "id": "font_type",
+      "label": "Origen de la fuente",
+      "options": [
+        { "value": "theme", "label": "Fuente de Shopify" },
+        { "value": "custom", "label": "Fuente personalizada (URL / @font-face)" }
+      ],
+      "default": "theme"
+    },
+    {
+      "type": "font_picker",
+      "id": "font",
+      "label": "Tipografía (Shopify)",
+      "default": "inter_n4"
+    },
+    {
+      "type": "text",
+      "id": "custom_font_name",
+      "label": "Nombre de la fuente personalizada",
+      "visible_if": "{{ block.settings.font_type == 'custom' }}"
+    },
+    {
+      "type": "url",
+      "id": "custom_font_url",
+      "label": "URL del archivo de fuente",
+      "info": "Sube el archivo a Contenido → Archivos y pega su URL.",
+      "visible_if": "{{ block.settings.font_type == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "custom_font_weight",
+      "label": "Peso real del archivo",
+      "options": [
+        { "value": "auto", "label": "Normal" },
+        { "value": "100", "label": "100" },
+        { "value": "200", "label": "200" },
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" },
+        { "value": "900", "label": "900" }
+      ],
+      "default": "auto",
+      "visible_if": "{{ block.settings.font_type == 'custom' }}"
+    },
+    {
+      "type": "select",
+      "id": "weight",
+      "label": "Grosor aplicado",
+      "info": "Si la familia no incluye ese grosor, se usa el más cercano disponible en lugar de simularlo.",
+      "options": [
+        { "value": "auto", "label": "Automático (según fuente)" },
+        { "value": "100", "label": "100 - Thin" },
+        { "value": "200", "label": "200 - Extra Light" },
+        { "value": "300", "label": "300 - Light" },
+        { "value": "400", "label": "400 - Regular" },
+        { "value": "500", "label": "500 - Medium" },
+        { "value": "600", "label": "600 - Semi Bold" },
+        { "value": "700", "label": "700 - Bold" },
+        { "value": "800", "label": "800 - Extra Bold" },
+        { "value": "900", "label": "900 - Black" }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "checkbox",
+      "id": "bold",
+      "label": "Texto en negrita",
+      "info": "Solo se aplica si el grosor está en 'Automático'.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "label": "Tamaño (Escritorio)",
+      "min": 10,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Tamaño (Mobile)",
+      "min": 8,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Alineación"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alineación (Escritorio)",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "alignment_mobile",
+      "label": "Alineación (Mobile)",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Botón del Hero"
+    }
+  ]
+}
+{% endschema %}
