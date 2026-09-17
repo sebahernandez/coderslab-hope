@@ -136,6 +136,7 @@
             --description-line-height: {{ section.settings.description_line_height }};
             --description-line-height-mobile: {{ section.settings.description_line_height_mobile }};
             --description-spacing-bottom: {{ section.settings.description_spacing_bottom }}px;
+            --button-spacing-top: {{ section.settings.button_spacing_top }}px;
             --heading-font-family: {{ heading_css_family }};
             --heading-font-weight: {{ heading_css_weight }};
             --heading-font-style: {{ heading_css_style }};
@@ -361,7 +362,7 @@
 }
 
 .hero-banner-button-wrapper {
-  margin-top: 20px;
+  margin-top: var(--button-spacing-top, 20px);
   align-self: var(--button-self-align, flex-start);
 }
 
@@ -1088,6 +1089,17 @@
     {
       "type": "header",
       "content": "Configuración del Botón"
+    },
+    {
+      "type": "range",
+      "id": "button_spacing_top",
+      "label": "Espacio Superior del Botón",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 20,
+      "info": "Separación entre el botón y el texto de arriba. Ponlo en 0 para pegarlo."
     },
     {
       "type": "text",
