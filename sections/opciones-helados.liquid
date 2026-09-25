@@ -15,6 +15,11 @@
 -%}
 <style>
   {{ title_font | font_face: font_display: 'swap' }}
+  {%- for block in section.blocks -%}
+    {%- if block.settings.card_title_font -%}
+      {{ block.settings.card_title_font | font_face: font_display: 'swap' }}
+    {%- endif -%}
+  {%- endfor -%}
 </style>
 
 <div
@@ -72,7 +77,17 @@
                 <p class="opciones-helados__eyebrow">{{ block.settings.eyebrow }}</p>
               {%- endif -%}
               {%- if block.settings.title != blank -%}
-                <h3 class="opciones-helados__card-title">{{ block.settings.title }}</h3>
+                {%- liquid
+                  assign card_font = block.settings.card_title_font
+                  capture card_title_style
+                    if card_font
+                      echo 'font-family:' | append: card_font.family | append: ', ' | append: card_font.fallback_families | append: ';'
+                      echo 'font-weight:' | append: card_font.weight | append: ';'
+                      echo 'font-style:' | append: card_font.style | append: ';'
+                    endif
+                  endcapture
+                -%}
+                <h3 class="opciones-helados__card-title" style="{{ card_title_style }}">{{ block.settings.title }}</h3>
               {%- endif -%}
               {%- if block.settings.text != blank -%}
                 <p class="opciones-helados__card-text">{{ block.settings.text }}</p>
@@ -155,20 +170,19 @@
     overflow: hidden;
     text-decoration: none;
     isolation: isolate;
+    box-shadow: 0 0 0 0 var(--oh-highlight-color);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
 
-  a.opciones-helados__card:hover {
+  /* Borde rosa como efecto hover en cada tarjeta */
+  .opciones-helados__card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 0 0 3px var(--oh-highlight-color), 0 18px 40px rgba(0, 0, 0, 0.18);
   }
 
+  /* Tarjeta destacada: muestra el borde de forma permanente */
   .opciones-helados__card--highlight {
     box-shadow: 0 0 0 3px var(--oh-highlight-color);
-  }
-
-  a.opciones-helados__card--highlight:hover {
-    box-shadow: 0 0 0 3px var(--oh-highlight-color), 0 18px 40px rgba(0, 0, 0, 0.18);
   }
 
   .opciones-helados__image {
@@ -442,6 +456,12 @@
           "id": "title",
           "label": "Título",
           "default": "HELADO"
+        },
+        {
+          "type": "font_picker",
+          "id": "card_title_font",
+          "label": "Tipografía del título",
+          "default": "assistant_n7"
         },
         {
           "type": "text",
