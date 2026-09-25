@@ -8,11 +8,25 @@
   vive en el bloque {% stylesheet %} de esta sección. Totalmente responsive.
 {%- endcomment -%}
 
+{%- liquid
+  assign title_font = section.settings.title_font
+  assign title_min = section.settings.title_size | times: 0.5 | round: 0
+-%}
+<style>
+  {{ title_font | font_face: font_display: 'swap' }}
+</style>
+
 <div
   class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style arma-helado"
   style="
     {%- render 'spacing-style', settings: section.settings -%}
     --ah-heading-color: {{ section.settings.heading_color }};
+    --ah-title-color: {{ section.settings.title_color }};
+    --ah-title-font: {{ title_font.family }}, {{ title_font.fallback_families }};
+    --ah-title-weight: {{ title_font.weight }};
+    --ah-title-style: {{ title_font.style }};
+    --ah-title-size: {{ section.settings.title_size }}px;
+    --ah-title-size-min: {{ title_min }}px;
     --ah-eyebrow-color: {{ section.settings.eyebrow_color }};
     --ah-card-bg: {{ section.settings.card_background }};
     --ah-card-radius: {{ section.settings.card_radius }}px;
@@ -78,6 +92,9 @@
 {% stylesheet %}
   .arma-helado {
     --ah-heading-color: #7a0b3d;
+    --ah-title-color: #7a0b3d;
+    --ah-title-size: 80px;
+    --ah-title-size-min: 40px;
     --ah-eyebrow-color: #e05a9a;
     --ah-card-bg: #fdf3f7;
     --ah-card-radius: 28px;
@@ -114,10 +131,12 @@
 
   .arma-helado__title {
     margin: 0;
-    color: var(--ah-heading-color);
-    font-size: clamp(2.5rem, 7vw, 5rem);
+    color: var(--ah-title-color);
+    font-family: var(--ah-title-font);
+    font-weight: var(--ah-title-weight);
+    font-style: var(--ah-title-style);
+    font-size: clamp(var(--ah-title-size-min), 7vw, var(--ah-title-size));
     line-height: 0.95;
-    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: -0.01em;
   }
@@ -262,12 +281,39 @@
     },
     {
       "type": "header",
+      "content": "Título principal"
+    },
+    {
+      "type": "font_picker",
+      "id": "title_font",
+      "label": "Tipografía del título",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título",
+      "min": 32,
+      "max": 140,
+      "step": 2,
+      "unit": "px",
+      "default": 80,
+      "info": "En móvil se reduce automáticamente para mantenerse responsive."
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#7a0b3d"
+    },
+    {
+      "type": "header",
       "content": "Colores"
     },
     {
       "type": "color",
       "id": "heading_color",
-      "label": "Color del título y textos",
+      "label": "Color de textos (lateral y tarjetas)",
       "default": "#7a0b3d"
     },
     {
