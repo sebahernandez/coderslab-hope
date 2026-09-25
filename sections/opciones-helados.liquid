@@ -1,0 +1,519 @@
+{%- comment -%}
+  Opciones de helados: fila de tarjetas grandes con imagen de fondo a sangre, degradado
+  inferior y contenido superpuesto (eyebrow + título + descripción + enlace "Elegir").
+  Cada tarjeta es un bloque de tema (Online Store 2.0) con su propia imagen, textos y
+  enlace a un producto. Se puede marcar una tarjeta como destacada (borde) y otra como
+  seleccionada (check junto al enlace).
+
+  Convención del tema: los valores dinámicos viajan como CSS vars inline; el CSS estático
+  vive en el bloque {% stylesheet %} de esta sección. Totalmente responsive.
+{%- endcomment -%}
+
+{%- liquid
+  assign title_font = section.settings.title_font
+  assign title_min = section.settings.title_size | times: 0.5 | round: 0
+-%}
+<style>
+  {{ title_font | font_face: font_display: 'swap' }}
+</style>
+
+<div
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style opciones-helados"
+  style="
+    {%- render 'spacing-style', settings: section.settings -%}
+    --oh-title-color: {{ section.settings.title_color }};
+    --oh-title-font: {{ title_font.family }}, {{ title_font.fallback_families }};
+    --oh-title-weight: {{ title_font.weight }};
+    --oh-title-style: {{ title_font.style }};
+    --oh-title-size: {{ section.settings.title_size }}px;
+    --oh-title-size-min: {{ title_min }}px;
+    --oh-text-color: {{ section.settings.text_color }};
+    --oh-eyebrow-color: {{ section.settings.eyebrow_color }};
+    --oh-link-color: {{ section.settings.link_color }};
+    --oh-highlight-color: {{ section.settings.highlight_color }};
+    --oh-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};
+    --oh-card-radius: {{ section.settings.card_radius }}px;
+    --oh-card-min-height: {{ section.settings.card_min_height }}px;
+    --oh-grid-gap: {{ section.settings.grid_gap }}px;
+  "
+>
+  <div class="opciones-helados__inner">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="opciones-helados__title">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="opciones-helados__grid">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign card_classes = 'opciones-helados__card'
+            if block.settings.highlight
+              assign card_classes = card_classes | append: ' opciones-helados__card--highlight'
+            endif
+          -%}
+          {%- capture card_content -%}
+            {%- if block.settings.image != blank -%}
+              {{
+                block.settings.image
+                | image_url: width: 1000
+                | image_tag:
+                  loading: 'lazy',
+                  sizes: '(min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw',
+                  widths: '400, 600, 800, 1000',
+                  class: 'opciones-helados__image',
+                  alt: block.settings.image.alt | default: block.settings.title
+              }}
+            {%- else -%}
+              {{ 'image' | placeholder_svg_tag: 'opciones-helados__image opciones-helados__image--placeholder' }}
+            {%- endif -%}
+
+            <div class="opciones-helados__content">
+              {%- if block.settings.eyebrow != blank -%}
+                <p class="opciones-helados__eyebrow">{{ block.settings.eyebrow }}</p>
+              {%- endif -%}
+              {%- if block.settings.title != blank -%}
+                <h3 class="opciones-helados__card-title">{{ block.settings.title }}</h3>
+              {%- endif -%}
+              {%- if block.settings.text != blank -%}
+                <p class="opciones-helados__card-text">{{ block.settings.text }}</p>
+              {%- endif -%}
+
+              {%- if block.settings.link_label != blank -%}
+                <span class="opciones-helados__cta">
+                  {{ block.settings.link_label }}
+                  {%- if block.settings.selected -%}
+                    <svg class="opciones-helados__check" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
+                      <path d="M4 10.5l4 4 8-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  {%- endif -%}
+                </span>
+              {%- endif -%}
+            </div>
+          {%- endcapture -%}
+
+          {%- if block.settings.link != blank -%}
+            <a
+              href="{{ block.settings.link }}"
+              class="{{ card_classes }}"
+              {% if block.settings.title != blank %}aria-label="{{ block.settings.link_label | default: 'Elegir' }} {{ block.settings.title }}"{% endif %}
+              {{ block.shopify_attributes }}
+            >
+              {{ card_content }}
+            </a>
+          {%- else -%}
+            <div class="{{ card_classes }}" {{ block.shopify_attributes }}>
+              {{ card_content }}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .opciones-helados {
+    --oh-title-color: #7a0b3d;
+    --oh-title-size: 48px;
+    --oh-title-size-min: 28px;
+    --oh-text-color: #ffffff;
+    --oh-eyebrow-color: rgba(255, 255, 255, 0.75);
+    --oh-link-color: #ffffff;
+    --oh-highlight-color: #ff5fa2;
+    --oh-overlay-opacity: 0.35;
+    --oh-card-radius: 24px;
+    --oh-card-min-height: 380px;
+    --oh-grid-gap: 24px;
+  }
+
+  .opciones-helados__inner {
+    width: 100%;
+  }
+
+  .opciones-helados__title {
+    margin: 0 0 clamp(24px, 4vw, 48px);
+    color: var(--oh-title-color);
+    font-family: var(--oh-title-font);
+    font-weight: var(--oh-title-weight);
+    font-style: var(--oh-title-style);
+    font-size: clamp(var(--oh-title-size-min), 5vw, var(--oh-title-size));
+    line-height: 1.05;
+    text-align: center;
+  }
+
+  .opciones-helados__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--oh-grid-gap);
+  }
+
+  .opciones-helados__card {
+    position: relative;
+    display: block;
+    min-height: var(--oh-card-min-height);
+    border-radius: var(--oh-card-radius);
+    overflow: hidden;
+    text-decoration: none;
+    isolation: isolate;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  a.opciones-helados__card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+  }
+
+  .opciones-helados__card--highlight {
+    box-shadow: 0 0 0 3px var(--oh-highlight-color);
+  }
+
+  a.opciones-helados__card--highlight:hover {
+    box-shadow: 0 0 0 3px var(--oh-highlight-color), 0 18px 40px rgba(0, 0, 0, 0.18);
+  }
+
+  .opciones-helados__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .opciones-helados__image--placeholder {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  /* Degradado inferior para legibilidad del texto superpuesto */
+  .opciones-helados__card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, var(--oh-overlay-opacity)) 0%,
+      rgba(0, 0, 0, calc(var(--oh-overlay-opacity) * 0.4)) 45%,
+      rgba(0, 0, 0, 0) 75%
+    );
+    pointer-events: none;
+  }
+
+  .opciones-helados__content {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    padding: clamp(20px, 2.5vw, 32px);
+  }
+
+  .opciones-helados__eyebrow {
+    margin: 0 0 6px;
+    color: var(--oh-eyebrow-color);
+    font-size: clamp(0.68rem, 1vw, 0.78rem);
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  .opciones-helados__card-title {
+    margin: 0 0 8px;
+    color: var(--oh-text-color);
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 800;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  .opciones-helados__card-text {
+    margin: 0 0 16px;
+    color: var(--oh-text-color);
+    opacity: 0.85;
+    font-size: clamp(0.85rem, 1.3vw, 0.98rem);
+    line-height: 1.4;
+  }
+
+  .opciones-helados__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--oh-link-color);
+    font-size: clamp(0.9rem, 1.3vw, 1rem);
+    font-weight: 600;
+  }
+
+  .opciones-helados__check {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+  }
+
+  a.opciones-helados__card:hover .opciones-helados__cta {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  /* Tablet */
+  @media screen and (max-width: 989px) {
+    .opciones-helados__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Móvil */
+  @media screen and (max-width: 749px) {
+    .opciones-helados__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Opciones de helados",
+  "tag": "section",
+  "class": "section-opciones-helados",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Encabezado"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título de la sección",
+      "info": "Déjalo vacío para ocultarlo."
+    },
+    {
+      "type": "font_picker",
+      "id": "title_font",
+      "label": "Tipografía del título",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título",
+      "min": 24,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Color del título",
+      "default": "#7a0b3d"
+    },
+    {
+      "type": "header",
+      "content": "Colores de las tarjetas"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Color del título y descripción",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Color del texto superior",
+      "default": "#f2d7e5"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Color del enlace \"Elegir\"",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Color del borde destacado",
+      "default": "#ff5fa2"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Oscurecer imagen (para leer el texto)",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Diseño de la sección"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Ancho",
+      "options": [
+        { "value": "page-width", "label": "Ancho de página" },
+        { "value": "full-width", "label": "Ancho completo" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "card_min_height",
+      "label": "Altura mínima de las tarjetas",
+      "min": 240,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "default": 380
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Redondeo de las tarjetas",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Espacio entre tarjetas",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Esquema de color",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Superior",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Inferior",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "opcion",
+      "name": "Opción",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen de fondo"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Texto superior",
+          "default": "EL CLÁSICO"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "HELADO"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Descripción",
+          "default": "Cremoso, fresco y hecho a tu manera."
+        },
+        {
+          "type": "header",
+          "content": "Enlace"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Producto o enlace",
+          "info": "Selecciona el producto que se abrirá al hacer clic."
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Texto del enlace",
+          "default": "Elegir"
+        },
+        {
+          "type": "checkbox",
+          "id": "selected",
+          "label": "Mostrar check de \"seleccionado\"",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "highlight",
+          "label": "Destacar con borde",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Opciones de helados",
+      "category": "Personalizado",
+      "blocks": [
+        {
+          "type": "opcion",
+          "settings": {
+            "eyebrow": "EL CLÁSICO",
+            "title": "HELADO",
+            "text": "Cremoso, fresco y hecho a tu manera.",
+            "selected": true
+          }
+        },
+        {
+          "type": "opcion",
+          "settings": {
+            "eyebrow": "CAPAS DE SABOR",
+            "title": "MIXO",
+            "text": "Tu combinación favorita, capa por capa.",
+            "highlight": true
+          }
+        },
+        {
+          "type": "opcion",
+          "settings": {
+            "eyebrow": "PARA TOMAR",
+            "title": "MILKSHAKE",
+            "text": "Sabor intenso, cremosidad y proteína."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

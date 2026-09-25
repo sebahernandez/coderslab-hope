@@ -120,7 +120,7 @@
         "imagen_y9xXwD": {
           "type": "imagen",
           "settings": {
-            "image": "shopify://shop_images/arma-tu-helado-hope.webp",
+            "image": "shopify://shop_images/paso1_hope.png",
             "title": "Elige tu vaso",
             "text": "Escoge el tamaño ideal para tu antojo."
           }
@@ -128,7 +128,7 @@
         "imagen_CdFdJU": {
           "type": "imagen",
           "settings": {
-            "image": "shopify://shop_images/elige-tus-toppings.webp",
+            "image": "shopify://shop_images/file_000000008830820e90e93869de5e9a16_7c201954-87ee-4d82-8eb7-adfcdae6695e.avif",
             "title": "Elige 2 toppings",
             "text": "Selecciona 2 toppings básicos incluidos."
           }
@@ -136,7 +136,7 @@
         "imagen_peRKYw": {
           "type": "imagen",
           "settings": {
-            "image": "shopify://shop_images/elige-tu-sirope.webp",
+            "image": "shopify://shop_images/file_000000008728820e88ec764aaa3a2b46.avif",
             "title": "Elige tu sirope",
             "text": "El toque final, hecho artesanalmente."
           }
@@ -152,6 +152,9 @@
         "eyebrow": "Paso a paso",
         "heading": "Arma tu helado",
         "side_text": "<p>1 base + 2 toppings + 1 sirope = tu Hope perfecto.</p>",
+        "title_font": "poppins_n7",
+        "title_size": 50,
+        "title_color": "#7a0b3d",
         "heading_color": "#7a0b3d",
         "eyebrow_color": "#e05a9a",
         "card_background": "#fdf3f7",

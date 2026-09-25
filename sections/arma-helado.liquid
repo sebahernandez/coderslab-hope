@@ -240,9 +240,15 @@
       align-items: flex-start;
     }
 
+    /* En columna, el flex-basis pasa a ser altura: reseteamos para
+       que el intro no reserve 480px y no aparezca un hueco bajo el título. */
+    .arma-helado__intro {
+      flex: 0 0 auto;
+    }
+
     .arma-helado__side-text {
       text-align: left;
-      flex-basis: auto;
+      flex: 0 0 auto;
     }
 
     .arma-helado__grid {
