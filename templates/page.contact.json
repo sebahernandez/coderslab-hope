@@ -80,19 +80,6 @@
     },
     "hero_text_p9GAzw": {
       "type": "hero-text",
-      "name": "Hero Banner Helados",
-      "settings": {
-        "height_type": "auto",
-        "min_height": 700,
-        "min_height_mobile": 400,
-        "height_custom": 80,
-        "height_unit": "vh",
-        "height_custom_mobile": 60,
-        "height_unit_mobile": "vh",
-        "background_color": "#ffb6d9",
-        "background_image": "shopify://shop_images/bg-contact.png",
-        "show_image": true
-      },
       "blocks": {
         "text_heading": {
           "type": "_hero-text-row",
@@ -118,7 +105,8 @@
             "spacing_bottom": 0,
             "alignment": "left",
             "alignment_mobile": "center"
-          }
+          },
+          "blocks": {}
         },
         "text_description": {
           "type": "_hero-text-row",
@@ -144,13 +132,27 @@
             "spacing_bottom": 0,
             "alignment": "left",
             "alignment_mobile": "center"
-          }
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "text_heading",
         "text_description"
-      ]
+      ],
+      "name": "Hero Banner Helados",
+      "settings": {
+        "height_type": "auto",
+        "min_height": 700,
+        "min_height_mobile": 400,
+        "height_custom": 80,
+        "height_unit": "vh",
+        "height_custom_mobile": 60,
+        "height_unit_mobile": "vh",
+        "background_color": "#ffb6d9",
+        "background_image": "shopify://shop_images/bg-contact.png",
+        "show_image": true
+      }
     },
     "custom_contact_fKYEWW": {
       "type": "custom-contact",
@@ -187,7 +189,7 @@
             "title_padding_right": 0,
             "title_padding_bottom": 0,
             "title_padding_left": 0,
-            "text": "<p>Dirección, número, ciudad, local, Venezuela</p>",
+            "text": "<p>ROSETTA MARKET, Tucacas 2054, Falcón, Venezuela</p>",
             "text_font": "work_sans_n4",
             "text_weight": "auto",
             "text_size": 15,
@@ -225,7 +227,7 @@
             "title_padding_right": 0,
             "title_padding_bottom": 0,
             "title_padding_left": 0,
-            "text": "<p>Describe aquí la información de esta caja.</p>",
+            "text": "<p>contacto@hope.com.ve</p>",
             "text_font": "work_sans_n4",
             "text_weight": "auto",
             "text_size": 15,
@@ -378,8 +380,20 @@
         "social_border": "#5a0f2e"
       }
     },
+    "custom_liquid_aDUtBB": {
+      "type": "custom-liquid",
+      "name": "t:names.custom_liquid",
+      "settings": {
+        "custom_liquid": "{%- comment -%}\n  Sección: Mapa ROSETTA MARKET\n  Altura: 400px | Ancho: 100%\n  Ubicación: 10.7888415, -68.3245884\n{%- endcomment -%}\n\n<div class=\"rosetta-map-container\">\n  <iframe\n    src=\"https://www.google.com/maps?q=ROSETTA+MARKET&ll=10.7888415,-68.3245884&z=16&output=embed\"\n    width=\"100%\"\n    height=\"400\"\n    style=\"border:0;\"\n    allowfullscreen=\"\"\n    loading=\"lazy\"\n    referrerpolicy=\"no-referrer-when-downgrade\"\n    title=\"Mapa de ROSETTA MARKET\">\n  </iframe>\n</div>\n\n<style>\n  .rosetta-map-container {\n    position: relative;\n    width: 100%;\n    height: 400px;\n    margin: 0 auto;\n    padding: 0;\n    overflow: hidden;\n  }\n\n  .rosetta-map-container iframe {\n    display: block;\n    width: 100%;\n    height: 400px;\n    border: 0;\n  }\n\n  /* Responsive: en móviles mantiene los 400px, si prefieres menos, descomenta */\n  /*\n  @media (max-width: 749px) {\n    .rosetta-map-container,\n    .rosetta-map-container iframe {\n      height: 300px;\n    }\n  }\n  */\n</style>",
+        "color_scheme": "",
+        "section_width": "full-width",
+        "padding-block-start": 0,
+        "padding-block-end": 0
+      }
+    },
     "custom_image_kA4QB4": {
       "type": "custom-image",
+      "disabled": true,
       "name": "Custom Image",
       "settings": {
         "image_desktop": "shopify://shop_images/Piscinahope.jpg",
@@ -407,6 +421,7 @@
     "custom_contact_fKYEWW",
     "information_boxes_nwyFAB",
     "custom_form_HgeJJW",
+    "custom_liquid_aDUtBB",
     "custom_image_kA4QB4"
   ]
 }
