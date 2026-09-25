@@ -1,0 +1,388 @@
+{%- comment -%}
+  Arma tu helado: encabezado (eyebrow + título grande a la izquierda, texto de apoyo
+  a la derecha) seguido de una fila de 3 tarjetas con imagen que se agregan como bloques
+  de tema (Online Store 2.0). Cada bloque acepta imagen + título + texto opcionales y
+  muestra un número de paso automático (01, 02, 03…).
+
+  Convención del tema: los valores dinámicos viajan como CSS vars inline; el CSS estático
+  vive en el bloque {% stylesheet %} de esta sección. Totalmente responsive.
+{%- endcomment -%}
+
+<div
+  class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }} spacing-style arma-helado"
+  style="
+    {%- render 'spacing-style', settings: section.settings -%}
+    --ah-heading-color: {{ section.settings.heading_color }};
+    --ah-eyebrow-color: {{ section.settings.eyebrow_color }};
+    --ah-card-bg: {{ section.settings.card_background }};
+    --ah-card-radius: {{ section.settings.card_radius }}px;
+    --ah-grid-gap: {{ section.settings.grid_gap }}px;
+  "
+>
+  <div class="arma-helado__inner">
+    <div class="arma-helado__header">
+      <div class="arma-helado__intro">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="arma-helado__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="arma-helado__title">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+      </div>
+      {%- if section.settings.side_text != blank -%}
+        <div class="arma-helado__side-text">{{ section.settings.side_text }}</div>
+      {%- endif -%}
+    </div>
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="arma-helado__grid">
+        {%- for block in section.blocks -%}
+          <article class="arma-helado__card" {{ block.shopify_attributes }}>
+            {%- assign step = forloop.index -%}
+            <span class="arma-helado__number" aria-hidden="true">
+              {{- step | prepend: '0' | slice: -2, 2 -}}
+            </span>
+
+            <div class="arma-helado__card-body">
+              {%- if block.settings.title != blank -%}
+                <h3 class="arma-helado__card-title">{{ block.settings.title }}</h3>
+              {%- endif -%}
+              {%- if block.settings.text != blank -%}
+                <p class="arma-helado__card-text">{{ block.settings.text }}</p>
+              {%- endif -%}
+
+              <div class="arma-helado__media">
+                {%- if block.settings.image != blank -%}
+                  {{
+                    block.settings.image
+                    | image_url: width: 900
+                    | image_tag:
+                      loading: 'lazy',
+                      sizes: '(min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw',
+                      widths: '300, 400, 500, 700, 900',
+                      class: 'arma-helado__image',
+                      alt: block.settings.image.alt | default: block.settings.title
+                  }}
+                {%- else -%}
+                  {{ 'image' | placeholder_svg_tag: 'arma-helado__image arma-helado__image--placeholder' }}
+                {%- endif -%}
+              </div>
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .arma-helado {
+    --ah-heading-color: #7a0b3d;
+    --ah-eyebrow-color: #e05a9a;
+    --ah-card-bg: #fdf3f7;
+    --ah-card-radius: 28px;
+    --ah-grid-gap: 24px;
+  }
+
+  .arma-helado__inner {
+    width: 100%;
+  }
+
+  /* Encabezado: título a la izquierda, texto de apoyo a la derecha */
+  .arma-helado__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px 32px;
+    margin-bottom: clamp(24px, 4vw, 48px);
+  }
+
+  .arma-helado__intro {
+    flex: 1 1 480px;
+    min-width: 0;
+  }
+
+  .arma-helado__eyebrow {
+    margin: 0 0 8px;
+    color: var(--ah-eyebrow-color);
+    font-size: clamp(0.7rem, 1vw, 0.8rem);
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  .arma-helado__title {
+    margin: 0;
+    color: var(--ah-heading-color);
+    font-size: clamp(2.5rem, 7vw, 5rem);
+    line-height: 0.95;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+
+  .arma-helado__side-text {
+    flex: 0 1 320px;
+    color: var(--ah-heading-color);
+    opacity: 0.7;
+    font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+    line-height: 1.5;
+    text-align: right;
+  }
+
+  .arma-helado__side-text > :first-child { margin-top: 0; }
+  .arma-helado__side-text > :last-child { margin-bottom: 0; }
+
+  /* Grid de 3 tarjetas */
+  .arma-helado__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--ah-grid-gap);
+  }
+
+  .arma-helado__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--ah-card-bg);
+    border-radius: var(--ah-card-radius);
+    padding: clamp(20px, 2.5vw, 32px);
+    overflow: hidden;
+  }
+
+  .arma-helado__number {
+    position: absolute;
+    top: clamp(8px, 1.5vw, 20px);
+    right: clamp(12px, 2vw, 28px);
+    color: var(--ah-eyebrow-color);
+    opacity: 0.22;
+    font-size: clamp(4rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 1;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .arma-helado__card-body {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .arma-helado__card-title {
+    margin: 0 0 6px;
+    color: var(--ah-heading-color);
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+
+  .arma-helado__card-text {
+    margin: 0 0 18px;
+    color: var(--ah-heading-color);
+    opacity: 0.7;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  .arma-helado__media {
+    margin-top: auto;
+    width: 100%;
+  }
+
+  .arma-helado__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: calc(var(--ah-card-radius) - 12px);
+    object-fit: cover;
+  }
+
+  .arma-helado__image--placeholder {
+    background: rgba(0, 0, 0, 0.03);
+    opacity: 0.6;
+  }
+
+  /* Tablet */
+  @media screen and (max-width: 989px) {
+    .arma-helado__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Móvil */
+  @media screen and (max-width: 749px) {
+    .arma-helado__header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .arma-helado__side-text {
+      text-align: left;
+      flex-basis: auto;
+    }
+
+    .arma-helado__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Arma tu helado",
+  "tag": "section",
+  "class": "section-arma-helado",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Encabezado"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Texto superior",
+      "default": "Paso a paso"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título principal",
+      "default": "Arma tu helado"
+    },
+    {
+      "type": "richtext",
+      "id": "side_text",
+      "label": "Texto lateral (derecha)",
+      "default": "<p>1 base + 2 toppings + 1 sirope = tu Hope perfecto.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color del título y textos",
+      "default": "#7a0b3d"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Color de acento (texto superior y números)",
+      "default": "#e05a9a"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Fondo de las tarjetas",
+      "default": "#fdf3f7"
+    },
+    {
+      "type": "header",
+      "content": "Diseño de la sección"
+    },
+    {
+      "type": "select",
+      "id": "section_width",
+      "label": "Ancho",
+      "options": [
+        { "value": "page-width", "label": "Ancho de página" },
+        { "value": "full-width", "label": "Ancho completo" }
+      ],
+      "default": "page-width"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Redondeo de las tarjetas",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "label": "Espacio entre tarjetas",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Esquema de color",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Superior",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Inferior",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "imagen",
+      "name": "Imagen / Paso",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Imagen"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Elige tu vaso"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Descripción",
+          "default": "Escoge el tamaño ideal para tu antojo."
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Arma tu helado",
+      "category": "Personalizado",
+      "blocks": [
+        { "type": "imagen", "settings": { "title": "Elige tu vaso", "text": "Escoge el tamaño ideal para tu antojo." } },
+        { "type": "imagen", "settings": { "title": "Elige 2 toppings", "text": "Selecciona 2 toppings básicos incluidos." } },
+        { "type": "imagen", "settings": { "title": "Elige tu sirope", "text": "El toque final, hecho artesanalmente." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

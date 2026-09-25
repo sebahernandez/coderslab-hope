@@ -114,6 +114,55 @@
         "image": "shopify://shop_images/chica_hope_png.png"
       }
     },
+    "arma_helado_UVmGEP": {
+      "type": "arma-helado",
+      "blocks": {
+        "imagen_y9xXwD": {
+          "type": "imagen",
+          "settings": {
+            "image": "shopify://shop_images/arma-tu-helado-hope.webp",
+            "title": "Elige tu vaso",
+            "text": "Escoge el tamaño ideal para tu antojo."
+          }
+        },
+        "imagen_CdFdJU": {
+          "type": "imagen",
+          "settings": {
+            "image": "shopify://shop_images/elige-tus-toppings.webp",
+            "title": "Elige 2 toppings",
+            "text": "Selecciona 2 toppings básicos incluidos."
+          }
+        },
+        "imagen_peRKYw": {
+          "type": "imagen",
+          "settings": {
+            "image": "shopify://shop_images/elige-tu-sirope.webp",
+            "title": "Elige tu sirope",
+            "text": "El toque final, hecho artesanalmente."
+          }
+        }
+      },
+      "block_order": [
+        "imagen_y9xXwD",
+        "imagen_CdFdJU",
+        "imagen_peRKYw"
+      ],
+      "name": "Arma tu helado",
+      "settings": {
+        "eyebrow": "Paso a paso",
+        "heading": "Arma tu helado",
+        "side_text": "<p>1 base + 2 toppings + 1 sirope = tu Hope perfecto.</p>",
+        "heading_color": "#7a0b3d",
+        "eyebrow_color": "#e05a9a",
+        "card_background": "#fdf3f7",
+        "section_width": "page-width",
+        "card_radius": 28,
+        "grid_gap": 24,
+        "color_scheme": "",
+        "padding-block-start": 60,
+        "padding-block-end": 60
+      }
+    },
     "main": {
       "type": "main-page",
       "blocks": {
@@ -160,49 +209,6 @@
         "color_scheme": "",
         "padding-block-start": 40,
         "padding-block-end": 80
-      }
-    },
-    "custom_featured_jhmX8i": {
-      "type": "custom-featured",
-      "blocks": {
-        "base_item_jmTTwz": {
-          "type": "base_item",
-          "settings": {
-            "image": "shopify://shop_images/Helado_Fondo.webp",
-            "title": "HELADO",
-            "text": "Un postre en capas que sorprende en cada cucharada. Capas de yogurt helado mezcladas con frutas jugosas, galletas, salsas artesanales y más.",
-            "image_fit": "cover"
-          }
-        },
-        "base_item_9AFAAp": {
-          "type": "base_item",
-          "settings": {
-            "image": "shopify://shop_images/MixoFondo.webp",
-            "title": "MIXO",
-            "text": "Un postre en capas que sorprende en cada cucharada. Capas de yogurt helado mezcladas con frutas jugosas, galletas, salsas artesanales y más.",
-            "image_fit": "cover"
-          }
-        },
-        "base_item_3a4mMm": {
-          "type": "base_item",
-          "settings": {
-            "image": "shopify://shop_images/MilshakeFondo.webp",
-            "title": "MILKSHAKE",
-            "text": "Un postre en capas que sorprende en cada cucharada. Capas de yogurt helado mezcladas con frutas jugosas, galletas, salsas artesanales y más.",
-            "image_fit": "cover"
-          }
-        }
-      },
-      "block_order": [
-        "base_item_jmTTwz",
-        "base_item_9AFAAp",
-        "base_item_3a4mMm"
-      ],
-      "name": "Custom Featured",
-      "settings": {
-        "title": "PASO 1: ELIGE TU VASO",
-        "description": "Helado de yogurt cremoso, preparado al momento y personalizado a tu gusto. Elige entre frutas frescas, siropes, galletas, cereales y más, para crear tu combinación perfecta.",
-        "image_height": 600
       }
     },
     "custom_step_KtdzJH": {
@@ -271,13 +277,88 @@
         "image4": "shopify://shop_images/hope-04.png",
         "image5": "shopify://shop_images/hope-03.png"
       }
+    },
+    "hero_text_fTKemQ": {
+      "type": "hero-text",
+      "blocks": {
+        "hero_text_row_3ALpEJ": {
+          "type": "_hero-text-row",
+          "settings": {
+            "content": "Ya sabes cómo.\nAhora hazlo tuyo.",
+            "convert_newlines": true,
+            "tag": "h1",
+            "color": "#ffffff",
+            "text_transform": "uppercase",
+            "letter_spacing": 1,
+            "max_width": 0,
+            "font_type": "theme",
+            "font": "inter_n7",
+            "custom_font_name": "",
+            "custom_font_url": "",
+            "custom_font_weight": "auto",
+            "weight": "auto",
+            "bold": true,
+            "font_size": 40,
+            "font_size_mobile": 24,
+            "line_height": 1.2,
+            "line_height_mobile": 1.2,
+            "spacing_bottom": 0,
+            "alignment": "center",
+            "alignment_mobile": "center"
+          },
+          "blocks": {}
+        },
+        "hero_button_DLYPBD": {
+          "type": "_hero-button",
+          "settings": {
+            "label": "ARMA TU HELADO",
+            "link": "",
+            "spacing_top": 20,
+            "glass_background": "#ffffff40",
+            "glass_border_color": "#ffffff80",
+            "glass_blur": 10,
+            "text_color": "#400724",
+            "border_radius": 25,
+            "font_type": "theme",
+            "font": "inter_n4",
+            "custom_font_name": "",
+            "custom_font_url": "",
+            "custom_font_weight": "auto",
+            "weight": "auto",
+            "bold": true,
+            "font_size": 16,
+            "font_size_mobile": 14,
+            "alignment": "center",
+            "alignment_mobile": "center"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "hero_text_row_3ALpEJ",
+        "hero_button_DLYPBD"
+      ],
+      "name": "Hero Banner Helados",
+      "settings": {
+        "height_type": "auto",
+        "min_height": 400,
+        "min_height_mobile": 430,
+        "height_custom": 55,
+        "height_unit": "vh",
+        "height_custom_mobile": 60,
+        "height_unit_mobile": "vh",
+        "background_color": "#ffffff",
+        "background_image": "shopify://shop_images/como-comprar-bg_01.webp",
+        "show_image": true
+      }
     }
   },
   "order": [
     "hero_text_rygWEb",
+    "arma_helado_UVmGEP",
     "main",
-    "custom_featured_jhmX8i",
     "custom_step_KtdzJH",
-    "custom_gallery_qeNJT8"
+    "custom_gallery_qeNJT8",
+    "hero_text_fTKemQ"
   ]
 }
