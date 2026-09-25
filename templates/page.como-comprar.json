@@ -11,20 +11,6 @@
   "sections": {
     "hero_text_rygWEb": {
       "type": "hero-text",
-      "name": "Hero Banner Helados",
-      "settings": {
-        "height_type": "auto",
-        "min_height": 700,
-        "min_height_mobile": 400,
-        "height_custom": 80,
-        "height_unit": "vh",
-        "height_custom_mobile": 60,
-        "height_unit_mobile": "vh",
-        "background_color": "#ffffff",
-        "background_image": "shopify://shop_images/bg-cloud.webp",
-        "show_image": false,
-        "image": "shopify://shop_images/chica_hope_png.png"
-      },
       "blocks": {
         "text_heading": {
           "type": "_hero-text-row",
@@ -50,7 +36,8 @@
             "spacing_bottom": 0,
             "alignment": "center",
             "alignment_mobile": "center"
-          }
+          },
+          "blocks": {}
         },
         "text_subheading": {
           "type": "_hero-text-row",
@@ -76,7 +63,8 @@
             "spacing_bottom": 0,
             "alignment": "center",
             "alignment_mobile": "center"
-          }
+          },
+          "blocks": {}
         },
         "text_description": {
           "type": "_hero-text-row",
@@ -102,39 +90,29 @@
             "spacing_bottom": 0,
             "alignment": "center",
             "alignment_mobile": "center"
-          }
-        },
-        "hero_button": {
-          "type": "_hero-button",
-          "settings": {
-            "label": "ARMA TU HELADO",
-            "link": "",
-            "spacing_top": 20,
-            "glass_background": "#fff3f3",
-            "glass_border_color": "#ffffff80",
-            "glass_blur": 14,
-            "text_color": "#641239",
-            "border_radius": 25,
-            "font_type": "theme",
-            "font": "sans_serif_n4",
-            "custom_font_name": "",
-            "custom_font_url": "",
-            "custom_font_weight": "auto",
-            "weight": "auto",
-            "bold": true,
-            "font_size": 16,
-            "font_size_mobile": 14,
-            "alignment": "center",
-            "alignment_mobile": "center"
-          }
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "text_heading",
         "text_subheading",
-        "text_description",
-        "hero_button"
-      ]
+        "text_description"
+      ],
+      "name": "Hero Banner Helados",
+      "settings": {
+        "height_type": "auto",
+        "min_height": 700,
+        "min_height_mobile": 400,
+        "height_custom": 80,
+        "height_unit": "vh",
+        "height_custom_mobile": 60,
+        "height_unit_mobile": "vh",
+        "background_color": "#ffffff",
+        "background_image": "shopify://shop_images/bg-cloud.webp",
+        "show_image": false,
+        "image": "shopify://shop_images/chica_hope_png.png"
+      }
     },
     "main": {
       "type": "main-page",

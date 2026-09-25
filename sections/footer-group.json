@@ -222,6 +222,7 @@
           "blocks": {
             "copyright": {
               "type": "_footer-copyright",
+              "disabled": true,
               "static": true,
               "settings": {
                 "font_size": "0.75rem",
@@ -233,7 +234,7 @@
               "type": "_footer-policy-list",
               "static": true,
               "settings": {
-                "font_size": "0.75rem",
+                "font_size": "0.875rem",
                 "case": "none"
               },
               "blocks": {}

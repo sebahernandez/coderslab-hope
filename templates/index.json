@@ -11,20 +11,6 @@
   "sections": {
     "hero_text_KKQXTN": {
       "type": "hero-text",
-      "name": "Hero Banner Helados",
-      "settings": {
-        "height_type": "custom",
-        "min_height": 760,
-        "min_height_mobile": 650,
-        "height_custom": 70,
-        "height_unit": "vh",
-        "height_custom_mobile": 80,
-        "height_unit_mobile": "vh",
-        "background_color": "#ffb6d9",
-        "background_image": "shopify://shop_images/home-hope.webp",
-        "background_image_mobile": "shopify://shop_images/hope-movil-home-bd.webp",
-        "show_image": false
-      },
       "blocks": {
         "text_heading": {
           "type": "_hero-text-row",
@@ -50,7 +36,8 @@
             "spacing_bottom": 0,
             "alignment": "left",
             "alignment_mobile": "left"
-          }
+          },
+          "blocks": {}
         },
         "text_subheading": {
           "type": "_hero-text-row",
@@ -76,7 +63,8 @@
             "spacing_bottom": 0,
             "alignment": "left",
             "alignment_mobile": "left"
-          }
+          },
+          "blocks": {}
         },
         "text_description": {
           "type": "_hero-text-row",
@@ -102,13 +90,15 @@
             "spacing_bottom": 0,
             "alignment": "left",
             "alignment_mobile": "left"
-          }
+          },
+          "blocks": {}
         },
         "hero_button": {
           "type": "_hero-button",
+          "disabled": true,
           "settings": {
-            "label": "ARMA TU HELADO",
-            "link": "",
+            "label": "TU HELADO FAVORITO",
+            "link": "#helado",
             "spacing_top": 20,
             "glass_background": "#ffffff40",
             "glass_border_color": "#ffffff80",
@@ -126,7 +116,8 @@
             "font_size_mobile": 14,
             "alignment": "left",
             "alignment_mobile": "left"
-          }
+          },
+          "blocks": {}
         }
       },
       "block_order": [
@@ -134,7 +125,21 @@
         "text_subheading",
         "text_description",
         "hero_button"
-      ]
+      ],
+      "name": "Hero Banner Helados",
+      "settings": {
+        "height_type": "custom",
+        "min_height": 760,
+        "min_height_mobile": 650,
+        "height_custom": 70,
+        "height_unit": "vh",
+        "height_custom_mobile": 80,
+        "height_unit_mobile": "vh",
+        "background_color": "#ffb6d9",
+        "background_image": "shopify://shop_images/home-hope.webp",
+        "background_image_mobile": "shopify://shop_images/hope-movil-home-bd.webp",
+        "show_image": false
+      }
     },
     "hope_features_DjnWDG": {
       "type": "hope-features",
@@ -208,20 +213,6 @@
     },
     "hero_text_QextmY": {
       "type": "hero-text",
-      "name": "Hero Banner Helados",
-      "settings": {
-        "height_type": "auto",
-        "min_height": 700,
-        "min_height_mobile": 400,
-        "height_custom": 80,
-        "height_unit": "vh",
-        "height_custom_mobile": 60,
-        "height_unit_mobile": "vh",
-        "background_color": "#ffb6d9",
-        "background_image": "shopify://shop_images/home-girl-hd.webp",
-        "background_image_mobile": "shopify://shop_images/girl-movil-hope.webp",
-        "show_image": false
-      },
       "blocks": {
         "text_heading": {
           "type": "_hero-text-row",
@@ -247,12 +238,13 @@
             "spacing_bottom": 0,
             "alignment": "left",
             "alignment_mobile": "left"
-          }
+          },
+          "blocks": {}
         },
         "text_subheading": {
           "type": "_hero-text-row",
           "settings": {
-            "content": "Helados artesanales, sabores únicos y toppings irresistibles.",
+            "content": "Helados artesanales, sabores únicos y <br> toppings irresistibles.",
             "convert_newlines": false,
             "tag": "h2",
             "color": "#630022",
@@ -273,12 +265,13 @@
             "spacing_bottom": 0,
             "alignment": "left",
             "alignment_mobile": "left"
-          }
+          },
+          "blocks": {}
         },
         "hero_button": {
           "type": "_hero-button",
           "settings": {
-            "label": "ARMA TU HELADO",
+            "label": "ARMA TU HELADO HOPE",
             "link": "shopify://products/helado-hope",
             "spacing_top": 20,
             "glass_background": "#ffffff40",
@@ -297,17 +290,15 @@
             "font_size_mobile": 14,
             "alignment": "left",
             "alignment_mobile": "left"
-          }
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "text_heading",
         "text_subheading",
         "hero_button"
-      ]
-    },
-    "hero_text_yHJFzV": {
-      "type": "hero-text",
+      ],
       "name": "Hero Banner Helados",
       "settings": {
         "height_type": "auto",
@@ -317,11 +308,14 @@
         "height_unit": "vh",
         "height_custom_mobile": 60,
         "height_unit_mobile": "vh",
-        "background_color": "#FFFFFF",
-        "background_image": "shopify://shop_images/mixo-hope-hero.webp",
-        "background_image_mobile": "shopify://shop_images/mixo-movil-bg.webp",
-        "show_image": true
-      },
+        "background_color": "#ffb6d9",
+        "background_image": "shopify://shop_images/home-girl-hd.webp",
+        "background_image_mobile": "shopify://shop_images/girl-movil-hope.webp",
+        "show_image": false
+      }
+    },
+    "hero_text_yHJFzV": {
+      "type": "hero-text",
       "blocks": {
         "text_heading": {
           "type": "_hero-text-row",
@@ -347,7 +341,8 @@
             "spacing_bottom": 0,
             "alignment": "right",
             "alignment_mobile": "right"
-          }
+          },
+          "blocks": {}
         },
         "text_subheading": {
           "type": "_hero-text-row",
@@ -373,7 +368,8 @@
             "spacing_bottom": 0,
             "alignment": "right",
             "alignment_mobile": "right"
-          }
+          },
+          "blocks": {}
         },
         "text_description": {
           "type": "_hero-text-row",
@@ -399,12 +395,13 @@
             "spacing_bottom": 0,
             "alignment": "right",
             "alignment_mobile": "right"
-          }
+          },
+          "blocks": {}
         },
         "hero_button": {
           "type": "_hero-button",
           "settings": {
-            "label": "ARMA TU HELADO",
+            "label": "ARMA TU MIXO",
             "link": "shopify://products/mixo-hope",
             "spacing_top": 20,
             "glass_background": "#ffffff40",
@@ -423,7 +420,8 @@
             "font_size_mobile": 14,
             "alignment": "right",
             "alignment_mobile": "right"
-          }
+          },
+          "blocks": {}
         }
       },
       "block_order": [
@@ -431,10 +429,7 @@
         "text_subheading",
         "text_description",
         "hero_button"
-      ]
-    },
-    "hero_text_rW3g99": {
-      "type": "hero-text",
+      ],
       "name": "Hero Banner Helados",
       "settings": {
         "height_type": "auto",
@@ -444,15 +439,19 @@
         "height_unit": "vh",
         "height_custom_mobile": 60,
         "height_unit_mobile": "vh",
-        "background_color": "#FFFFFF",
-        "background_image": "shopify://shop_images/hope-auto.webp",
+        "background_color": "#ffffff",
+        "background_image": "shopify://shop_images/mixo-hope-hero.webp",
+        "background_image_mobile": "shopify://shop_images/mixo-movil-bg.webp",
         "show_image": true
-      },
+      }
+    },
+    "hero_text_rW3g99": {
+      "type": "hero-text",
       "blocks": {
         "text_heading": {
           "type": "_hero-text-row",
           "settings": {
-            "content": "HELADOS ARTESANALES",
+            "content": "MILSHAKES",
             "convert_newlines": true,
             "tag": "h1",
             "color": "#630022",
@@ -473,7 +472,8 @@
             "spacing_bottom": 0,
             "alignment": "left",
             "alignment_mobile": "left"
-          }
+          },
+          "blocks": {}
         },
         "text_subheading": {
           "type": "_hero-text-row",
@@ -499,12 +499,13 @@
             "spacing_bottom": 0,
             "alignment": "left",
             "alignment_mobile": "left"
-          }
+          },
+          "blocks": {}
         },
         "hero_button": {
           "type": "_hero-button",
           "settings": {
-            "label": "ARMA TU HELADO",
+            "label": "ARMA TU MILSHAKE",
             "link": "shopify://products/milkshake",
             "spacing_top": 20,
             "glass_background": "#ffffff40",
@@ -523,14 +524,28 @@
             "font_size_mobile": 14,
             "alignment": "left",
             "alignment_mobile": "left"
-          }
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "text_heading",
         "text_subheading",
         "hero_button"
-      ]
+      ],
+      "name": "Hero Banner Helados",
+      "settings": {
+        "height_type": "auto",
+        "min_height": 700,
+        "min_height_mobile": 400,
+        "height_custom": 80,
+        "height_unit": "vh",
+        "height_custom_mobile": 60,
+        "height_unit_mobile": "vh",
+        "background_color": "#ffffff",
+        "background_image": "shopify://shop_images/hope-auto.webp",
+        "show_image": true
+      }
     },
     "video_hope_xtYyXx": {
       "type": "video-hope",
