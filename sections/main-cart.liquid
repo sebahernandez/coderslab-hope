@@ -34,6 +34,15 @@
 </cart-items-component>
 
 {% stylesheet %}
+  /* El header "glass" es position: fixed y flota SOBRE el contenido (no reserva
+     banda en el flujo, para que los heros suban por detrás). La página de carrito
+     no tiene hero, así que su contenido quedaría tapado por el navbar. Reservamos
+     el alto del header + aire arriba. Solo cuando el header glass está activo
+     (si no, el header es sticky/in-flow y no haría falta). */
+  body:has(#header-component.header--glass) .cart-items-component {
+    padding-block-start: calc(var(--header-group-height, 86px) + var(--padding-xl));
+  }
+
   .cart-page {
     --cart-font-size--2xs: var(--font-size--2xs);
     --cart-font-size--xs: var(--font-size--xs);
