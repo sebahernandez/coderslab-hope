@@ -143,6 +143,18 @@
   {% endif %}
 </div>
 
+{% stylesheet %}
+  /* El header "glass" es position: fixed y flota SOBRE el contenido (no reserva
+     banda en el flujo, para que los heros suban por detrás). La página de listado
+     de colecciones (/collections) no tiene hero, así que su contenido quedaría
+     tapado por el navbar. Reservamos el alto del header + aire arriba. Solo cuando
+     el header glass está activo (si no, el header es sticky/in-flow y no haría falta).
+     Aplica tanto en móvil como en desktop. */
+  body:has(#header-component.header--glass) .section-resource-list {
+    padding-block-start: calc(var(--header-group-height, 86px) + var(--padding-xl));
+  }
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "t:names.collection_list",
