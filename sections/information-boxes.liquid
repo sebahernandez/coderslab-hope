@@ -19,7 +19,7 @@
   elsif section.settings.heading_weight == 'bold'
     assign heading_weight = 700
   else
-    assign heading_weight = heading_font.weight
+    assign heading_weight = heading_font.weight | plus: 0
   endif
 -%}
 
@@ -38,7 +38,7 @@
       elsif block.settings.title_weight == 'bold'
         assign title_weight = 700
       else
-        assign title_weight = title_font.weight
+        assign title_weight = title_font.weight | plus: 0
       endif
 
       assign title_align = block.settings.title_alignment
@@ -52,7 +52,7 @@
       elsif block.settings.text_weight == 'bold'
         assign text_weight = 700
       else
-        assign text_weight = text_font.weight
+        assign text_weight = text_font.weight | plus: 0
       endif
     -%}
     {{ title_font | font_face: font_display: 'swap' }}

@@ -114,6 +114,77 @@
         "image": "shopify://shop_images/chica_hope_png.png"
       }
     },
+    "opciones_helados_L9BCMY": {
+      "type": "opciones-helados",
+      "blocks": {
+        "opcion_gR9we6": {
+          "type": "opcion",
+          "settings": {
+            "image": "shopify://shop_images/hope1.avif",
+            "eyebrow": "EL CLÁSICO",
+            "title": "HELADO",
+            "card_title_font": "assistant_n7",
+            "text": "Cremoso, fresco y hecho a tu manera.",
+            "link": "shopify://products/helado-hope",
+            "link_label": "Elegir",
+            "selected": true,
+            "highlight": false
+          }
+        },
+        "opcion_NjceaT": {
+          "type": "opcion",
+          "settings": {
+            "image": "shopify://shop_images/Mixo1.avif",
+            "eyebrow": "CAPAS DE SABOR",
+            "title": "MIXO",
+            "card_title_font": "assistant_n7",
+            "text": "Tu combinación favorita, capa por capa.",
+            "link": "shopify://products/mixo-hope",
+            "link_label": "Elegir",
+            "selected": false,
+            "highlight": true
+          }
+        },
+        "opcion_qJrt9Q": {
+          "type": "opcion",
+          "settings": {
+            "image": "shopify://shop_images/milkshake1.avif",
+            "eyebrow": "PARA TOMAR",
+            "title": "MILKSHAKE",
+            "card_title_font": "assistant_n7",
+            "text": "Sabor intenso, cremosidad y proteína.",
+            "link": "shopify://products/milkshake",
+            "link_label": "Elegir",
+            "selected": false,
+            "highlight": false
+          }
+        }
+      },
+      "block_order": [
+        "opcion_gR9we6",
+        "opcion_NjceaT",
+        "opcion_qJrt9Q"
+      ],
+      "name": "Opciones de helados",
+      "settings": {
+        "heading": "",
+        "title_font": "poppins_n4",
+        "title_size": 48,
+        "title_color": "#7a0b3d",
+        "text_color": "#ffffff",
+        "eyebrow_color": "#f2d7e5",
+        "link_color": "#ffffff",
+        "highlight_color": "#ff5fa2",
+        "overlay_opacity": 40,
+        "section_width": "page-width",
+        "card_min_height": 380,
+        "card_radius": 24,
+        "grid_gap": 24,
+        "color_scheme": "",
+        "padding-block-start": 60,
+        "padding-block-end": 60
+      }
+    },
     "arma_helado_UVmGEP": {
       "type": "arma-helado",
       "blocks": {
@@ -314,7 +385,7 @@
         "hero_button_DLYPBD": {
           "type": "_hero-button",
           "settings": {
-            "label": "ARMA TU HELADO",
+            "label": "COMIENZA AHORA",
             "link": "",
             "spacing_top": 20,
             "glass_background": "#ffffff40",
@@ -358,6 +429,7 @@
   },
   "order": [
     "hero_text_rygWEb",
+    "opciones_helados_L9BCMY",
     "arma_helado_UVmGEP",
     "main",
     "custom_step_KtdzJH",
