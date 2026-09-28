@@ -268,6 +268,29 @@ body:has(.hopecfg) {
 @media (min-width: 640px) { .hopecfg__config-scroll { padding: 1rem 1.5rem; } }
 @media (min-width: 1024px) { .hopecfg__config-scroll { gap: 1.25rem; padding: 1.5rem 2.5rem; } }
 
+/* Scrollbar glass rosa para la lista de añadidos/siropes/toppings */
+.hopecfg__config-scroll {
+  scrollbar-width: thin;                       /* Firefox */
+  scrollbar-color: rgba(237, 93, 150, 0.45) transparent;
+}
+.hopecfg__config-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+.hopecfg__config-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin-block: 0.5rem;
+}
+.hopecfg__config-scroll::-webkit-scrollbar-thumb {
+  background: rgba(237, 93, 150, 0.35);        /* rosa acento translúcido (glass) */
+  border: 2px solid rgba(255, 255, 255, 0.5);  /* borde blanco translúcido */
+  border-radius: 999px;                        /* pill */
+  background-clip: padding-box;                /* respeta el borde translúcido */
+  backdrop-filter: blur(6px);                  /* efecto vidrio */
+}
+.hopecfg__config-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(237, 93, 150, 0.55);        /* más intenso al pasar el cursor */
+}
+
 .hopecfg__heading { flex-shrink: 0; }
 .hopecfg__eyebrow {
   margin: 0;
