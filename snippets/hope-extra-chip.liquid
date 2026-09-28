@@ -1,8 +1,10 @@
 {%- comment -%}
   Snippet: hope-extra-chip.liquid
-  Renderiza un chip de topping/sirope del configurador Hope. El precio del extra
-  viene del metafield (precio_cents). El JS usa ese precio para calcular el total
-  y elegir la variante nativa "nivel de precio" del producto (no hay producto add-on).
+  Renderiza un chip de topping/sirope del configurador Hope.
+  Modelo de cobro: los BÁSICOS (no premium) van 2 top + 1 sirope incluidos, cada
+  básico adicional $1 (bakeado en la variante nativa). Los PREMIUM (data-premium)
+  cobran un precio plano ($1.50) vía línea add-on y nunca cuentan como incluidos.
+  `data-premium` expone el flag al JS; `data-precio-cents` queda por compatibilidad.
 
   @param {object} item - Item del metafield custom.opciones_customizador
                          { id, nombre, emoji, precio_cents, premium, imagen }
@@ -21,6 +23,7 @@
   data-emoji="{{ item.emoji }}"
   data-image="{{ item.imagen }}"
   data-precio-cents="{{ vcents }}"
+  data-premium="{{ item.premium }}"
   type="button"
 >
   {%- if tipo == 'topping' -%}

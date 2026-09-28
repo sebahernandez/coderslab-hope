@@ -58,15 +58,23 @@
   endif
 
   comment
-    Modelo de cobro (sin SKU add-on): TODO el costo de los extras va bakeado en la
-    variante del helado (Tamaño × "Toppings extra" 0..N). Cada extra pagado (topping
-    o sirope más allá de lo incluido) = $1. Se añade 1 sola línea nativa; no existe
-    producto "Extras personalizados".
+    Modelo de cobro HÍBRIDO:
+    - Básicos (no premium): 2 toppings + 1 sirope incluidos; cada básico adicional = $1,
+      bakeado en la variante del helado (Tamaño × "Toppings extra" 0..N). 1 línea nativa.
+    - Premium (item.premium): NUNCA cuentan como incluidos; cobran un precio plano
+      (premium_cents, def. $1.50) vía una 2ª línea add-on ("Extras personalizados",
+      qty = nº premium). El add-on se vincula a la línea del helado con `_hope_ext`.
   endcomment
   assign free_toppings = section.settings.free_toppings | default: 2
   assign extra_topping_cents = section.settings.extra_topping_cents | default: 100
   assign free_syrups = section.settings.free_syrups | default: 1
   assign max_extra_toppings = section.settings.max_extra_toppings | default: 20
+  assign premium_cents = section.settings.premium_cents | default: 150
+
+  assign extras_variant_id = 67600613900540
+  if section.settings.producto_extras and section.settings.producto_extras.selected_or_first_available_variant
+    assign extras_variant_id = section.settings.producto_extras.selected_or_first_available_variant.id
+  endif
 -%}
 
 {%- capture products_json -%}
@@ -97,6 +105,8 @@
   data-extra-topping-cents="{{ extra_topping_cents }}"
   data-free-syrups="{{ free_syrups }}"
   data-max-extra-toppings="{{ max_extra_toppings }}"
+  data-premium-cents="{{ premium_cents }}"
+  data-extras-variant-id="{{ extras_variant_id }}"
 >
   <script type="application/json" data-hopecfg-products>{{ products_json }}</script>
 
@@ -147,17 +157,15 @@
           <h2 class="hopecfg__title">{{ titulo_dinamico }}</h2>
         </div>
 
-        {%- if is_mixo -%}
-          <div class="hope2__delivery-notice" role="note">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M1 3h15v13H1z" />
-              <path d="M16 8h4l3 3v5h-7V8z" />
-              <circle cx="5.5" cy="18.5" r="2.5" />
-              <circle cx="18.5" cy="18.5" r="2.5" />
-            </svg>
-            <span>Este producto es solo para delivery</span>
-          </div>
-        {%- endif -%}
+        <div class="hope2__delivery-notice" role="note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M1 3h15v13H1z" />
+            <path d="M16 8h4l3 3v5h-7V8z" />
+            <circle cx="5.5" cy="18.5" r="2.5" />
+            <circle cx="18.5" cy="18.5" r="2.5" />
+          </svg>
+          <span>Disponible para delivery y compra presencial</span>
+        </div>
 
         <div id="hope-options" class="hopecfg__groups">
           <fieldset id="size-options" class="hopecfg__group" data-group="size">
@@ -184,7 +192,7 @@
           {%- comment -%} Toppings (estándar + premium): los primeros 2 van incluidos; cada extra +$1.00 {%- endcomment -%}
           <fieldset id="topping-options" class="hopecfg__group" data-group="topping">
             <legend class="hopecfg__legend">
-              <span id="topping-title">2 · Elige tus toppings <span class="hopecfg__legend-hint">({{ free_toppings }} incluidos · cada extra {{ extra_topping_cents | money }})</span></span>
+              <span id="topping-title">2 · Elige tus toppings <span class="hopecfg__legend-hint">({{ free_toppings }} básicos incluidos · básico extra {{ extra_topping_cents | money }} · premium ★ {{ premium_cents | money }})</span></span>
               <span class="hopecfg__legend-count" data-topping-count>0/{{ free_toppings }}</span>
             </legend>
             <div id="topping-warning" class="hope2__cost-warning" role="note" hidden>
@@ -193,7 +201,7 @@
                 <path d="M12 8v5" />
                 <path d="M12 16h.01" />
               </svg>
-              <span>Los primeros {{ free_toppings }} toppings están incluidos. Cada extra adicional (topping o sirope) tiene un costo de {{ extra_topping_cents | money }}.</span>
+              <span>Los primeros {{ free_toppings }} toppings básicos están incluidos; cada básico adicional (topping o sirope) cuesta {{ extra_topping_cents | money }}. Los toppings y siropes premium (★) cuestan {{ premium_cents | money }} cada uno y no cuentan como incluidos.</span>
             </div>
             <div class="hopecfg__chips topping-grid">
               {%- if meta_topping_count > 0 -%}
@@ -218,7 +226,7 @@
           </fieldset>
 
           <fieldset id="syrup-options" class="hopecfg__group" data-group="syrup">
-            <legend class="hopecfg__legend">3 · Elige tu sirope <span class="hopecfg__legend-hint">({{ free_syrups }} incluido · cada extra {{ extra_topping_cents | money }})</span></legend>
+            <legend class="hopecfg__legend">3 · Elige tu sirope <span class="hopecfg__legend-hint">({{ free_syrups }} básico incluido · básico extra {{ extra_topping_cents | money }} · premium ★ {{ premium_cents | money }})</span></legend>
             <div class="hopecfg__chips">
               {%- if cat_sirope.items.size > 0 -%}
                 {%- for item in cat_sirope.items -%}
@@ -325,6 +333,12 @@
       "label": "Producto · Helado"
     },
     {
+      "type": "product",
+      "id": "producto_extras",
+      "label": "Producto · Extras personalizados (add-on premium)",
+      "info": "Producto add-on (1 variante @ premium_cents, inventario no rastreado, tag addon). Si se deja vacío, usa el variant por defecto (67600613900540). Los premium se cobran en esta línea."
+    },
+    {
       "type": "header",
       "content": "Reglas de precio de extras"
     },
@@ -359,6 +373,13 @@
       "max": 3,
       "step": 1,
       "default": 1
+    },
+    {
+      "type": "number",
+      "id": "premium_cents",
+      "label": "Costo por item premium (centavos)",
+      "default": 150,
+      "info": "150 = $1.50 por cada topping/sirope premium (★). Se cobra en la línea add-on \"Extras personalizados\" (qty = nº premium). Debe coincidir con el precio de la variante del add-on."
     },
     {
       "type": "header",

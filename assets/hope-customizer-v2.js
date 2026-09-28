@@ -1,19 +1,20 @@
 /**
  * hope-customizer-v2.js — Configurador Hope V2 ("Crea tu helado")
  *
- * Reglas de negocio (Helado Hope / Mixo Hope) — modelo UNIFORME, sin SKU:
- *  - Tamaño: Pequeño/Mediano/Grande = precio base ($5/$7/$9), variante nativa.
- *  - Toppings (estándar y premium por igual): los primeros 2 van INCLUIDOS en el
- *    precio base; cada topping adicional cuesta $1.00. Sin límite superior en la UI.
- *  - Siropes: el primero va INCLUIDO; cada sirope adicional cuesta $1.00. Mínimo 1.
- *  - En resumen: cualquier extra más allá de lo incluido = $1.00 fijo.
+ * Reglas de negocio (Helado Hope / Mixo Hope) — modelo HÍBRIDO:
+ *  - Tamaño: Pequeño/Mediano/Grande = precio base, variante nativa.
+ *  - Toppings/siropes BÁSICOS (no premium): los primeros 2 toppings + 1 sirope van
+ *    INCLUIDOS; cada BÁSICO adicional cuesta $1.00 (EXTRA_UNIT_CENTS). Sin límite UI.
+ *  - Toppings/siropes PREMIUM (data-premium): NUNCA cuentan como incluidos; cada uno
+ *    cuesta un precio plano PREMIUM_CENTS ($1.50).
  *
- * Cobro (tienda no-Plus, sin Functions): TODO el costo de los extras va BAKEADO en
- * el precio de la variante del helado. El producto tiene variantes
- * Tamaño × "Toppings extra" (0..MAX_EXTRA_TOPPINGS); el JS elige la variante que
- * corresponde a (tamaño, nº total de extras pagados). Se añade 1 SOLA línea nativa,
- * sin ningún producto/SKU add-on. El desglose legible va como line item properties
- * en la línea del helado, para cocina.
+ * Cobro (tienda no-Plus, sin Functions):
+ *  - Los BÁSICOS pagados van BAKEADOS en la variante del helado
+ *    (Tamaño × "Toppings extra" 0..MAX_EXTRA_TOPPINGS, $1 c/u). 1 línea nativa.
+ *  - Los PREMIUM van en una 2ª línea add-on ("Extras personalizados",
+ *    EXTRAS_VARIANT_ID, qty = nº premium @ PREMIUM_CENTS), vinculada a la línea del
+ *    helado con la property `_hope_ext` (cleanup/badge por toppings-customizer.js).
+ *  - El desglose legible va como line item properties en la línea del helado.
  *
  * Es idempotente y solo actúa sobre raíces [data-hopecfg-v2].
  */
@@ -59,6 +60,9 @@
     // Máx. de extras pagados que soportan las variantes del helado. El costo de los
     // extras ($1 c/u) va BAKEADO en el precio de la variante (Tamaño × Toppings extra).
     var MAX_EXTRA_TOPPINGS = parseInt(root.dataset.maxExtraToppings || "20", 10);
+    // Precio plano por item premium (topping o sirope) y variante del add-on que lo cobra.
+    var PREMIUM_CENTS = parseInt(root.dataset.premiumCents || "150", 10);
+    var EXTRAS_VARIANT_ID = parseInt(root.dataset.extrasVariantId || "0", 10) || null;
 
     function catalogUrl(asset, width) {
       width = width || 1000;
@@ -106,13 +110,24 @@
 
     var SIZE_NAME = { small: "Pequeño", medium: "Mediano", large: "Grande" };
 
-    // ---- Nº de extras pagados (toppings + siropes más allá de lo incluido) ----
-    // Cada extra pagado cuesta $1 y va bakeado en la variante. Sin límite en la UI,
-    // pero para el cobro se topa a MAX_EXTRA_TOPPINGS (lo que soportan las variantes).
-    function extraToppingCount() { return Math.max(0, state.toppings.length - FREE_TOPPINGS); }
-    function extraSyrupCount() { return Math.max(0, state.syrups.length - FREE_SYRUPS); }
-    function paidExtraCount() { return extraToppingCount() + extraSyrupCount(); }
-    function cappedExtraCount() { return Math.min(paidExtraCount(), MAX_EXTRA_TOPPINGS); }
+    // ---- Clasificación básicos vs premium (conserva el orden de selección) ----
+    function basicIds(group, arr) { return arr.filter(function (id) { return !isPremium(group, id); }); }
+    function premiumIds(group, arr) { return arr.filter(function (id) { return isPremium(group, id); }); }
+    function basicToppings() { return basicIds("topping", state.toppings); }
+    function premiumToppings() { return premiumIds("topping", state.toppings); }
+    function basicSyrups() { return basicIds("syrup", state.syrups); }
+    function premiumSyrups() { return premiumIds("syrup", state.syrups); }
+
+    // ---- Extras pagados ----
+    // Solo los BÁSICOS ocupan lo incluido (2 top + 1 sirope) y van bakeados en la
+    // variante ($1 c/u). Los PREMIUM nunca cuentan como incluidos y cuestan
+    // PREMIUM_CENTS c/u vía la línea add-on.
+    function paidBasicToppingCount() { return Math.max(0, basicToppings().length - FREE_TOPPINGS); }
+    function paidBasicSyrupCount() { return Math.max(0, basicSyrups().length - FREE_SYRUPS); }
+    // Conteo para elegir la variante (Tamaño × Toppings extra), topado a MAX_EXTRA_TOPPINGS.
+    function variantExtraCount() { return Math.min(paidBasicToppingCount() + paidBasicSyrupCount(), MAX_EXTRA_TOPPINGS); }
+    function premiumCount() { return premiumToppings().length + premiumSyrups().length; }
+    function hasPaidExtras() { return variantExtraCount() > 0 || premiumCount() > 0; }
 
     // ---- Variante nativa (Tamaño × Toppings extra) = base + $1·nºextra ----
     function findVariant(sizeName, extraCount) {
@@ -127,7 +142,7 @@
     }
     function findSizeVariant(sizeName) { return findVariant(sizeName, 0); }
     function variantForState() {
-      return findVariant(SIZE_NAME[state.size] || state.size, cappedExtraCount());
+      return findVariant(SIZE_NAME[state.size] || state.size, variantExtraCount());
     }
     // Precio de la variante seleccionada (ya incluye TODOS los extras bakeados).
     function baseCents() {
@@ -135,11 +150,14 @@
       return v ? v.price : null;
     }
 
-    // ---- Cálculo de extras (en centavos), solo para mostrar el desglose ----
-    function extrasCents() { return cappedExtraCount() * EXTRA_UNIT_CENTS; }
+    // ---- Cálculo de extras (en centavos) ----
+    function basicExtrasCents() { return variantExtraCount() * EXTRA_UNIT_CENTS; }
+    function premiumExtrasCents() { return premiumCount() * PREMIUM_CENTS; }
+    function extrasCents() { return basicExtrasCents() + premiumExtrasCents(); }
     function totalCents() {
-      // Todo el costo ya está bakeado en la variante; el total ES el precio de la variante.
-      return baseCents();
+      // Básicos ya bakeados en la variante; premium se suma (línea add-on).
+      var b = baseCents();
+      return b == null ? null : b + premiumExtrasCents();
     }
 
     // ---- Lectura de datos de los chips ----
@@ -154,6 +172,10 @@
     function readImage(group, id) {
       var el = $("[data-group='" + group + "'] [data-id='" + id + "']");
       return el ? (el.dataset.image || "") : "";
+    }
+    function isPremium(group, id) {
+      var el = $("[data-group='" + group + "'] [data-id='" + id + "']");
+      return !!(el && el.dataset.premium === "true");
     }
 
     // ---- Validación: al menos 1 sirope (obligatorio, el incluido) ----
@@ -233,17 +255,23 @@
     }
 
     function renderChipPrices() {
-      // Toppings (estándar + premium): primeros FREE_TOPPINGS "Incluido"; extras "+$1.00".
+      // Premium → siempre "+$1.50". Básicos → primeros incluidos, resto "+$1.00"
+      // (el índice se calcula SOLO entre básicos, para que premium no ocupe incluidos).
+      var basicTop = basicToppings();
       $$("[data-group='topping'] .hopecfg__choice").forEach(function (b) {
-        var idx = state.toppings.indexOf(b.dataset.id);
-        if (idx === -1) { setChipPrice(b, "", false); return; }
+        var id = b.dataset.id;
+        if (state.toppings.indexOf(id) === -1) { setChipPrice(b, "", false); return; }
+        if (isPremium("topping", id)) { setChipPrice(b, "+" + formatMoney(PREMIUM_CENTS), true); return; }
+        var idx = basicTop.indexOf(id);
         if (idx < FREE_TOPPINGS) setChipPrice(b, "Incluido", false);
         else setChipPrice(b, "+" + formatMoney(EXTRA_UNIT_CENTS), true);
       });
-      // Siropes: primeros FREE_SYRUPS "Incluido"; el resto "+$1.00".
+      var basicSyr = basicSyrups();
       $$("[data-group='syrup'] .hopecfg__choice").forEach(function (b) {
-        var idx = state.syrups.indexOf(b.dataset.id);
-        if (idx === -1) { setChipPrice(b, "", false); return; }
+        var id = b.dataset.id;
+        if (state.syrups.indexOf(id) === -1) { setChipPrice(b, "", false); return; }
+        if (isPremium("syrup", id)) { setChipPrice(b, "+" + formatMoney(PREMIUM_CENTS), true); return; }
+        var idx = basicSyr.indexOf(id);
         if (idx < FREE_SYRUPS) setChipPrice(b, "Incluido", false);
         else setChipPrice(b, "+" + formatMoney(EXTRA_UNIT_CENTS), true);
       });
@@ -252,7 +280,7 @@
     // ---- Aviso de costo adicional (regla UX) ----
     function renderWarning() {
       var warn = $("#topping-warning");
-      if (warn) warn.hidden = paidExtraCount() <= 0;
+      if (warn) warn.hidden = !hasPaidExtras();
     }
 
     // ---- Precio y gating del botón ----
@@ -270,15 +298,17 @@
       var countEl = $("[data-topping-count]");
       if (countEl) {
         var n = state.toppings.length;
-        var extra = extraToppingCount();
-        countEl.textContent = extra > 0 ? n + " (" + extra + " con costo)" : n + "/" + FREE_TOPPINGS;
+        var conCosto = paidBasicToppingCount() + premiumToppings().length;
+        countEl.textContent = conCosto > 0 ? n + " (" + conCosto + " con costo)" : n + "/" + FREE_TOPPINGS;
       }
 
       // Desglose de extras bajo el total.
       var breakEl = $("#extras-breakdown");
       if (breakEl) {
-        var e = extrasCents();
-        breakEl.textContent = e > 0 ? "Incluye " + formatMoney(e) + " en extras" : "";
+        var parts = [];
+        if (basicExtrasCents() > 0) parts.push(formatMoney(basicExtrasCents()) + " en extras");
+        if (premiumExtrasCents() > 0) parts.push(formatMoney(premiumExtrasCents()) + " en premium");
+        breakEl.textContent = parts.length ? "Incluye " + parts.join(" + ") : "";
       }
 
       var buyBtn = $("#buy");
@@ -302,15 +332,21 @@
       $$("[data-group='size'] .hopecfg__choice").forEach(function (b) {
         b.classList.toggle("is-active", b.dataset.id === state.size);
       });
+      var basicTopR = basicToppings();
       $$("[data-group='topping'] .hopecfg__choice").forEach(function (b) {
-        var idx = state.toppings.indexOf(b.dataset.id);
-        b.classList.toggle("is-active", idx !== -1);
-        b.classList.toggle("is-extra-cost", idx >= FREE_TOPPINGS);
+        var id = b.dataset.id;
+        var active = state.toppings.indexOf(id) !== -1;
+        b.classList.toggle("is-active", active);
+        var costs = active && (isPremium("topping", id) || basicTopR.indexOf(id) >= FREE_TOPPINGS);
+        b.classList.toggle("is-extra-cost", costs);
       });
+      var basicSyrR = basicSyrups();
       $$("[data-group='syrup'] .hopecfg__choice").forEach(function (b) {
-        var idx = state.syrups.indexOf(b.dataset.id);
-        b.classList.toggle("is-active", idx !== -1);
-        b.classList.toggle("is-extra-cost", idx >= FREE_SYRUPS && idx !== -1);
+        var id = b.dataset.id;
+        var active = state.syrups.indexOf(id) !== -1;
+        b.classList.toggle("is-active", active);
+        var costs = active && (isPremium("syrup", id) || basicSyrR.indexOf(id) >= FREE_SYRUPS);
+        b.classList.toggle("is-extra-cost", costs);
       });
 
       renderChipPrices();
@@ -374,14 +410,21 @@
 
     function buildMainProperties() {
       var props = {};
-      var incl = state.toppings.slice(0, FREE_TOPPINGS).map(function (id) { return readLabel("topping", id); });
-      var adic = state.toppings.slice(FREE_TOPPINGS).map(function (id) { return readLabel("topping", id); });
-      if (incl.length) props["Toppings incluidos"] = incl.join(", ");
-      if (adic.length) props["Toppings adicionales"] = adic.join(", ") + " (+" + formatMoney(extraToppingCount() * EXTRA_UNIT_CENTS) + ")";
-      var sInc = state.syrups.slice(0, FREE_SYRUPS).map(function (id) { return readLabel("syrup", id); });
-      var sAdd = state.syrups.slice(FREE_SYRUPS).map(function (id) { return readLabel("syrup", id); });
-      if (sInc.length) props["Sirope incluido"] = sInc.join(", ");
-      if (sAdd.length) props["Siropes adicionales"] = sAdd.join(", ") + " (+" + formatMoney(extraSyrupCount() * EXTRA_UNIT_CENTS) + ")";
+      var bTop = basicToppings();
+      var inclT = bTop.slice(0, FREE_TOPPINGS).map(function (id) { return readLabel("topping", id); });
+      var addT = bTop.slice(FREE_TOPPINGS).map(function (id) { return readLabel("topping", id); });
+      var premT = premiumToppings().map(function (id) { return readLabel("topping", id); });
+      if (inclT.length) props["Toppings incluidos"] = inclT.join(", ");
+      if (addT.length) props["Toppings adicionales"] = addT.join(", ") + " (+" + formatMoney(addT.length * EXTRA_UNIT_CENTS) + ")";
+      if (premT.length) props["Toppings premium"] = premT.join(", ") + " (+" + formatMoney(premT.length * PREMIUM_CENTS) + ")";
+
+      var bSyr = basicSyrups();
+      var inclS = bSyr.slice(0, FREE_SYRUPS).map(function (id) { return readLabel("syrup", id); });
+      var addS = bSyr.slice(FREE_SYRUPS).map(function (id) { return readLabel("syrup", id); });
+      var premS = premiumSyrups().map(function (id) { return readLabel("syrup", id); });
+      if (inclS.length) props["Sirope incluido"] = inclS.join(", ");
+      if (addS.length) props["Siropes adicionales"] = addS.join(", ") + " (+" + formatMoney(addS.length * EXTRA_UNIT_CENTS) + ")";
+      if (premS.length) props["Siropes premium"] = premS.join(", ") + " (+" + formatMoney(premS.length * PREMIUM_CENTS) + ")";
       return props;
     }
 
@@ -441,8 +484,27 @@
 
         var product = PRODUCTS.helado || null;
 
-        // 1 sola línea nativa (el precio de la variante ya incluye todos los extras).
-        var items = [{ id: variant.id, quantity: 1, properties: buildMainProperties() }];
+        // Línea del helado (básicos ya bakeados en la variante). Si hay premium,
+        // se añade una 2ª línea add-on ("Extras personalizados", qty = nº premium
+        // @ PREMIUM_CENTS), vinculada por `_hope_ext` (cleanup/badge en
+        // toppings-customizer.js). Si no hay premium, 1 sola línea nativa.
+        var mainProps = buildMainProperties();
+        var pCount = premiumCount();
+        var items;
+        if (pCount > 0 && EXTRAS_VARIANT_ID) {
+          var groupId = "hope-" + Date.now() + "-" + Math.floor(Math.random() * 1e6);
+          mainProps["_hope_ext"] = groupId;
+          items = [
+            { id: variant.id, quantity: 1, properties: mainProps },
+            {
+              id: EXTRAS_VARIANT_ID,
+              quantity: pCount,
+              properties: { "Para": (product && product.title) || "Helado Hope", "_hope_ext": groupId },
+            },
+          ];
+        } else {
+          items = [{ id: variant.id, quantity: 1, properties: mainProps }];
+        }
 
         var routes = (window.Theme && window.Theme.routes) || {};
         var addUrl = routes.cart_add_url || "/cart/add.js";

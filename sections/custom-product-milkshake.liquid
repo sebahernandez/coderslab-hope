@@ -116,7 +116,7 @@
               <circle cx="5.5" cy="18.5" r="2.5" />
               <circle cx="18.5" cy="18.5" r="2.5" />
             </svg>
-            <span>{{ section.settings.delivery_text | default: 'Este producto es solo para delivery' }}</span>
+            <span>{{ section.settings.delivery_text | default: 'Disponible para delivery y compra presencial' }}</span>
           </div>
         {%- endif -%}
 
@@ -222,14 +222,14 @@
     {
       "type": "checkbox",
       "id": "solo_delivery",
-      "label": "Mostrar aviso \"solo para delivery\"",
+      "label": "Mostrar aviso de disponibilidad (delivery y presencial)",
       "default": true
     },
     {
       "type": "text",
       "id": "delivery_text",
-      "label": "Texto del aviso de delivery",
-      "default": "Este producto es solo para delivery"
+      "label": "Texto del aviso de disponibilidad",
+      "default": "Disponible para delivery y compra presencial"
     },
     {
       "type": "header",
