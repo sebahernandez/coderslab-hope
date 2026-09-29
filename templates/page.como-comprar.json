@@ -92,12 +92,39 @@
             "alignment_mobile": "center"
           },
           "blocks": {}
+        },
+        "hero_button_AFwxgM": {
+          "type": "_hero-button",
+          "name": "Botón del Hero",
+          "settings": {
+            "label": "ARMA TU HELADO",
+            "link": "#seleccion-helados",
+            "spacing_top": 20,
+            "glass_background": "#ffffff40",
+            "glass_border_color": "#ffffff80",
+            "glass_blur": 10,
+            "text_color": "#611038",
+            "border_radius": 25,
+            "font_type": "theme",
+            "font": "inter_n4",
+            "custom_font_name": "",
+            "custom_font_url": "",
+            "custom_font_weight": "auto",
+            "weight": "auto",
+            "bold": true,
+            "font_size": 16,
+            "font_size_mobile": 14,
+            "alignment": "center",
+            "alignment_mobile": "center"
+          },
+          "blocks": {}
         }
       },
       "block_order": [
         "text_heading",
         "text_subheading",
-        "text_description"
+        "text_description",
+        "hero_button_AFwxgM"
       ],
       "name": "Hero Banner Helados",
       "settings": {
@@ -167,8 +194,8 @@
       ],
       "name": "Opciones de helados",
       "settings": {
-        "heading": "",
-        "title_font": "poppins_n4",
+        "heading": "SELECCIONA TU HELADO",
+        "title_font": "poppins_n7",
         "title_size": 48,
         "title_color": "#7a0b3d",
         "text_color": "#ffffff",
