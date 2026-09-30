@@ -121,6 +121,16 @@ class HeaderMenu extends Component {
 
     this.style.setProperty('--submenu-height', `${submenuHeight}px`);
     this.style.setProperty('--submenu-opacity', '1');
+
+    // Clamp horizontal: si el panel anclado a la izquierda se saldría por el borde
+    // derecho del viewport, se ancla a la derecha del ítem para no cortarse.
+    if (submenu && submenu.classList?.contains('menu-list__submenu')) {
+      submenu.classList.remove('menu-list__submenu--align-right');
+      const rect = submenu.getBoundingClientRect();
+      if (rect.right > window.innerWidth) {
+        submenu.classList.add('menu-list__submenu--align-right');
+      }
+    }
   };
 
   #debouncedActivateHandler = debounce(this.#activateHandler, ACTIVATE_DELAY);

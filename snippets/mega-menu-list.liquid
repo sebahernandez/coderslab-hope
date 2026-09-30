@@ -86,11 +86,11 @@
         href="{{ link.url }}"
         class="mega-menu__link {% if link.links != blank %}mega-menu__link--parent{% endif %}"
       >
-        {% if menu_content_type == 'collection_images' %}
+        {% if link.object.featured_image %}
           {{
             link.object.featured_image
-            | image_url: width: 1024
-            | image_tag: loading: 'lazy', class: 'mega-menu__link-image', sizes: 'auto'
+            | image_url: width: 96
+            | image_tag: loading: 'lazy', class: 'mega-menu__link-image', sizes: 'auto', widths: '48, 96, 144'
           }}
         {% endif %}
         <span

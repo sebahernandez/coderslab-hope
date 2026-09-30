@@ -348,6 +348,37 @@
     transition: clip-path var(--submenu-animation-speed) var(--ease-out-cubic);
   }
 
+  /* === Ajuste Hope: desplegable anclado a su ítem, ancho por contenido (no full-width) === */
+  /* El ítem es el contexto de posicionamiento para su propio panel */
+  .menu-list__list-item:where(:not([slot='overflow'])) {
+    position: relative;
+  }
+
+  .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu {
+    width: max-content;
+    max-width: min(90vw, 360px);
+    left: 0;
+    right: auto;
+    padding-inline: var(--padding-md);
+  }
+
+  /* Quita el padding/offset de ancho de página del contenido interno para el panel por ítem */
+  .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu .menu-list__submenu-inner {
+    grid-column: auto;
+    padding-inline: 0;
+  }
+
+  /* Clamp horizontal: anclar a la derecha del ítem cuando se saldría del viewport (lo activa header-menu.js) */
+  .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu.menu-list__submenu--align-right {
+    left: auto;
+    right: 0;
+  }
+
+  /* El panel ya tiene su propio fondo; elimina la franja de fondo a ancho completo */
+  .overflow-menu::after {
+    display: none;
+  }
+
   /* Show the submenus on hover */
   .menu-list__list-item:has([aria-expanded='true']) > .menu-list__submenu,
   /* Show the overflow menu when a menu item is hovered */
@@ -504,6 +535,56 @@
     border-radius: var(--menu-image-border-radius);
   }
 
+  /* === Ajuste Hope: links con miniatura en FILA (círculo + nombre) dentro del desplegable === */
+  .menu-list__submenu .mega-menu__link:has(.mega-menu__link-image) {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--padding-md);
+    padding-block: var(--padding-md);
+    padding-inline: 0;
+  }
+
+  /* Alinear a la izquierda: neutraliza padding de página y grilla del mega-menú dentro del desplegable */
+  .menu-list__submenu .mega-menu {
+    display: block;
+    padding-inline: 0;
+    margin-inline: 0;
+  }
+
+  .menu-list__submenu .mega-menu__grid {
+    display: block;
+    padding-inline: 0;
+    gap: 0;
+  }
+
+  .menu-list__submenu .mega-menu__list {
+    margin: 0;
+    padding-inline: 0;
+    width: 100%;
+  }
+
+  /* Línea divisora sutil y suave entre productos del desplegable */
+  .menu-list__submenu .mega-menu__list li > div:not(:last-child) {
+    border-block-end: 1px solid rgb(var(--color-foreground-rgb) / 0.08);
+  }
+
+  .menu-list__submenu .mega-menu__link-image {
+    flex: 0 0 44px;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    height: 44px;
+    aspect-ratio: 1 / 1;
+    margin-bottom: 0;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  /* El nombre del producto no se parte en dos líneas */
+  .menu-list__submenu .mega-menu__link .mega-menu__link-title {
+    white-space: nowrap;
+  }
+
   .mega-menu__grid {
     display: grid;
     grid-template-columns: repeat(var(--menu-columns-tablet), minmax(0, 1fr));
@@ -557,6 +638,20 @@
     display: grid;
     justify-content: end;
     gap: var(--menu-vertical-gap) var(--menu-horizontal-gap);
+  }
+
+  /* === Ajuste Hope: imágenes de PRODUCTO del desplegable en círculo (solo productos) === */
+  .mega-menu__content-list--products .resource-card__media {
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .mega-menu__content-list--products .resource-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
   }
 
   .mega-menu__content-list--products {

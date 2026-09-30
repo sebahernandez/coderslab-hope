@@ -143,11 +143,11 @@
                                 aria-current="page"
                               {% endif %}
                             >
-                              {% if render_link_image %}
+                              {% if childlink.object.featured_image %}
                                 {{
                                   childlink.object.featured_image
-                                  | image_url: width: 1024
-                                  | image_tag: loading: 'lazy', class: 'menu-drawer__link-image', sizes: 'auto'
+                                  | image_url: width: 96
+                                  | image_tag: loading: 'lazy', class: 'menu-drawer__link-image', sizes: 'auto', widths: '48, 96, 144'
                                 }}
                               {% endif %}
                               <span class="menu-drawer__menu-item-text">{{ childlink.title | escape }}</span>
@@ -194,11 +194,11 @@
                           href="{{ childlink.url }}"
                           class="menu-drawer__menu-item menu-drawer__menu-item--child menu-drawer__animated-element focus-inset{% if childlink.current %} menu-drawer__menu-item--active{% endif %}"
                         >
-                          {% if render_link_image %}
+                          {% if childlink.object.featured_image %}
                             {{
                               childlink.object.featured_image
-                              | image_url: width: 1024
-                              | image_tag: loading: 'lazy', class: 'menu-drawer__link-image', sizes: 'auto'
+                              | image_url: width: 96
+                              | image_tag: loading: 'lazy', class: 'menu-drawer__link-image', sizes: 'auto', widths: '48, 96, 144'
                             }}
                           {% endif %}
                           <span class="menu-drawer__menu-item-text">{{ childlink.title | escape }}</span>
@@ -1242,5 +1242,44 @@
   /* Keep localization (if shown) at the very bottom, social sits under the menu */
   .header__drawer--mobile .menu-drawer__social + .menu-drawer__utility-links {
     margin-block-start: 0;
+  }
+
+  /* Lista de productos del acordeón alineada a la izquierda (sin sangrado) */
+  .header__drawer--mobile .menu-drawer__menu--childlist {
+    padding-inline-start: 0;
+  }
+
+  .header__drawer--mobile .menu-drawer__menu--childlist .menu-drawer__list-item {
+    width: 100%;
+    min-height: 0;
+  }
+
+  /* Enlaces hijos (productos) — legibles, en FILA (imagen + texto centrado vertical), a la izquierda */
+  .header__drawer--mobile .menu-drawer__menu-item--child {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--padding-sm);
+    width: 100%;
+    text-align: start;
+    color: var(--drawer-maroon);
+    padding-block: var(--padding-sm);
+    padding-inline: 0;
+  }
+
+  .header__drawer--mobile .menu-drawer__menu-item--child:hover {
+    color: var(--drawer-maroon-strong);
+  }
+
+  .header__drawer--mobile .menu-drawer__link-image {
+    flex: 0 0 44px;
+    width: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    height: 44px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    object-fit: cover;
   }
 {% endstylesheet %}
