@@ -575,7 +575,21 @@
 
     // ---- Arranque ----
     var cupEl = $("#product-preview");
-    if (cupEl && !cupEl.getAttribute("src")) cupEl.src = catalogUrl(BASE_ASSET);
+    if (cupEl) {
+      var stageEl = cupEl.closest(".hopecfg__stage");
+      function revealCup() {
+        cupEl.classList.add("is-loaded");
+        if (stageEl) stageEl.classList.remove("is-loading");
+      }
+      cupEl.addEventListener("load", revealCup);
+      cupEl.addEventListener("error", revealCup);
+      if (!cupEl.getAttribute("src")) {
+        if (stageEl) stageEl.classList.add("is-loading");
+        cupEl.src = catalogUrl(BASE_ASSET);
+      }
+      // Si ya estaba en caché y cargó antes de enganchar el evento.
+      if (cupEl.complete && cupEl.naturalWidth > 0) revealCup();
+    }
     render();
     setupScrollIndicators();
   }
