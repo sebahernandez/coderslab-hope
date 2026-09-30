@@ -40,6 +40,68 @@
 }
 @keyframes hope2-spin { to { transform: rotate(360deg); } }
 
+/* Degradado animado sobre el cielo de nubes, DETRÁS del helado.
+   El vaso (.hopecfg__stage) va después en el DOM y por encima, así que este
+   ::before solo cubre el cielo. Con mix-blend screen el brillo se nota sobre
+   el rosa y es invisible sobre las zonas claras (panel de extras / vaso). */
+.hopecfg--v2 .hopecfg__preview::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    115deg,
+    rgba(255, 255, 255, 0) 6%,
+    rgba(255, 255, 255, 0.9) 28%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.85) 72%,
+    rgba(255, 255, 255, 0) 94%
+  );
+  background-size: 200% 100%;
+  background-repeat: no-repeat;
+  mix-blend-mode: screen;
+  animation: hope2-cloud-glow 11s ease-in-out infinite alternate;
+}
+
+@keyframes hope2-cloud-glow {
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
+}
+
+/* El cielo (foto de nubes) vive en su propia capa para poder desplazarlo SIN
+   cortes: la imagen se mantiene en COVER y el movimiento es por transform con
+   sobre-escaneo (inset negativo), así nunca se ven bordes ni repeticiones.
+   isolation:isolate crea un contexto de apilado para que esta capa (z-index:-1)
+   quede sobre el color de fondo pero DETRÁS del degradado y del vaso. */
+.hopecfg--v2 .hopecfg__preview {
+  isolation: isolate;
+}
+.hopecfg--v2 .hopecfg__preview[data-view="2d"] {
+  background-image: none;
+}
+.hopecfg--v2 .hopecfg__preview[data-view="2d"]::after {
+  content: "";
+  position: absolute;
+  inset: -8%;
+  z-index: -1;
+  background-image: url("https://res.cloudinary.com/slealu5f/image/upload/f_auto,q_auto,w_1600/hope/catalog/hope-pink-clouds-bg-v1");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: hope2-sky-pan 24s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@keyframes hope2-sky-pan {
+  from { transform: translate3d(-3%, -1%, 0) scale(1.1); }
+  to   { transform: translate3d(3%, 1%, 0) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hopecfg--v2 .hopecfg__preview::before,
+  .hopecfg--v2 .hopecfg__preview[data-view="2d"]::after { animation: none; }
+}
+
 /* Capa de burbujas sobre el helado */
 .hope2__bubbles {
   position: absolute;
