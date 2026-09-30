@@ -16,6 +16,27 @@
 {{ 'hope-customizer-v2.css' | asset_url | stylesheet_tag }}
 <script src="{{ 'hope-customizer-v2.js' | asset_url }}" defer></script>
 
+{%- comment -%}
+  Tipografía: todo el armador V2 usa Poppins (cargado desde la librería de
+  fuentes de Shopify). Cargamos los pesos usados por el diseño y forzamos la
+  familia sobre todo el componente (.hopecfg--v2). El bloque {% style %} se
+  inyecta inline donde se renderiza la sección, así gana por orden de origen
+  sobre el `font-family: Inter` base de toppings-customizer.css.
+{%- endcomment -%}
+{%- assign cfg_font = section.settings.cfg_font | default: settings.type_body_font -%}
+{%- style -%}
+  {{ cfg_font | font_face: font_display: 'swap' }}
+  {{ cfg_font | font_modify: 'weight', '500' | font_face: font_display: 'swap' }}
+  {{ cfg_font | font_modify: 'weight', '600' | font_face: font_display: 'swap' }}
+  {{ cfg_font | font_modify: 'weight', '700' | font_face: font_display: 'swap' }}
+  {{ cfg_font | font_modify: 'weight', '800' | font_face: font_display: 'swap' }}
+
+  #shopify-section-{{ section.id }} .hopecfg--v2,
+  #shopify-section-{{ section.id }} .hopecfg--v2 * {
+    font-family: {{ cfg_font.family }}, {{ cfg_font.fallback_families }};
+  }
+{%- endstyle -%}
+
 {%- liquid
   assign p_helado = section.settings.producto_helado | default: closest.product | default: product
   assign cfg_product = p_helado
@@ -56,6 +77,18 @@
       assign base_asset_val = 'hope-vanilla-cup-cutout-v1'
     endif
   endif
+
+  comment
+    URL inicial del helado (mismo formato que catalogUrl() del JS). Evita un
+    src="" inválido y mejora el primer render; el JS la reemplaza al inicializar.
+  endcomment
+  assign cl_account = section.settings.cloudinary_account | default: 'slealu5f'
+  assign cl_folder = section.settings.cloudinary_folder | default: 'hope/catalog'
+  assign cl_transform = 'f_auto,q_auto,w_1000'
+  if is_mixo
+    assign cl_transform = 'e_background_removal/f_auto,q_auto,w_1000'
+  endif
+  assign base_img_url = 'https://res.cloudinary.com/' | append: cl_account | append: '/image/upload/' | append: cl_transform | append: '/' | append: cl_folder | append: '/' | append: base_asset_val
 
   comment
     Modelo de cobro HÍBRIDO:
@@ -120,6 +153,7 @@
             src="{{ section.settings.logo | image_url: width: 320 }}"
             alt="{{ shop.name | escape }}"
             width="160"
+            height="{{ 160 | divided_by: section.settings.logo.aspect_ratio | round }}"
             loading="eager"
           >
         </div>
@@ -130,8 +164,10 @@
           id="product-preview"
           class="hopecfg__cup"
           data-mode="2d"
-          src=""
+          src="{{ base_img_url }}"
           alt="{{ shop.name | escape }}"
+          width="1000"
+          height="1000"
           decoding="async"
         >
         {%- comment -%} Capa de burbujas "+1" que el JS rellena según los extras {%- endcomment -%}
@@ -282,7 +318,7 @@
             </svg>
           </button>
           <button type="button" class="hope2__nav hope2__nav--next" data-step-next>
-            <span class="hope2__nav-label">Siguiente</span>
+            <span class="hope2__nav-label">Continuar</span>
             <span class="hope2__nav-arrow" aria-hidden="true">›</span>
           </button>
           <button id="buy" type="button" class="hopecfg__buy">
@@ -305,6 +341,17 @@
 {
   "name": "Configurador Hope V2",
   "settings": [
+    {
+      "type": "header",
+      "content": "Tipografía"
+    },
+    {
+      "type": "font_picker",
+      "id": "cfg_font",
+      "label": "Fuente del armador",
+      "default": "poppins_n4",
+      "info": "Se aplica a todo el configurador V2 (títulos, chips, precios, botones). Por defecto: Poppins."
+    },
     {
       "type": "header",
       "content": "Marca y textos"

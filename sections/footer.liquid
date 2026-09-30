@@ -21,6 +21,7 @@
       layout-panel-flex
       layout-panel-flex--{{ section.settings.content_direction }}
       section-content-wrapper
+      footer-layout
       {% if section.settings.vertical_on_mobile %} mobile-column{% endif %}
     "
     style="
@@ -31,6 +32,24 @@
     {% content_for 'blocks' %}
   </div>
 </div>
+
+{% stylesheet %}
+  /* En móvil acerca los elementos del footer (menos espacio vertical entre los
+     bloques y entre los enlaces del menú). Solo móvil; desktop sin cambios.
+     Se sobreescriben las variables inline con !important porque el gap viene
+     como estilo inline en cada bloque (sistema de bloques de Horizon). */
+  @media screen and (max-width: 749px) {
+    /* Hueco entre los bloques principales del footer (logo/texto, enlaces,
+       Ubicación, Horario): grupo contenedor directo del footer. */
+    .footer-layout > .group-block > .group-block-content {
+      --gap: 30px !important;
+    }
+    /* Enlaces del menú (Inicio · ¿Cómo Comprar? · Contacto) más juntos. */
+    .footer-layout .menu__details {
+      --spacing--size: 6px !important;
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {

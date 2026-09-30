@@ -119,7 +119,7 @@
       },
       "scheme-2": {
         "settings": {
-          "background": "#ffb9d1",
+          "background": "#FFB9D15C",
           "foreground_heading": "#000000",
           "foreground": "#630022",
           "primary": "#000000cf",
