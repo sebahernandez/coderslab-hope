@@ -15,10 +15,35 @@
     {% endif %}
     --hero-min-height: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height }}px{% else %}var(--hero-height){% endif %};
     --hero-min-height-mobile: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height_mobile }}px{% else %}var(--hero-height-mobile){% endif %};
+    {% if section.settings.enable_cloud_motion %}
+      --cloud-cup-size: {{ section.settings.clouds_cup_size | default: 30 }}%;
+      --cloud-cup-size-mobile: {{ section.settings.clouds_cup_size_mobile | default: 58 }}%;
+    {% endif %}
   }
 {% endstyle %}
 
-<div class="hero-banner-section" data-section-id="{{ section.id }}">
+<div class="hero-banner-section{% if section.settings.enable_cloud_motion %} hero-banner-section--clouds{% endif %}" data-section-id="{{ section.id }}"{% if section.settings.enable_cloud_motion %} data-cup-align="{{ section.settings.clouds_cup_align | default: 'center' }}"{% endif %}>
+
+  {%- if section.settings.enable_cloud_motion -%}
+    <div class="hero-clouds" aria-hidden="true">
+      {%- if section.settings.clouds_sky_url != blank -%}
+        <div class="hero-clouds__sky" style="background-image: url('{{ section.settings.clouds_sky_url }}');"></div>
+      {%- endif -%}
+      <div class="hero-clouds__glow"></div>
+    </div>
+    {%- if section.settings.clouds_cup_url != blank -%}
+      <img
+        class="hero-clouds__cup"
+        src="{{ section.settings.clouds_cup_url }}"
+        alt=""
+        aria-hidden="true"
+        loading="eager"
+        width="600"
+        height="600"
+      >
+    {%- endif -%}
+  {%- endif -%}
+
   <div class="hero-banner-container section--page-width section">
     <div class="hero-banner-content">
 
@@ -89,6 +114,111 @@
 
   .hero-banner-image {
     max-width: 300px;
+  }
+}
+
+/* Efecto de nubes en capas: cielo animado + degradado en movimiento + helado al frente */
+.hero-banner-section--clouds {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Capa 0 — cielo con nubes, deriva lenta */
+.hero-clouds {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.hero-clouds__sky {
+  position: absolute;
+  inset: -8%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: hope-sky-drift 42s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Capa 1 — degradado que se desliza sobre el cielo (detrás del helado) */
+.hero-clouds__glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.55) 25%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.45) 75%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 220% 100%;
+  mix-blend-mode: screen;
+  animation: hope-sky-glow 16s ease-in-out infinite alternate;
+  will-change: background-position;
+}
+
+/* Capa 2 — helado (PNG transparente), fijo */
+.hero-clouds__cup {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--cloud-cup-size, 30%);
+  max-width: 520px;
+  height: auto;
+  z-index: 1;
+  pointer-events: none;
+  filter: drop-shadow(0 12px 24px rgba(99, 0, 34, 0.18));
+}
+
+.hero-banner-section--clouds[data-cup-align="left"] .hero-clouds__cup {
+  left: 4%;
+  transform: none;
+}
+
+.hero-banner-section--clouds[data-cup-align="right"] .hero-clouds__cup {
+  left: auto;
+  right: 4%;
+  transform: none;
+}
+
+/* Capa 3 — contenido (textos/botón) por encima de todo */
+.hero-banner-section--clouds .hero-banner-container {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes hope-sky-drift {
+  from {
+    transform: translate3d(-2%, -1%, 0) scale(1.08);
+  }
+  to {
+    transform: translate3d(2%, 1%, 0) scale(1.08);
+  }
+}
+
+@keyframes hope-sky-glow {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .hero-clouds__cup {
+    width: var(--cloud-cup-size-mobile, 58%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-clouds__sky,
+  .hero-clouds__glow {
+    animation: none;
   }
 }
 {% endstylesheet %}
@@ -229,6 +359,62 @@
       "type": "image_picker",
       "id": "image",
       "label": "Imagen"
+    },
+    {
+      "type": "header",
+      "content": "Efecto de nubes (capas separadas)"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_cloud_motion",
+      "label": "Nubes en movimiento",
+      "default": false,
+      "info": "Reemplaza el fondo por un cielo animado con un degradado que se desliza, y el helado como capa separada por delante (fijo). Úsalo solo en el hero con cielo de nubes."
+    },
+    {
+      "type": "text",
+      "id": "clouds_sky_url",
+      "label": "URL del cielo (nubes)",
+      "default": "https://res.cloudinary.com/slealu5f/image/upload/f_auto,q_auto,w_1600/hope/catalog/hope-pink-clouds-bg-v1",
+      "info": "Imagen del cielo SIN el helado. Va al fondo y se anima."
+    },
+    {
+      "type": "text",
+      "id": "clouds_cup_url",
+      "label": "URL del helado (PNG transparente)",
+      "default": "https://res.cloudinary.com/slealu5f/image/upload/f_auto,q_auto,w_1000/hope/catalog/hope-vanilla-cup-cutout-v1",
+      "info": "Imagen del helado con fondo transparente. Va por delante del degradado."
+    },
+    {
+      "type": "select",
+      "id": "clouds_cup_align",
+      "label": "Posición del helado",
+      "options": [
+        { "value": "left", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "right", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "clouds_cup_size",
+      "label": "Tamaño del helado (Escritorio)",
+      "min": 15,
+      "max": 60,
+      "step": 1,
+      "unit": "%",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "clouds_cup_size_mobile",
+      "label": "Tamaño del helado (Mobile)",
+      "min": 30,
+      "max": 90,
+      "step": 1,
+      "unit": "%",
+      "default": 58
     }
   ],
   "presets": [

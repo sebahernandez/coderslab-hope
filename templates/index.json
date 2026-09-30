@@ -15,7 +15,7 @@
         "text_heading": {
           "type": "_hero-text-row",
           "settings": {
-            "content": "HELADOS   ARTESANALES CON",
+            "content": "Helados artesanales con",
             "convert_newlines": true,
             "tag": "h1",
             "color": "#630022",
@@ -45,7 +45,7 @@
             "content": "SABOR A FELICIDAD",
             "convert_newlines": false,
             "tag": "h2",
-            "color": "#ffffff",
+            "color": "#630022",
             "text_transform": "uppercase",
             "letter_spacing": 0,
             "max_width": 0,
@@ -136,9 +136,10 @@
         "height_custom_mobile": 80,
         "height_unit_mobile": "vh",
         "background_color": "#ffb6d9",
-        "background_image": "shopify://shop_images/home-hope.webp",
+        "background_image": "shopify://shop_images/hopehero.avif",
         "background_image_mobile": "shopify://shop_images/hope-movil-home-bd.webp",
-        "show_image": false
+        "show_image": false,
+        "enable_cloud_motion": true
       }
     },
     "hope_features_DjnWDG": {
@@ -182,7 +183,7 @@
       ],
       "name": "Hope Features",
       "settings": {
-        "image": "shopify://shop_images/bg-love-hope.webp",
+        "image": "shopify://shop_images/promo-hope.avif",
         "image_side": "left",
         "container_height": 55,
         "container_height_mobile": 40,
@@ -310,7 +311,7 @@
         "height_unit_mobile": "vh",
         "background_color": "#ffb6d9",
         "background_image": "shopify://shop_images/home-girl-hd.webp",
-        "background_image_mobile": "shopify://shop_images/girl-movil-hope.webp",
+        "background_image_mobile": "shopify://shop_images/hope-helado-bg.avif",
         "show_image": false
       }
     },
@@ -544,6 +545,7 @@
         "height_unit_mobile": "vh",
         "background_color": "#ffffff",
         "background_image": "shopify://shop_images/hope-auto.webp",
+        "background_image_mobile": "shopify://shop_images/automovil-hope-heladeria.avif",
         "show_image": true
       }
     },
@@ -654,15 +656,15 @@
         "instagram_card_3TpXLG": {
           "type": "instagram_card",
           "settings": {
-            "imagen": "shopify://shop_images/base-image-01.png",
+            "imagen": "shopify://shop_images/tu-heado-pefecto.avif",
             "link": "",
-            "alt": ""
+            "alt": "heladeria hope tucacas"
           }
         },
         "instagram_card_gMXbwX": {
           "type": "instagram_card",
           "settings": {
-            "imagen": "shopify://shop_images/base-image-02_9534f948-a9be-4bf6-bc89-35c409cb1a36.png",
+            "imagen": "shopify://shop_images/cuentanos-experiencia.avif",
             "link": "",
             "alt": ""
           }
@@ -670,7 +672,7 @@
         "instagram_card_9chxwC": {
           "type": "instagram_card",
           "settings": {
-            "imagen": "shopify://shop_images/base-image-03.png",
+            "imagen": "shopify://shop_images/eleccion-definitiva.avif",
             "link": "",
             "alt": ""
           }
