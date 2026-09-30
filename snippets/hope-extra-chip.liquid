@@ -36,7 +36,7 @@
     </span>
     <span class="topping-name">
       {{- item.nombre -}}
-      {%- if item.premium %} <span class="hopecfg__star">★</span>{% endif -%}
+      {%- if item.premium %} <span class="hopecfg__star">★</span> <span class="hopecfg__premium-tag">premium</span>{% endif -%}
     </span>
   {%- else -%}
     {%- if item.imagen != blank -%}
@@ -45,6 +45,6 @@
       </span>
     {%- endif -%}
     {{- item.nombre -}}
-    {%- if item.premium %} <span class="hopecfg__star">★</span>{% endif -%}
+    {%- if item.premium %} <span class="hopecfg__star">★</span> <span class="hopecfg__premium-tag">premium</span>{% endif -%}
   {%- endif -%}
 </button>

@@ -465,6 +465,15 @@ body:has(.hopecfg) {
   font-size: 0.85em;
 }
 .hopecfg__choice.is-active .hopecfg__star { color: inherit; }
+/* Etiqueta "premium" junto a la estrella */
+.hopecfg__premium-tag {
+  color: var(--hopecfg-hope);
+  font-size: 0.72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.hopecfg__choice.is-active .hopecfg__premium-tag { color: inherit; }
 
 /* ---- Modo mixo (yogurt): topping en grilla ---- */
 .hopecfg__config[data-view="mixo"] #topping-options {
