@@ -226,7 +226,7 @@
           </fieldset>
 
           <fieldset id="syrup-options" class="hopecfg__group" data-group="syrup">
-            <legend class="hopecfg__legend">3 · Elige tu sirope <span class="hopecfg__legend-hint">({{ free_syrups }} básico incluido · básico extra {{ extra_topping_cents | money }} · premium ★ {{ premium_cents | money }})</span></legend>
+            <legend class="hopecfg__legend"><span class="hopecfg__legend-title">3 · Elige tu sirope <span class="hopecfg__legend-hint">({{ free_syrups }} básico incluido · básico extra {{ extra_topping_cents | money }} · premium ★ {{ premium_cents | money }})</span></span></legend>
             <div class="hopecfg__chips">
               {%- if cat_sirope.items.size > 0 -%}
                 {%- for item in cat_sirope.items -%}

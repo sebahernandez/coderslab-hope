@@ -221,4 +221,187 @@
   .hope2__bubble { width: 46px; height: 46px; border-width: 2.5px; }
   .hope2__bubble-emoji { font-size: 1.3rem; }
   .hope2__bubble-badge { min-width: 20px; height: 17px; font-size: 9px; top: -6px; right: -6px; }
+
+  /* Un poco más de aire entre secciones para que no queden tan juntas. */
+  .hopecfg--v2 .hopecfg__groups { gap: 1.1rem; }
+  .hopecfg--v2 .hopecfg__legend { margin-bottom: 0.55rem; }
+
+  /* Botones del pie (reiniciar + añadir al carrito) más pequeños en móvil. */
+  .hopecfg--v2 .hopecfg__actions { gap: 0.5rem; }
+  .hopecfg--v2 .hopecfg__reset {
+    height: 2.1rem;
+    width: 2.1rem;
+    box-shadow: 0 6px 16px #ed5d9633;
+  }
+  .hopecfg--v2 .hopecfg__reset svg { height: 0.85rem; width: 0.85rem; }
+  .hopecfg--v2 .hopecfg__buy {
+    padding: 0.5rem 1.1rem;
+    font-size: 11px;
+    box-shadow: 0 6px 16px #ed5d9633;
+  }
+  .hopecfg--v2 .hopecfg__buy-arrow { margin-left: 0.35rem; }
+
+  /* Nota "aparece sobre tu helado con un +1": más sutil y separada en móvil. */
+  .hopecfg--v2 .hope2__hint {
+    gap: 0.45rem;
+    margin-top: 1rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: 10px;
+    background: #fff4f9;
+    color: #b56487;
+    font-size: 10.5px;
+    font-weight: 600;
+  }
+  .hopecfg--v2 .hope2__hint svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* Aviso de delivery más pequeño y sutil en móvil. */
+  .hopecfg--v2 .hope2__delivery-notice {
+    gap: 0.4rem;
+    margin: 0.35rem 0 0.15rem;
+    padding: 0.4rem 0.65rem;
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: #fbd7e6;
+    background: #fff6fa;
+    color: #b56487;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .hopecfg--v2 .hope2__delivery-notice svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  /* Selectores de tamaño más pequeños y sutiles en móvil. */
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice--size {
+    padding: 0.35rem 0.4rem;
+    border-width: 1px;
+    border-color: #f1e2e8;
+    border-radius: 9px;
+  }
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice-name {
+    font-size: 0.68rem;
+    font-weight: 800;
+  }
+
+  /* Título en una sola línea y la nota (incluye/precios) debajo, en otra línea. */
+  .hopecfg--v2 .hopecfg__legend { align-items: flex-start; }
+  .hopecfg--v2 .hopecfg__legend-hint {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 9.5px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  /* Toppings, siropes y premium en columna vertical (uno por fila),
+     con scroll: se ven ~4 y se avisa que hay más. Solo móvil y armador v2. */
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #topping-options,
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options {
+    position: relative;
+  }
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid,
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options > .hopecfg__chips {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    width: 100%;
+    gap: 0.4rem;
+    max-height: 11rem; /* ~4 opciones visibles */
+    overflow-x: visible;
+    overflow-y: auto;
+    scroll-snap-type: none;
+    touch-action: pan-y;
+    scrollbar-width: thin;
+    scrollbar-color: var(--hopecfg-hope) transparent;
+    padding-right: 0.2rem;
+  }
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid::-webkit-scrollbar,
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options > .hopecfg__chips::-webkit-scrollbar {
+    display: block;
+    width: 5px;
+  }
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid::-webkit-scrollbar-thumb,
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options > .hopecfg__chips::-webkit-scrollbar-thumb {
+    background: var(--hopecfg-hope);
+    border-radius: 999px;
+  }
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid .hopecfg__choice,
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options .hopecfg__choice {
+    width: 100%;
+    min-width: 0;
+    flex-shrink: 0;
+    justify-content: flex-start;
+    scroll-snap-align: none;
+    /* Más pequeñas y sutiles en móvil */
+    min-height: 0;
+    gap: 0.45rem;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    border-width: 1px;
+    border-color: #f1e2e8;
+    border-radius: 9px;
+  }
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid .hopecfg__choice .topping-img,
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options .hopecfg__choice .topping-img {
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid .hopecfg__choice .topping-icon,
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options .hopecfg__choice .topping-icon {
+    font-size: 0.95rem;
+  }
+
+  /* Indicador "desliza para ver más": degradado + chevron al fondo.
+     Se activa por JS (.hope2__scrollmore) y se oculta al llegar al final (.is-scroll-bottom). */
+  .hopecfg--v2 #topping-options::after,
+  .hopecfg--v2 #syrup-options::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0.2rem;
+    bottom: 0;
+    height: 2.4rem;
+    background: linear-gradient(to top, rgba(255, 243, 248, 0.98), rgba(255, 243, 248, 0));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+  .hopecfg--v2 #topping-options::before,
+  .hopecfg--v2 #syrup-options::before {
+    content: "Desliza para ver más ▾";
+    position: absolute;
+    left: 50%;
+    bottom: 0.35rem;
+    transform: translateX(-50%);
+    z-index: 2;
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--hopecfg-hope);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+    box-shadow: 0 2px 8px rgba(233, 84, 148, 0.25);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+  .hopecfg--v2 #topping-options.hope2__scrollmore::after,
+  .hopecfg--v2 #topping-options.hope2__scrollmore::before,
+  .hopecfg--v2 #syrup-options.hope2__scrollmore::after,
+  .hopecfg--v2 #syrup-options.hope2__scrollmore::before {
+    opacity: 1;
+  }
+  .hopecfg--v2 #topping-options.hope2__scrollmore.is-scroll-bottom::after,
+  .hopecfg--v2 #topping-options.hope2__scrollmore.is-scroll-bottom::before,
+  .hopecfg--v2 #syrup-options.hope2__scrollmore.is-scroll-bottom::after,
+  .hopecfg--v2 #syrup-options.hope2__scrollmore.is-scroll-bottom::before {
+    opacity: 0;
+  }
 }
