@@ -44,9 +44,18 @@
     .footer-layout > .group-block > .group-block-content {
       --gap: 30px !important;
     }
-    /* Enlaces del menú (Inicio · ¿Cómo Comprar? · Contacto) más juntos. */
+    /* Enlaces del menú (Inicio · ¿Cómo Comprar? · Contacto) más juntos.
+       Se ataca directamente el margen entre ítems (que es lo que genera el
+       hueco) además de la variable, porque el gap real viene de
+       .menu__item + .menu__item { margin-block-start: var(--spacing--size) }. */
     .footer-layout .menu__details {
       --spacing--size: 6px !important;
+    }
+    .footer-layout .menu__item + .menu__item {
+      margin-block-start: 6px !important;
+    }
+    .footer-layout .menu__item {
+      line-height: 1.2 !important;
     }
   }
 {% endstylesheet %}
