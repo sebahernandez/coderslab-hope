@@ -600,6 +600,10 @@ body:has(.hopecfg) {
   font-weight: 900;
   box-shadow: 0 10px 25px #ed5d9640;
   transition: 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 .hopecfg__buy:hover { transform: translateY(-2px); background: #dc4e88; }
 .hopecfg__buy:active { transform: scale(0.95); }
