@@ -422,6 +422,13 @@
       }
       var scroller = $(".hopecfg__config-scroll");
       if (scroller) scroller.scrollTop = 0;
+      // Etiqueta del botón de avanzar: indica el paso humano (1-based) al que lleva,
+      // en vez de un "Siguiente" genérico. No aplica en el último paso (el botón
+      // queda oculto por CSS y no hay paso siguiente al que continuar).
+      var nextLabel = stepNextBtn && stepNextBtn.querySelector(".hope2__nav-label");
+      if (nextLabel && step < STEP_LABELS.length - 1) {
+        nextLabel.textContent = "Continuar paso " + (step + 2);
+      }
     }
     function currentStep() { return parseInt(root.dataset.step || "0", 10) || 0; }
     var stepNextBtn = $("[data-step-next]");
