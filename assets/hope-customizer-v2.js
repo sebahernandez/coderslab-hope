@@ -110,6 +110,9 @@
 
     var SIZE_NAME = { small: "Pequeño", medium: "Mediano", large: "Grande" };
 
+    // Etiquetas del wizard móvil (paso a paso). Desktop las ignora (ver CSS).
+    var STEP_LABELS = ["Elige tu tamaño", "Elige tus toppings", "Elige tu sirope"];
+
     // ---- Clasificación básicos vs premium (conserva el orden de selección) ----
     function basicIds(group, arr) { return arr.filter(function (id) { return !isPremium(group, id); }); }
     function premiumIds(group, arr) { return arr.filter(function (id) { return isPremium(group, id); }); }
@@ -395,6 +398,28 @@
       });
     }
 
+    // ---- Wizard móvil (paso a paso) ----
+    // Solo cambia `data-step`; el mostrar/ocultar por paso lo hace el CSS dentro
+    // del media query móvil (en desktop este estado es inerte).
+    function setStep(i) {
+      var step = Math.max(0, Math.min(STEP_LABELS.length - 1, i));
+      root.dataset.step = String(step);
+      var bar = $("[data-step-indicator]");
+      if (bar) {
+        bar.hidden = false;
+        var nameEl = bar.querySelector("[data-step-name]");
+        bar.firstChild.textContent = "Paso " + (step + 1) + " de " + STEP_LABELS.length + " · ";
+        if (nameEl) nameEl.textContent = STEP_LABELS[step];
+      }
+      var scroller = $(".hopecfg__config-scroll");
+      if (scroller) scroller.scrollTop = 0;
+    }
+    function currentStep() { return parseInt(root.dataset.step || "0", 10) || 0; }
+    var stepNextBtn = $("[data-step-next]");
+    if (stepNextBtn) stepNextBtn.addEventListener("click", function () { setStep(currentStep() + 1); });
+    var stepPrevBtn = $("[data-step-prev]");
+    if (stepPrevBtn) stepPrevBtn.addEventListener("click", function () { setStep(currentStep() - 1); });
+
     // ---- Carrito real ----
     var buyBtn = $("#buy");
 
@@ -592,6 +617,7 @@
     }
     render();
     setupScrollIndicators();
+    setStep(0);
   }
 
   function initAll() {

@@ -10,6 +10,12 @@
   position: relative;
 }
 
+/* ===== Wizard móvil (paso a paso): chrome oculto por defecto (desktop) =====
+   El indicador de paso y los botones Atrás/Siguiente solo se muestran en móvil
+   (ver media query max-width:1023px). En desktop no existen visualmente. */
+.hopecfg--v2 .hope2__stepbar,
+.hopecfg--v2 .hope2__nav { display: none; }
+
 /* Loader sutil de la imagen principal del helado.
    La imagen entra con fade-in y mientras carga se ve un spinner discreto. */
 .hopecfg--v2 .hopecfg__cup {
@@ -240,8 +246,112 @@
   color: var(--hopecfg-hope, #ed5d96);
 }
 
+/* ===== Tonos por tamaño (Pequeño → Grande) =====
+   Cada botón de tamaño tiene un tono rosa pastel progresivo (más intenso a mayor
+   tamaño) para diferenciarlos de un vistazo. Son tintes claros a propósito: el
+   texto se mantiene oscuro (var(--hopecfg-ink)) y perfectamente legible. El tono
+   se conserva incluso seleccionado; la selección se refuerza con borde + anillo +
+   el punto (.hopecfg__check), no cambiando el color del texto. Solo aplica a V2. */
+.hopecfg--v2 #size-options .hopecfg__choice--size[data-id="small"]  { background: #fff5fa; }
+.hopecfg--v2 #size-options .hopecfg__choice--size[data-id="medium"] { background: #ffe6f1; }
+.hopecfg--v2 #size-options .hopecfg__choice--size[data-id="large"]  { background: #ffd6e8; }
+.hopecfg--v2 #size-options .hopecfg__choice--size.is-active {
+  border-color: var(--hopecfg-hope);
+  box-shadow: 0 0 0 2px #f7a9cb;
+}
+
+/* Título del configurador ("Crea tu ...") en mayúsculas. */
+.hopecfg--v2 .hopecfg__title { text-transform: uppercase; }
+
+/* Ícono de carrito del CTA "Añadir al carrito" (reemplaza la flecha). Hereda el
+   color del texto (currentColor). Tamaño relativo a la tipografía del botón. */
+.hopecfg--v2 .hopecfg__buy-arrow {
+  width: 1.15em;
+  height: 1.15em;
+  vertical-align: -0.2em;
+  flex-shrink: 0;
+}
+
 /* En móvil las burbujas se reducen para no tapar el vaso */
 @media (max-width: 1023px) {
+  /* ===== Wizard móvil: un paso a la vez (Tamaño → Toppings → Sirope) ===== */
+  .hopecfg--v2 .hope2__stepbar {
+    display: block;
+    margin: 0.35rem 0 0.15rem;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--hopecfg-hope, #ed5d96);
+    text-transform: uppercase;
+  }
+  .hopecfg--v2 .hope2__stepbar [data-step-name] {
+    color: #b56487;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* Mostrar solo el grupo del paso actual (control por data-step en la raíz). */
+  .hopecfg--v2 .hopecfg__group { display: none; }
+  .hopecfg--v2[data-step="0"] #size-options,
+  .hopecfg--v2[data-step="1"] #topping-options,
+  .hopecfg--v2[data-step="2"] #syrup-options { display: block; }
+
+  /* Botones de navegación Atrás/Siguiente (misma línea gráfica que el CTA).
+     Igual tamaño que el CTA: reparten el ancho a partes iguales (flex 1 1 0). */
+  .hopecfg--v2 .hope2__nav {
+    position: relative; /* ancla la flecha al borde para que el texto quede centrado */
+    flex: 1 1 0;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    /* mismo padding y borde que el CTA para que la base flex (padding+borde) sea
+       idéntica y los anchos queden iguales. La flecha va en absoluto (no ocupa flujo). */
+    padding: 0.45rem 0.5rem;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    line-height: 1.15;
+    text-align: center;
+    white-space: nowrap;
+  }
+  .hopecfg--v2 .hope2__nav-label { display: block; }
+  .hopecfg--v2 .hope2__nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.35em;
+    font-weight: 900;
+    line-height: 0;
+    opacity: 0.9;
+  }
+  .hopecfg--v2 .hope2__nav--prev .hope2__nav-arrow { left: 0.7rem; }
+  .hopecfg--v2 .hope2__nav--next .hope2__nav-arrow { right: 0.7rem; }
+  .hopecfg--v2 .hope2__nav--next {
+    color: #fff;
+    background: var(--hopecfg-hope, #ed5d96);
+    box-shadow: 0 6px 16px #ed5d9633;
+  }
+  .hopecfg--v2 .hope2__nav--prev {
+    color: #b56487;
+    background: #fff4f9;
+    border: 1px solid #fbd7e6;
+  }
+
+  /* Atrás oculto en el paso 0; Siguiente oculto en el paso 2 (sirope). */
+  .hopecfg--v2[data-step="0"] .hope2__nav--prev { display: none; }
+  .hopecfg--v2[data-step="2"] .hope2__nav--next { display: none; }
+
+  /* Reset + Añadir al carrito solo en el último paso (sirope). */
+  .hopecfg--v2[data-step="0"] #reset-view,
+  .hopecfg--v2[data-step="0"] #buy,
+  .hopecfg--v2[data-step="1"] #reset-view,
+  .hopecfg--v2[data-step="1"] #buy { display: none; }
+
   .hope2__bubble { width: 38px; height: 38px; border-width: 2px; }
   .hope2__bubble-emoji { font-size: 1.05rem; }
   .hope2__bubble-badge { min-width: 17px; height: 15px; font-size: 8px; top: -5px; right: -5px; }
@@ -249,10 +359,18 @@
   /* Ocultar la barra de extras (texto "Tu helado" + mini-stack) en móvil. */
   .hopecfg--v2 .hopecfg__extras { display: none; }
 
-  /* Vista previa más baja en móvil para que no ocupe tanta pantalla;
-     el configurador toma el alto restante. */
-  .hopecfg--v2 .hopecfg__preview { height: 30%; flex: none; }
-  .hopecfg--v2 .hopecfg__config { height: auto; flex: 1 1 auto; }
+  /* En móvil el configurador toma la ALTURA DE SU CONTENIDO (no la app-height
+     de escritorio), así no queda espacio vacío bajo el último elemento. La vista
+     previa recibe una altura propia (basada en viewport) porque ya no hay un frame
+     de alto fijo del cual sacar un 30%. */
+  .hopecfg--v2 .hopecfg__frame { height: auto; min-height: 0; }
+  .hopecfg--v2 .hopecfg__preview {
+    height: 32vh;
+    min-height: 160px;
+    max-height: 230px;
+    flex: none;
+  }
+  .hopecfg--v2 .hopecfg__config { height: auto; flex: none; }
 
   /* Imagen de vista previa un poco más pequeña en móvil. */
   .hopecfg--v2 .hopecfg__cup {
@@ -260,24 +378,52 @@
     max-height: 260px;
   }
 
-  /* Un poco más de aire entre secciones para que no queden tan juntas. */
-  .hopecfg--v2 .hopecfg__groups { gap: 1.1rem; }
-  .hopecfg--v2 .hopecfg__legend { margin-bottom: 0.55rem; }
+  /* En el wizard solo se ve un grupo a la vez: apilamos el contenido arriba
+     (flex-start) en vez del space-evenly de escritorio, que dejaba huecos enormes. */
+  .hopecfg--v2 .hopecfg__groups {
+    flex: 0 0 auto; /* altura de contenido, no rellenar el panel */
+    justify-content: flex-start;
+    gap: 0.9rem;
+  }
+  .hopecfg--v2 .hopecfg__legend { margin-bottom: 0.5rem; }
 
-  /* Botones del pie (reiniciar + añadir al carrito) más pequeños en móvil. */
-  .hopecfg--v2 .hopecfg__actions { gap: 0.5rem; }
+  /* En móvil apilamos el pie: Total arriba y la fila de botones a lo ancho abajo.
+     Así hay espacio suficiente para que "Añadir al carrito" quepa en una sola
+     línea y los 3 pasos tengan botones idénticos (misma altura y estilo). */
+  .hopecfg--v2 .hopecfg__footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  /* La fila de botones ocupa todo el ancho y reparte a partes iguales. */
+  .hopecfg--v2 .hopecfg__actions { width: 100%; gap: 0.35rem; align-items: stretch; }
   .hopecfg--v2 .hopecfg__reset {
-    height: 2.1rem;
-    width: 2.1rem;
+    flex: 0 0 auto;
+    align-self: center;
+    height: 1.7rem;
+    width: 1.7rem;
     box-shadow: 0 6px 16px #ed5d9633;
   }
-  .hopecfg--v2 .hopecfg__reset svg { height: 0.85rem; width: 0.85rem; }
+  .hopecfg--v2 .hopecfg__reset svg { height: 0.8rem; width: 0.8rem; }
   .hopecfg--v2 .hopecfg__buy {
-    padding: 0.5rem 1.1rem;
-    font-size: 11px;
+    flex: 1 1 0;
+    min-width: 0;
+    /* inline-flex (igual que Atrás/Siguiente) para que el reparto flex sea idéntico. */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 0.5rem;
+    /* Borde transparente para igualar exactamente la caja de "Atrás" (que sí tiene borde). */
+    border: 1px solid transparent;
+    border-radius: 14px;
+    font-size: 10px;
+    letter-spacing: 0.02em;
+    line-height: 1.15;
+    text-align: center;
+    white-space: nowrap; /* una sola línea, igual que Atrás/Siguiente */
     box-shadow: 0 6px 16px #ed5d9633;
   }
-  .hopecfg--v2 .hopecfg__buy-arrow { margin-left: 0.35rem; }
+  .hopecfg--v2 .hopecfg__buy-arrow { margin-left: 0.3rem; }
 
   /* Aviso de costos ("Los primeros 2 toppings...") más pequeño en móvil. */
   .hopecfg--v2 .hope2__cost-warning {
@@ -300,7 +446,7 @@
   /* Nota "aparece sobre tu helado con un +1": más sutil y separada en móvil. */
   .hopecfg--v2 .hope2__hint {
     gap: 0.45rem;
-    margin-top: 1rem;
+    margin-top: 0.3rem;
     padding: 0.45rem 0.7rem;
     border-radius: 10px;
     background: #fff4f9;
@@ -337,6 +483,10 @@
     border-width: 1px;
     border-color: #f1e2e8;
     border-radius: 9px;
+  }
+  /* Borde marca en el activo (gana a la regla neutra de arriba por especificidad). */
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice--size.is-active {
+    border-color: var(--hopecfg-hope);
   }
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice-name {
     font-size: 0.68rem;

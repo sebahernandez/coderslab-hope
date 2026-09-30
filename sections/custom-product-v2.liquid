@@ -167,6 +167,8 @@
           <span>Disponible para delivery y compra presencial</span>
         </div>
 
+        <p class="hope2__stepbar" data-step-indicator hidden>Paso 1 de 3 · <span data-step-name>Elige tu tamaño</span></p>
+
         <div id="hope-options" class="hopecfg__groups">
           <fieldset id="size-options" class="hopecfg__group" data-group="size">
             <legend class="hopecfg__legend">1 · Elige tu tamaño</legend>
@@ -269,14 +271,27 @@
           <p id="buy-hint" class="hopecfg__buy-hint"></p>
         </div>
         <div class="hopecfg__actions">
+          <button type="button" class="hope2__nav hope2__nav--prev" data-step-prev>
+            <span class="hope2__nav-arrow" aria-hidden="true">‹</span>
+            <span class="hope2__nav-label">Atrás</span>
+          </button>
           <button id="reset-view" type="button" class="hopecfg__reset" aria-label="Reiniciar" title="Reiniciar">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M20 11a8 8 0 1 0-2.34 5.66" />
               <path d="M20 4v7h-7" />
             </svg>
           </button>
+          <button type="button" class="hope2__nav hope2__nav--next" data-step-next>
+            <span class="hope2__nav-label">Siguiente</span>
+            <span class="hope2__nav-arrow" aria-hidden="true">›</span>
+          </button>
           <button id="buy" type="button" class="hopecfg__buy">
-            {{ section.settings.texto_boton | default: 'AÑADIR AL CARRITO' }} <span class="hopecfg__buy-arrow">→</span>
+            {{ section.settings.texto_boton | default: 'AÑADIR AL CARRITO' }}
+            <svg class="hopecfg__buy-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
           </button>
         </div>
       </footer>
