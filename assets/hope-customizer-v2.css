@@ -242,17 +242,22 @@
 
 /* En móvil las burbujas se reducen para no tapar el vaso */
 @media (max-width: 1023px) {
-  .hope2__bubble { width: 46px; height: 46px; border-width: 2.5px; }
-  .hope2__bubble-emoji { font-size: 1.3rem; }
-  .hope2__bubble-badge { min-width: 20px; height: 17px; font-size: 9px; top: -6px; right: -6px; }
+  .hope2__bubble { width: 38px; height: 38px; border-width: 2px; }
+  .hope2__bubble-emoji { font-size: 1.05rem; }
+  .hope2__bubble-badge { min-width: 17px; height: 15px; font-size: 8px; top: -5px; right: -5px; }
 
   /* Ocultar la barra de extras (texto "Tu helado" + mini-stack) en móvil. */
   .hopecfg--v2 .hopecfg__extras { display: none; }
 
+  /* Vista previa más baja en móvil para que no ocupe tanta pantalla;
+     el configurador toma el alto restante. */
+  .hopecfg--v2 .hopecfg__preview { height: 30%; flex: none; }
+  .hopecfg--v2 .hopecfg__config { height: auto; flex: 1 1 auto; }
+
   /* Imagen de vista previa un poco más pequeña en móvil. */
   .hopecfg--v2 .hopecfg__cup {
     height: 82%;
-    max-height: 300px;
+    max-height: 260px;
   }
 
   /* Un poco más de aire entre secciones para que no queden tan juntas. */
