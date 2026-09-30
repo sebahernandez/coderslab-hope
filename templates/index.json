@@ -138,8 +138,7 @@
         "background_color": "#ffb6d9",
         "background_image": "shopify://shop_images/hopehero.avif",
         "background_image_mobile": "shopify://shop_images/hope-movil-home-bd.webp",
-        "show_image": false,
-        "enable_cloud_motion": true
+        "show_image": false
       }
     },
     "hope_features_DjnWDG": {
