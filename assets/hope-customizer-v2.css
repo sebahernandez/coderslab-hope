@@ -222,6 +222,9 @@
   .hope2__bubble-emoji { font-size: 1.3rem; }
   .hope2__bubble-badge { min-width: 20px; height: 17px; font-size: 9px; top: -6px; right: -6px; }
 
+  /* Ocultar la barra de extras (texto "Tu helado" + mini-stack) en móvil. */
+  .hopecfg--v2 .hopecfg__extras { display: none; }
+
   /* Un poco más de aire entre secciones para que no queden tan juntas. */
   .hopecfg--v2 .hopecfg__groups { gap: 1.1rem; }
   .hopecfg--v2 .hopecfg__legend { margin-bottom: 0.55rem; }
