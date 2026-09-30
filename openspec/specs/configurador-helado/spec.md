@@ -58,3 +58,44 @@ sección v2.
 - **WHEN** la página v2 se carga con el asset global `toppings-customizer.js` presente
 - **THEN** el JS global (que inicializa sobre `[data-hopecfg]`) no inicializa la raíz v2
   (`[data-hopecfg-v2]`)
+
+### Requirement: Flujo de armado en tres pasos
+
+El sistema SHALL guiar el armado en tres pasos ordenados: (1) elegir tamaño, (2) elegir toppings,
+(3) elegir sirope (`STEP_LABELS = ["Elige tu tamaño", "Elige tus toppings", "Elige tu sirope"]`). El
+tamaño SHALL ser de selección única; toppings y siropes SHALL ser de selección múltiple.
+
+#### Scenario: Recorrido de los tres pasos
+
+- **WHEN** el cliente abre el armador
+- **THEN** ve los pasos "Elige tu tamaño", "Elige tus toppings" y "Elige tu sirope" en ese orden,
+  con el tamaño como selección única y toppings/siropes como selección múltiple
+
+#### Scenario: Aplica por igual a Helado Hope y Mixo Hope
+
+- **WHEN** el armador se sirve para Helado Hope o para Mixo Hope (misma sección `custom-product-v2`)
+- **THEN** el flujo de tres pasos es idéntico, diferenciándose solo la tabla de precios base del
+  producto
+
+### Requirement: Etiqueta dinámica del botón de avanzar de paso
+
+En la vista móvil, el botón que avanza de paso en el wizard v2 SHALL mostrar el número del paso al
+que lleva ("Continuar paso 2", "Continuar paso 3") en vez de un texto genérico, actualizándose junto
+con el resto del estado del wizard cada vez que cambia el paso activo, incluida la carga inicial.
+
+#### Scenario: Etiqueta al iniciar el armador (paso 1 de 3)
+
+- **WHEN** el cliente abre el armador y ve el paso 1 de 3 (tamaño)
+- **THEN** el botón de avanzar muestra el texto "Continuar paso 2"
+
+#### Scenario: Etiqueta al avanzar al paso 2 de 3
+
+- **WHEN** el cliente presiona el botón de avanzar desde el paso 1 (tamaño) y llega al paso 2 de 3
+  (toppings)
+- **THEN** el botón de avanzar muestra el texto "Continuar paso 3"
+
+#### Scenario: Botón de avanzar oculto en el último paso
+
+- **WHEN** el cliente llega al paso 3 de 3 (sirope)
+- **THEN** el botón de avanzar no se muestra (solo aparecen "Atrás" y "Añadir al carrito"), por lo que
+  no hay una etiqueta "Continuar paso 4"
