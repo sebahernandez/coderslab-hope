@@ -249,15 +249,15 @@
 /* ===== Tonos por tamaño (Pequeño → Grande) =====
    Cada botón de tamaño tiene un tono rosa pastel progresivo (más intenso a mayor
    tamaño) para diferenciarlos de un vistazo. Son tintes claros a propósito: el
-   texto se mantiene oscuro (var(--hopecfg-ink)) y perfectamente legible. El tono
-   se conserva incluso seleccionado; la selección se refuerza con borde + anillo +
-   el punto (.hopecfg__check), no cambiando el color del texto. Solo aplica a V2. */
+   texto se mantiene oscuro (var(--hopecfg-ink)) y perfectamente legible.
+   SIN BORDE: la selección se marca con una elevación sutil (sombra) + el punto
+   rosa (.hopecfg__check), no con borde. Solo aplica a V2. */
+.hopecfg--v2 #size-options .hopecfg__choice--size { border: 0; }
 .hopecfg--v2 #size-options .hopecfg__choice--size[data-id="small"]  { background: #fff5fa; }
 .hopecfg--v2 #size-options .hopecfg__choice--size[data-id="medium"] { background: #ffe6f1; }
 .hopecfg--v2 #size-options .hopecfg__choice--size[data-id="large"]  { background: #ffd6e8; }
 .hopecfg--v2 #size-options .hopecfg__choice--size.is-active {
-  border-color: var(--hopecfg-hope);
-  box-shadow: 0 0 0 2px #f7a9cb;
+  box-shadow: 0 2px 6px rgba(237, 93, 150, 0.22);
 }
 
 /* Título del configurador ("Crea tu ...") en mayúsculas. */
@@ -290,11 +290,27 @@
     letter-spacing: 0;
   }
 
-  /* Mostrar solo el grupo del paso actual (control por data-step en la raíz). */
+  /* Mostrar solo el grupo del paso actual (control por data-step en la raíz).
+     Al pasar de display:none a block, la animación se dispara sola → el contenido
+     del nuevo paso entra con un fundido/deslizamiento suave, no de golpe. */
+  @keyframes hope2-step-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
   .hopecfg--v2 .hopecfg__group { display: none; }
   .hopecfg--v2[data-step="0"] #size-options,
   .hopecfg--v2[data-step="1"] #topping-options,
-  .hopecfg--v2[data-step="2"] #syrup-options { display: block; }
+  .hopecfg--v2[data-step="2"] #syrup-options {
+    display: block;
+    animation: hope2-step-in 0.34s cubic-bezier(0.22, 0.75, 0.25, 1) both;
+  }
+  /* El indicador de paso también entra suave: el JS reinicia esta animación en
+     cada cambio de paso (respeta prefers-reduced-motion). */
+  @media (prefers-reduced-motion: reduce) {
+    .hopecfg--v2[data-step="0"] #size-options,
+    .hopecfg--v2[data-step="1"] #topping-options,
+    .hopecfg--v2[data-step="2"] #syrup-options { animation: none; }
+  }
 
   /* Botones de navegación Atrás/Siguiente (misma línea gráfica que el CTA).
      Igual tamaño que el CTA: reparten el ancho a partes iguales (flex 1 1 0). */
@@ -477,16 +493,11 @@
     height: 15px;
   }
 
-  /* Selectores de tamaño más pequeños y sutiles en móvil. */
+  /* Selectores de tamaño más pequeños y sutiles en móvil (sin borde). */
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice--size {
     padding: 0.35rem 0.4rem;
-    border-width: 1px;
-    border-color: #f1e2e8;
+    border: 0;
     border-radius: 9px;
-  }
-  /* Borde marca en el activo (gana a la regla neutra de arriba por especificidad). */
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice--size.is-active {
-    border-color: var(--hopecfg-hope);
   }
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice-name {
     font-size: 0.68rem;

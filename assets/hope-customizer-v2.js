@@ -410,6 +410,15 @@
         var nameEl = bar.querySelector("[data-step-name]");
         bar.firstChild.textContent = "Paso " + (step + 1) + " de " + STEP_LABELS.length + " · ";
         if (nameEl) nameEl.textContent = STEP_LABELS[step];
+        // Reinicia la animación del indicador para que también entre suave en cada
+        // paso (el elemento no cambia de display; forzamos un instance nuevo con el
+        // valor explícito). En desktop los keyframes no existen → sin efecto.
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (!reduce) {
+          bar.style.animation = "none";
+          void bar.offsetWidth; // reflow
+          bar.style.animation = "hope2-step-in 0.34s cubic-bezier(0.22, 0.75, 0.25, 1) both";
+        }
       }
       var scroller = $(".hopecfg__config-scroll");
       if (scroller) scroller.scrollTop = 0;
