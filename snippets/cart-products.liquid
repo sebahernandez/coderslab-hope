@@ -13,8 +13,9 @@
 >
   {% if cart.empty? %}
     {%- if shop.customer_accounts_enabled and customer == null -%}
+      {% capture cart_login_link %}{% render 'hope-login-url' %}{% endcapture %}
       <p>
-        {{ 'actions.log_in_html' | t: link: routes.account_login_url }}
+        {{ 'actions.log_in_html' | t: link: cart_login_link }}
       </p>
     {%- endif -%}
 

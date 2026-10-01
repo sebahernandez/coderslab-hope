@@ -8,8 +8,13 @@
   {{- block.shopify_attributes -}}
 >
   {% if shop.customer_accounts_enabled %}
-    {% render 'account-popover' %}
-    {% render 'account-drawer' %}
+    {% if customer == null and request.design_mode == false %}
+      {% capture account_link_attributes %}href="{% render 'hope-login-url' %}"{% endcapture %}
+      {% render 'account-button', tag: 'a', attributes: account_link_attributes %}
+    {% else %}
+      {% render 'account-popover' %}
+      {% render 'account-drawer' %}
+    {% endif %}
   {% endif %}
 
   {% if settings.cart_type == 'drawer' and template.name != 'cart' %}
