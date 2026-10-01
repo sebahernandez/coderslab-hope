@@ -11,6 +11,7 @@
   "current": {
     "logo": "shopify://shop_images/logo-inverso.png",
     "logo_inverse": "shopify://shop_images/hope-rosa.png",
+    "favicon": "shopify://shop_images/HopeFresaBlanca_f3a551b0-1938-4f3d-a674-d7b250cb499e.png",
     "type_body_font": "jost_n4",
     "type_subheading_font": "jost_n4",
     "type_heading_font": "jost_n6",
@@ -119,7 +120,7 @@
       },
       "scheme-2": {
         "settings": {
-          "background": "#FFB9D15C",
+          "background": "#ffb9d15c",
           "foreground_heading": "#000000",
           "foreground": "#630022",
           "primary": "#000000cf",
