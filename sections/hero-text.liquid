@@ -1,27 +1,6 @@
-{% style %}
-  #shopify-section-{{ section.id }} .hero-banner-section {
-    background-color: {{ section.settings.background_color }};
-    {% if section.settings.background_image != blank %}--hero-bg-image: url('{{ section.settings.background_image | image_url }}');{% endif %}
-    {% if section.settings.background_image_mobile != blank %}--hero-bg-image-mobile: url('{{ section.settings.background_image_mobile | image_url }}');{% endif %}
-    {% if section.settings.height_type == 'full' %}
-      --hero-height: 100vh;
-      --hero-height-mobile: 100vh;
-    {% elsif section.settings.height_type == 'custom' %}
-      --hero-height: {{ section.settings.height_custom }}{{ section.settings.height_unit }};
-      --hero-height-mobile: {{ section.settings.height_custom_mobile }}{{ section.settings.height_unit_mobile }};
-    {% else %}
-      --hero-height: auto;
-      --hero-height-mobile: auto;
-    {% endif %}
-    --hero-min-height: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height }}px{% else %}var(--hero-height){% endif %};
-    --hero-min-height-mobile: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height_mobile }}px{% else %}var(--hero-height-mobile){% endif %};
-  }
-{% endstyle %}
-
 <div class="hero-banner-section" data-section-id="{{ section.id }}">
   <div class="hero-banner-container section--page-width section">
     <div class="hero-banner-content">
-
       {%- if section.settings.show_image and section.settings.image != blank -%}
         <div class="hero-banner-image">
           <img
@@ -37,74 +16,121 @@
       <div class="hero-banner-text">
         {% content_for 'blocks' %}
       </div>
-
     </div>
   </div>
 </div>
 
-{% stylesheet %}
-.hero-banner-section {
-  background-image: var(--hero-bg-image, none);
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  width: 100%;
-  height: var(--hero-height, auto);
-  min-height: var(--hero-min-height, 700px);
-  display: flex;
-  align-items: center;
-}
-
-.hero-banner-content {
-  display: flex;
-  align-items: center;
-  gap: 40px;
-  flex-wrap: wrap;
-}
-
-.hero-banner-image {
-  flex: 0 0 auto;
-  max-width: 400px;
-}
-
-.hero-banner-text {
-  flex: 1;
-  min-width: 300px;
-  display: flex;
-  flex-direction: column;
-}
-
-@media screen and (max-width: 768px) {
+<style>
+    #shopify-section-{{ section.id }} .hero-banner-section {
+      background-color: {{ section.settings.background_color }};
+      --hero-vertical-alignment: {{ section.settings.vertical_alignment | default: 'center' }};
+      --hero-vertical-alignment-mobile: {{ section.settings.vertical_alignment_mobile | default: 'center' }};
+      {% if section.settings.background_image != blank %}--hero-bg-image: url('{{ section.settings.background_image | image_url }}');{% endif %}
+      {% if section.settings.background_image_mobile != blank %}--hero-bg-image-mobile: url('{{ section.settings.background_image_mobile | image_url }}');{% endif %}
+      {% if section.settings.height_type == 'full' %}
+        --hero-height: 100vh;
+        --hero-height-mobile: 100vh;
+      {% elsif section.settings.height_type == 'custom' %}
+        --hero-height: {{ section.settings.height_custom }}{{ section.settings.height_unit }};
+        --hero-height-mobile: {{ section.settings.height_custom_mobile }}{{ section.settings.height_unit_mobile }};
+      {% else %}
+        --hero-height: auto;
+        --hero-height-mobile: auto;
+      {% endif %}
+      --hero-min-height: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height }}px{% else %}var(--hero-height){% endif %};
+      --hero-min-height-mobile: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height_mobile }}px{% else %}var(--hero-height-mobile){% endif %};
+    }
   .hero-banner-section {
-    padding: 40px 15px;
-    height: var(--hero-height-mobile, auto);
-    min-height: var(--hero-min-height-mobile, 400px);
-    background-image: var(--hero-bg-image-mobile, var(--hero-bg-image, none));
+    background-image: var(--hero-bg-image, none);
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: var(--hero-height, auto);
+    min-height: var(--hero-min-height, 700px);
+    display: flex;
+    align-items: var(--hero-vertical-alignment, center);
   }
 
   .hero-banner-content {
-    flex-direction: column;
-    gap: 30px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap;
   }
 
   .hero-banner-image {
-    max-width: 300px;
+    flex: 0 0 auto;
+    max-width: 400px;
   }
-}
-{% endstylesheet %}
+
+  .hero-banner-text {
+    flex: 1;
+    min-width: 300px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media screen and (max-width: 768px) {
+    .hero-banner-section {
+      padding: 40px 15px;
+      align-items: var(--hero-vertical-alignment-mobile, center);
+      height: var(--hero-height-mobile, auto);
+      min-height: var(--hero-min-height-mobile, 400px);
+      background-image: var(--hero-bg-image-mobile, var(--hero-bg-image, none));
+    }
+
+    .hero-banner-content {
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .hero-banner-image {
+      max-width: 300px;
+    }
+  }
+</style>
 
 {% schema %}
 {
   "name": "Hero Banner Helados",
   "blocks": [
-    { 
-      "type": "_hero-text-row" 
+    {
+      "type": "_hero-text-row"
     },
-    { 
-      "type": "_hero-button" 
+    {
+      "type": "_hero-button"
     }
   ],
   "settings": [
+    {
+      "type": "header",
+      "content": "Posición del Contenido"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Posición Vertical (Escritorio)",
+      "options": [
+        { "value": "flex-start", "label": "Arriba" },
+        { "value": "center", "label": "Al medio" },
+        { "value": "flex-end", "label": "Abajo" }
+      ],
+      "default": "center",
+      "info": "Mueve textos, botón e imagen juntos dentro de la altura disponible."
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment_mobile",
+      "label": "Posición Vertical (Mobile)",
+      "options": [
+        { "value": "flex-start", "label": "Arriba" },
+        { "value": "center", "label": "Al medio" },
+        { "value": "flex-end", "label": "Abajo" }
+      ],
+      "default": "center",
+      "info": "Aplica en pantallas de 768px o menos, respetando el padding de la sección."
+    },
     {
       "type": "header",
       "content": "Altura de la Sección"
