@@ -32,6 +32,34 @@
   </div>
 </div>
 
+{% stylesheet %}
+  /* Only the footer row containing the custom payment column. */
+  footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content > * {
+    min-width: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 32px;
+      align-items: start;
+    }
+
+    footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content > * {
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+
+  @media screen and (min-width: 1200px) {
+    footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content {
+      grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr));
+      gap: clamp(24px, 3vw, 48px);
+    }
+  }
+{% endstylesheet %}
+
 {% schema %}
 {
   "name": "t:names.footer",
@@ -70,6 +98,9 @@
     },
     {
       "type": "payment-icons"
+    },
+    {
+      "type": "hope-payment-method"
     },
     {
       "type": "text"

@@ -1,0 +1,64 @@
+{% liquid
+  assign payment_name = block.settings.name | strip | default: 'Medio de pago'
+%}
+
+<div class="hope-payment-method" {{ block.shopify_attributes }}>
+  {% if block.settings.image != blank %}
+    {{
+      block.settings.image
+      | image_url: width: 480
+      | image_tag:
+        widths: '120, 240, 480',
+        sizes: '120px',
+        loading: 'lazy',
+        alt: payment_name,
+        class: 'hope-payment-method__image'
+    }}
+  {% else %}
+    <span>{{ payment_name | escape }}</span>
+  {% endif %}
+</div>
+
+{% stylesheet %}
+  .hope-payment-method {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .hope-payment-method__image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: min(120px, 100%);
+    max-height: 48px;
+    object-fit: contain;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Medio de pago",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "name",
+      "label": "Nombre del medio de pago",
+      "default": "Medio de pago"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen del medio de pago",
+      "info": "Selecciona una imagen de Shopify. Si queda vacía, se muestra el nombre."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Medio de pago",
+      "category": "t:categories.footer"
+    }
+  ]
+}
+{% endschema %}

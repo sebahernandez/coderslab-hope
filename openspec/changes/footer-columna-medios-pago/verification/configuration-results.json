@@ -1,0 +1,48 @@
+[
+  {
+    "width": 1440,
+    "images": [
+      {
+        "alt": "Stripe",
+        "src": "http://127.0.0.1:9292/cdn/shop/files/icon-fruit-01.png?v=1782935262&width=480",
+        "width": 48,
+        "height": 48
+      },
+      {
+        "alt": "Pago Móvil",
+        "src": "http://127.0.0.1:9292/cdn/shop/files/icon-vegan-01.png?v=1782935383&width=480",
+        "width": 48,
+        "height": 48
+      },
+      {
+        "alt": "Zelle",
+        "src": "http://127.0.0.1:9292/cdn/shop/files/todos-aman-hope.avif?v=1790891348&width=480",
+        "width": 48,
+        "height": 48
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "images": [
+      {
+        "alt": "Stripe",
+        "src": "http://127.0.0.1:9292/cdn/shop/files/icon-fruit-01.png?v=1782935262&width=480",
+        "width": 48,
+        "height": 48
+      },
+      {
+        "alt": "Pago Móvil",
+        "src": "http://127.0.0.1:9292/cdn/shop/files/icon-vegan-01.png?v=1782935383&width=480",
+        "width": 48,
+        "height": 48
+      },
+      {
+        "alt": "Zelle",
+        "src": "http://127.0.0.1:9292/cdn/shop/files/todos-aman-hope.avif?v=1790891348&width=480",
+        "width": 48,
+        "height": 48
+      }
+    ]
+  }
+]

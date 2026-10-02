@@ -15,7 +15,7 @@
         "text_heading": {
           "type": "_hero-text-row",
           "settings": {
-            "content": "Helados artesanales con",
+            "content": "Helados artesanales",
             "convert_newlines": true,
             "tag": "h1",
             "color": "#630022",
@@ -42,7 +42,7 @@
         "text_subheading": {
           "type": "_hero-text-row",
           "settings": {
-            "content": "SABOR A FELICIDAD",
+            "content": "CON SABOR A FELICIDAD",
             "convert_newlines": false,
             "tag": "h2",
             "color": "#630022",
@@ -136,7 +136,7 @@
         "height_custom_mobile": 80,
         "height_unit_mobile": "vh",
         "background_color": "#ffb6d9",
-        "background_image": "shopify://shop_images/hopehero.avif",
+        "background_image": "shopify://shop_images/banner-principal.avif",
         "background_image_mobile": "shopify://shop_images/hope-movil-home-bd.webp",
         "show_image": false
       }
@@ -182,9 +182,9 @@
       ],
       "name": "Hope Features",
       "settings": {
-        "image": "shopify://shop_images/promo-hope.avif",
+        "image": "shopify://shop_images/todos-aman-hope.avif",
         "image_side": "left",
-        "container_height": 55,
+        "container_height": 40,
         "container_height_mobile": 40,
         "heading": "<p>¿Por qué todos <strong>aman</strong> HOPE?</p>",
         "heading_font": "poppins_n4",
@@ -193,12 +193,12 @@
         "heading_size_mobile": 27,
         "heading_line_height": 1.2,
         "heading_text_transform": "none",
-        "feature_title_font": "work_sans_n7",
+        "feature_title_font": "poppins_n4",
         "feature_title_weight": "auto",
         "feature_title_size": 18,
         "feature_title_size_mobile": 16,
         "feature_title_color": "#630022",
-        "feature_description_font": "work_sans_n4",
+        "feature_description_font": "poppins_n4",
         "feature_description_weight": "auto",
         "feature_description_size": 15,
         "feature_description_size_mobile": 14,
@@ -244,7 +244,7 @@
         "text_subheading": {
           "type": "_hero-text-row",
           "settings": {
-            "content": "Helados artesanales, sabores únicos y <br> toppings irresistibles.",
+            "content": "Helados artesanales, sabores<br> únicos y  toppings irresistibles.",
             "convert_newlines": false,
             "tag": "h2",
             "color": "#630022",
@@ -308,8 +308,8 @@
         "height_unit": "vh",
         "height_custom_mobile": 60,
         "height_unit_mobile": "vh",
-        "background_color": "#ffb6d9",
-        "background_image": "shopify://shop_images/home-girl-hd.webp",
+        "background_color": "#FFFFFF",
+        "background_image": "shopify://shop_images/arma-tu-hope-helado.avif",
         "background_image_mobile": "shopify://shop_images/hope-helado-bg.avif",
         "show_image": false
       }
@@ -440,7 +440,7 @@
         "height_custom_mobile": 60,
         "height_unit_mobile": "vh",
         "background_color": "#ffffff",
-        "background_image": "shopify://shop_images/mixo-hope-hero.webp",
+        "background_image": "shopify://shop_images/arma-tu-mixo.avif",
         "background_image_mobile": "shopify://shop_images/mixo-movil-bg.webp",
         "show_image": true
       }
@@ -451,10 +451,10 @@
         "text_heading": {
           "type": "_hero-text-row",
           "settings": {
-            "content": "MILSHAKES",
+            "content": "MILKSHAKES",
             "convert_newlines": true,
             "tag": "h1",
-            "color": "#630022",
+            "color": "#ffffff",
             "text_transform": "uppercase",
             "letter_spacing": 1,
             "max_width": 0,
@@ -481,7 +481,7 @@
             "content": "Haz una pausa. Elige tu favorito <br>  y disfruta el momento.",
             "convert_newlines": false,
             "tag": "h2",
-            "color": "#630022",
+            "color": "#ffffff",
             "text_transform": "uppercase",
             "letter_spacing": 0,
             "max_width": 0,
@@ -505,13 +505,13 @@
         "hero_button": {
           "type": "_hero-button",
           "settings": {
-            "label": "ARMA TU MILSHAKE",
+            "label": "ARMA TU MILKSHAKE",
             "link": "shopify://products/milkshake",
             "spacing_top": 20,
             "glass_background": "#ffffff40",
             "glass_border_color": "#ffffff80",
             "glass_blur": 10,
-            "text_color": "#630022",
+            "text_color": "#ffffff",
             "border_radius": 25,
             "font_type": "theme",
             "font": "poppins_n4",
@@ -543,7 +543,7 @@
         "height_custom_mobile": 60,
         "height_unit_mobile": "vh",
         "background_color": "#ffffff",
-        "background_image": "shopify://shop_images/hope-auto.webp",
+        "background_image": "shopify://shop_images/arma-tu-milkshake.avif",
         "background_image_mobile": "shopify://shop_images/automovil-hope-heladeria.avif",
         "show_image": true
       }
@@ -655,7 +655,7 @@
         "instagram_card_3TpXLG": {
           "type": "instagram_card",
           "settings": {
-            "imagen": "shopify://shop_images/tu-heado-pefecto.avif",
+            "imagen": "shopify://shop_images/elige-tu-helado-perfecto.avif",
             "link": "",
             "alt": "heladeria hope tucacas"
           }
@@ -663,17 +663,17 @@
         "instagram_card_gMXbwX": {
           "type": "instagram_card",
           "settings": {
-            "imagen": "shopify://shop_images/cuentanos-experiencia.avif",
+            "imagen": "shopify://shop_images/comparte-tu-experiencia.avif",
             "link": "",
-            "alt": ""
+            "alt": "heladeria hope tucacas"
           }
         },
         "instagram_card_9chxwC": {
           "type": "instagram_card",
           "settings": {
-            "imagen": "shopify://shop_images/eleccion-definitiva.avif",
+            "imagen": "shopify://shop_images/tu-eleccion-definitiva.avif",
             "link": "",
-            "alt": ""
+            "alt": "heladeria hope tucacas"
           }
         }
       },

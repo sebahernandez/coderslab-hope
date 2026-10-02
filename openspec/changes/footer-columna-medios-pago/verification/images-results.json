@@ -1,0 +1,1052 @@
+[
+  {
+    "route": "/",
+    "width": 320,
+    "clientWidth": 320,
+    "scrollWidth": 320,
+    "columns": [
+      {
+        "x": 16,
+        "y": 34.671875,
+        "width": 288,
+        "height": 127.15625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 16,
+        "y": 207.328125,
+        "width": 288,
+        "height": 125.5625,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 16,
+        "y": 378.390625,
+        "width": 288,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 16,
+        "y": 491.0625,
+        "width": 288,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 16,
+        "y": 648.515625,
+        "width": 288,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/",
+    "width": 390,
+    "clientWidth": 390,
+    "scrollWidth": 390,
+    "columns": [
+      {
+        "x": 16,
+        "y": 34,
+        "width": 358,
+        "height": 104.765625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 16,
+        "y": 184.265625,
+        "width": 358,
+        "height": 125.5625,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 16,
+        "y": 355.328125,
+        "width": 358,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 16,
+        "y": 468,
+        "width": 358,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 16,
+        "y": 625.453125,
+        "width": 358,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/",
+    "width": 749,
+    "clientWidth": 749,
+    "scrollWidth": 749,
+    "columns": [
+      {
+        "x": 16,
+        "y": 61.4375,
+        "width": 717,
+        "height": 104.765625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 16,
+        "y": 211.703125,
+        "width": 717,
+        "height": 125.5625,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 16,
+        "y": 382.765625,
+        "width": 717,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 16,
+        "y": 495.4375,
+        "width": 717,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 16,
+        "y": 652.890625,
+        "width": 717,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/",
+    "width": 750,
+    "clientWidth": 750,
+    "scrollWidth": 750,
+    "columns": [
+      {
+        "x": 40,
+        "y": 509.84375,
+        "width": 202,
+        "height": 127.15625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 274,
+        "y": 509.84375,
+        "width": 202,
+        "height": 123.84375,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 508,
+        "y": 509.84375,
+        "width": 202,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 40,
+        "y": 669,
+        "width": 202,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 274,
+        "y": 669,
+        "width": 202,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/",
+    "width": 1024,
+    "clientWidth": 1024,
+    "scrollWidth": 1024,
+    "columns": [
+      {
+        "x": 40,
+        "y": 507.78125,
+        "width": 293.328125,
+        "height": 127.15625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 365.328125,
+        "y": 507.78125,
+        "width": 293.328125,
+        "height": 125.546875,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 690.65625,
+        "y": 507.78125,
+        "width": 293.34375,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 40,
+        "y": 666.9375,
+        "width": 293.328125,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 365.328125,
+        "y": 666.9375,
+        "width": 293.328125,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/",
+    "width": 1280,
+    "clientWidth": 1280,
+    "scrollWidth": 1280,
+    "columns": [
+      {
+        "x": 40,
+        "y": 666.921875,
+        "width": 271.296875,
+        "height": 127.15625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 349.6875,
+        "y": 666.921875,
+        "width": 193.78125,
+        "height": 116.875,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 581.859375,
+        "y": 666.921875,
+        "width": 193.78125,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 814.03125,
+        "y": 666.921875,
+        "width": 193.78125,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 1046.203125,
+        "y": 666.921875,
+        "width": 193.78125,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/",
+    "width": 1440,
+    "clientWidth": 1440,
+    "scrollWidth": 1440,
+    "columns": [
+      {
+        "x": 40,
+        "y": 666.796875,
+        "width": 307.796875,
+        "height": 104.765625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 390.984375,
+        "y": 666.796875,
+        "width": 219.859375,
+        "height": 125.546875,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 654.03125,
+        "y": 666.796875,
+        "width": 219.859375,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 917.078125,
+        "y": 666.796875,
+        "width": 219.859375,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 1180.125,
+        "y": 666.796875,
+        "width": 219.875,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/products/helado-hope",
+    "width": 320,
+    "clientWidth": 320,
+    "scrollWidth": 320,
+    "columns": [
+      {
+        "x": 16,
+        "y": 34.78125,
+        "width": 288,
+        "height": 127.15625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 16,
+        "y": 207.4375,
+        "width": 288,
+        "height": 125.5625,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 16,
+        "y": 378.5,
+        "width": 288,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 16,
+        "y": 491.171875,
+        "width": 288,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 16,
+        "y": 648.625,
+        "width": 288,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/products/helado-hope",
+    "width": 390,
+    "clientWidth": 390,
+    "scrollWidth": 390,
+    "columns": [
+      {
+        "x": 16,
+        "y": 34.9375,
+        "width": 358,
+        "height": 104.765625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 16,
+        "y": 185.203125,
+        "width": 358,
+        "height": 125.5625,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 16,
+        "y": 356.265625,
+        "width": 358,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 16,
+        "y": 468.9375,
+        "width": 358,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 16,
+        "y": 626.390625,
+        "width": 358,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/products/helado-hope",
+    "width": 749,
+    "clientWidth": 749,
+    "scrollWidth": 749,
+    "columns": [
+      {
+        "x": 16,
+        "y": 61.328125,
+        "width": 717,
+        "height": 104.765625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 16,
+        "y": 211.59375,
+        "width": 717,
+        "height": 125.5625,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 16,
+        "y": 382.65625,
+        "width": 717,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 16,
+        "y": 495.328125,
+        "width": 717,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 16,
+        "y": 652.78125,
+        "width": 717,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/products/helado-hope",
+    "width": 750,
+    "clientWidth": 750,
+    "scrollWidth": 750,
+    "columns": [
+      {
+        "x": 40,
+        "y": 509.328125,
+        "width": 202,
+        "height": 127.15625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 274,
+        "y": 509.328125,
+        "width": 202,
+        "height": 83.984375,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 508,
+        "y": 509.328125,
+        "width": 202,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 40,
+        "y": 668.484375,
+        "width": 202,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 274,
+        "y": 668.484375,
+        "width": 202,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/products/helado-hope",
+    "width": 1024,
+    "clientWidth": 1024,
+    "scrollWidth": 1024,
+    "columns": [
+      {
+        "x": 40,
+        "y": 508,
+        "width": 293.328125,
+        "height": 127.15625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 365.328125,
+        "y": 508,
+        "width": 293.328125,
+        "height": 83.953125,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 690.65625,
+        "y": 508,
+        "width": 293.34375,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 40,
+        "y": 667.15625,
+        "width": 293.328125,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 365.328125,
+        "y": 667.15625,
+        "width": 293.328125,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/products/helado-hope",
+    "width": 1280,
+    "clientWidth": 1280,
+    "scrollWidth": 1280,
+    "columns": [
+      {
+        "x": 40,
+        "y": 667,
+        "width": 271.296875,
+        "height": 127.15625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 349.6875,
+        "y": 667,
+        "width": 193.78125,
+        "height": 79.28125,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 581.859375,
+        "y": 667,
+        "width": 193.78125,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 814.03125,
+        "y": 667,
+        "width": 193.78125,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 1046.203125,
+        "y": 667,
+        "width": 193.78125,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  },
+  {
+    "route": "/products/helado-hope",
+    "width": 1440,
+    "clientWidth": 1440,
+    "scrollWidth": 1440,
+    "columns": [
+      {
+        "x": 40,
+        "y": 667,
+        "width": 307.796875,
+        "height": 104.765625,
+        "text": "Disfrutar es parte de cuidarte.En Hope endulzamos tu día con amor, color y sabor natural."
+      },
+      {
+        "x": 390.984375,
+        "y": 667,
+        "width": 219.859375,
+        "height": 79.375,
+        "text": "Inicio\n¿Cómo Comprar?\nProductos\nContacto"
+      },
+      {
+        "x": 654.03125,
+        "y": 667,
+        "width": 219.859375,
+        "height": 67.171875,
+        "text": "Ubicación\nTucacas 2054\nFalcón, Venezuela"
+      },
+      {
+        "x": 917.078125,
+        "y": 667,
+        "width": 219.859375,
+        "height": 111.953125,
+        "text": "Horario\nLunes a jueves\n9:00 – 22:00\nViernes a domingo\n9:00 – 12:00"
+      },
+      {
+        "x": 1180.125,
+        "y": 667,
+        "width": 219.875,
+        "height": 202.390625,
+        "text": "Medios de pago"
+      }
+    ],
+    "images": [
+      {
+        "alt": "Stripe",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Zelle",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      },
+      {
+        "alt": "Pago Móvil",
+        "complete": true,
+        "naturalWidth": 91,
+        "width": 48,
+        "height": 48,
+        "fit": "contain"
+      }
+    ],
+    "names": [
+      "",
+      "",
+      ""
+    ],
+    "placeholders": 0
+  }
+]
