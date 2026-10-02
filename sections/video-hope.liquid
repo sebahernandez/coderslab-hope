@@ -283,7 +283,7 @@
     .vh__overlay { bottom: auto; aspect-ratio: var(--vh-aspect); }
     .vh__stage {
       position: static;
-      padding: 28px 18px 40px;
+      padding: 36px 24px 40px;
     }
     .vh__head {
       position: static;
@@ -299,8 +299,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 22px;
-      margin-top: 24px;
+      gap: 32px;
+      margin-top: 32px;
     }
     .vh__center {
       position: static;
@@ -311,14 +311,21 @@
     }
     .vh__feature {
       position: static;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
       width: 100%;
-      max-width: 480px;
+      max-width: 400px;
       text-align: center;
     }
-    .vh__row  { width: auto; justify-content: center; flex-direction: row; margin: 0; }
-    .vh__text { width: auto; margin: 0; }
+    .vh__row  { width: 100%; justify-content: center; flex-direction: row; margin: 0; }
+    .vh__text { width: 100%; max-width: 360px; margin: 0; }
     .vh__line { display: none; }
     .vh__badge {
+      box-sizing: border-box;
+      max-width: 100%;
+      overflow-wrap: anywhere;
       border-width: 2px;
       padding: 10px 20px;
       font-size: {{ s.badge_size | times: 0.95 | round }}px;
@@ -327,7 +334,9 @@
     }
     .vh__desc {
       font-size: {{ s.description_size }}px;
-      margin-top: 10px;
+      line-height: 1.55;
+      margin: 0;
+      overflow-wrap: anywhere;
       text-align: center;
     }
   }
