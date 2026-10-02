@@ -35,7 +35,8 @@
 {% stylesheet %}
   footer .group-block-content:has(> .hope-payment-method) {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, max-content));
+    justify-content: start;
     align-content: start;
     align-items: center;
     gap: 12px;
