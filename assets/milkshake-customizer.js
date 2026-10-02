@@ -4,7 +4,7 @@
  * Producto de combos pre-armados (opción única "Combo"). El cliente elige 1 combo,
  * que se resuelve a una variante nativa del producto y se añade al carrito. NO hay
  * tamaño, toppings ni siropes. La presentación de cada combo (emoji, ingredientes,
- * imagen Cloudinary) la aporta el metafield custom.milkshake_combos, renderizado por
+ * imagen Cloudinary o Shopify) la aporta el metafield custom.milkshake_combos, renderizado por
  * la sección; este JS solo lee los data-attributes de cada card.
  *
  * Reutiliza la línea gráfica global (.hopecfg / hopecfg__*) y el mismo pipeline de
@@ -48,6 +48,7 @@
     }
 
     function catalogUrl(asset, width) {
+      if (/^https:\/\//i.test(asset)) return asset;
       width = width || 1000;
       var t = needsBackgroundRemoval(asset)
         ? "e_background_removal/f_auto,q_auto,w_" + width
@@ -197,7 +198,7 @@
       var props = {};
       if (state.combo) {
         props["Combo"] = readLabel(state.combo);
-        // Imagen del combo (cutout Cloudinary) para mostrarla como miniatura de la
+        // Imagen del combo para mostrarla como miniatura de la
         // línea del carrito. Property oculta (prefijo "_") → no aparece en el detalle.
         var asset = readAsset(state.combo);
         if (asset) props["_imagen"] = catalogUrl(asset, 400);
@@ -309,7 +310,18 @@
     comboButtons.forEach(function (btn) {
       var img = btn.querySelector("[data-combo-img]");
       var asset = btn.dataset.asset;
-      if (img && asset) img.src = catalogUrl(asset, 200);
+      if (!img || !asset) return;
+      var thumb = img.closest(".ms__thumb");
+      function finishLoading() {
+        if (thumb) thumb.classList.remove("is-loading");
+        img.removeEventListener("load", finishLoading);
+        img.removeEventListener("error", finishLoading);
+      }
+      if (thumb) thumb.classList.add("is-loading");
+      img.addEventListener("load", finishLoading);
+      img.addEventListener("error", finishLoading);
+      img.src = catalogUrl(asset, 200);
+      if (img.complete) finishLoading();
     });
 
     // ---- Arranque ----

@@ -27,6 +27,7 @@
 }
 
 .hopecfg--milkshake .ms__thumb {
+  position: relative;
   flex-shrink: 0;
   display: grid;
   place-items: center;
@@ -42,6 +43,27 @@
   height: 100%;
   object-fit: contain;
   display: block;
+}
+.hopecfg--milkshake .ms__thumb.is-loading::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 2px solid #ffe0ee;
+  border-top-color: var(--hopecfg-hope, #ed5d96);
+  border-radius: 50%;
+  animation: ms-thumb-spin 0.8s linear infinite;
+}
+.hopecfg--milkshake .ms__thumb.is-loading .ms__img {
+  visibility: hidden;
+}
+@keyframes ms-thumb-spin {
+  to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hopecfg--milkshake .ms__thumb.is-loading::after {
+    animation: none;
+  }
 }
 .hopecfg--milkshake .ms__emoji {
   font-size: 1.6rem;

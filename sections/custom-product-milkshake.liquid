@@ -7,7 +7,8 @@
   tamaño × extras, 2 toppings + sirope), aquí el cliente NO elige toppings ni siropes:
   solo elige 1 combo ya armado, que se resuelve a una variante nativa del producto y se
   agrega al carrito. La presentación de cada combo (emoji, ingredientes, gramos, imagen
-  Cloudinary) viene del metafield custom.milkshake_combos del producto vinculado.
+  Cloudinary o Shopify) viene del metafield custom.milkshake_combos del producto vinculado.
+  Los sabores Fresa, Vainilla y Chocolate usan las imágenes actuales de Shopify Files.
 
   Assets propios (no globales): milkshake-customizer.css / .js.
   Mantiene la línea gráfica global (.hopecfg / hopecfg__*) para heredar el layout base.
@@ -126,17 +127,29 @@
             <div class="ms__grid">
               {%- if ms_combos and ms_combos.size > 0 -%}
                 {%- for combo in ms_combos -%}
+                  {%- liquid
+                    assign combo_asset = combo.asset
+                    assign combo_name = combo.combo | strip | downcase
+                    case combo_name
+                      when 'chocolate'
+                        assign combo_asset = 'https://cdn.shopify.com/s/files/1/0755/1775/5644/files/milkshake-chocolate.avif?v=1790967895'
+                      when 'vainilla'
+                        assign combo_asset = 'https://cdn.shopify.com/s/files/1/0755/1775/5644/files/milkshake-vainilla.avif?v=1790967825'
+                      when 'fresa'
+                        assign combo_asset = 'https://cdn.shopify.com/s/files/1/0755/1775/5644/files/milkshake-fresa.avif?v=1790967750'
+                    endcase
+                  -%}
                   <button
                     class="hopecfg__choice ms__choice{% if forloop.first %} is-active{% endif %}"
                     data-id="{{ combo.combo | escape }}"
                     data-label="{{ combo.combo | escape }}"
                     data-emoji="{{ combo.emoji | escape }}"
-                    data-asset="{{ combo.asset | escape }}"
+                    data-asset="{{ combo_asset | escape }}"
                     type="button"
                   >
                     <span class="hopecfg__check"></span>
                     <span class="ms__thumb">
-                      {%- if combo.asset != blank -%}
+                      {%- if combo_asset != blank -%}
                         <img class="ms__img" data-combo-img alt="{{ combo.combo | escape }}" loading="lazy" width="54" height="54">
                       {%- else -%}
                         <span class="ms__emoji">{{ combo.emoji }}</span>
