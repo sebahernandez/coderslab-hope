@@ -1,0 +1,466 @@
+[
+  {
+    "width": 320,
+    "controls": [
+      {
+        "class": "header__icon header__icon--menu header__icon--summary",
+        "label": "Menú",
+        "x": 25.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button button-unstyled search-modal__button header-actions__action",
+        "label": "Abrir búsqueda",
+        "x": 69.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "size-style spacing-style header-logo",
+        "label": null,
+        "x": 113.1875,
+        "y": 14,
+        "width": 93.625,
+        "height": 60
+      },
+      {
+        "class": "account-button header-actions__action",
+        "label": "Abrir menú de cuenta",
+        "x": 206.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button header-actions__action button-unstyled",
+        "label": "Abrir carrito Total de artículos en el carrito: 0",
+        "x": 250.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      }
+    ],
+    "overlaps": [],
+    "header": {
+      "x": 0,
+      "y": 12,
+      "width": 320,
+      "height": 64
+    },
+    "panel": {
+      "x": 12,
+      "y": 12,
+      "width": 296,
+      "height": 64
+    },
+    "glass": "header header--glass",
+    "scrollWidth": 331
+  },
+  {
+    "width": 360,
+    "controls": [
+      {
+        "class": "header__icon header__icon--menu header__icon--summary",
+        "label": "Menú",
+        "x": 25.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button button-unstyled search-modal__button header-actions__action",
+        "label": "Abrir búsqueda",
+        "x": 69.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "size-style spacing-style header-logo",
+        "label": null,
+        "x": 113.1875,
+        "y": 14,
+        "width": 133.625,
+        "height": 60
+      },
+      {
+        "class": "account-button header-actions__action",
+        "label": "Abrir menú de cuenta",
+        "x": 246.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button header-actions__action button-unstyled",
+        "label": "Abrir carrito Total de artículos en el carrito: 0",
+        "x": 290.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      }
+    ],
+    "overlaps": [],
+    "header": {
+      "x": 0,
+      "y": 12,
+      "width": 360,
+      "height": 64
+    },
+    "panel": {
+      "x": 12,
+      "y": 12,
+      "width": 336,
+      "height": 64
+    },
+    "glass": "header header--glass",
+    "scrollWidth": 360
+  },
+  {
+    "width": 375,
+    "controls": [
+      {
+        "class": "header__icon header__icon--menu header__icon--summary",
+        "label": "Menú",
+        "x": 25.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button button-unstyled search-modal__button header-actions__action",
+        "label": "Abrir búsqueda",
+        "x": 69.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "size-style spacing-style header-logo",
+        "label": null,
+        "x": 113.1875,
+        "y": 14,
+        "width": 148.625,
+        "height": 60
+      },
+      {
+        "class": "account-button header-actions__action",
+        "label": "Abrir menú de cuenta",
+        "x": 261.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button header-actions__action button-unstyled",
+        "label": "Abrir carrito Total de artículos en el carrito: 0",
+        "x": 305.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      }
+    ],
+    "overlaps": [],
+    "header": {
+      "x": 0,
+      "y": 12,
+      "width": 375,
+      "height": 64
+    },
+    "panel": {
+      "x": 12,
+      "y": 12,
+      "width": 351,
+      "height": 64
+    },
+    "glass": "header header--glass",
+    "scrollWidth": 375
+  },
+  {
+    "width": 390,
+    "controls": [
+      {
+        "class": "header__icon header__icon--menu header__icon--summary",
+        "label": "Menú",
+        "x": 25.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button button-unstyled search-modal__button header-actions__action",
+        "label": "Abrir búsqueda",
+        "x": 69.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "size-style spacing-style header-logo",
+        "label": null,
+        "x": 113.1875,
+        "y": 14,
+        "width": 163.625,
+        "height": 60
+      },
+      {
+        "class": "account-button header-actions__action",
+        "label": "Abrir menú de cuenta",
+        "x": 276.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button header-actions__action button-unstyled",
+        "label": "Abrir carrito Total de artículos en el carrito: 0",
+        "x": 320.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      }
+    ],
+    "overlaps": [],
+    "header": {
+      "x": 0,
+      "y": 12,
+      "width": 390,
+      "height": 64
+    },
+    "panel": {
+      "x": 12,
+      "y": 12,
+      "width": 366,
+      "height": 64
+    },
+    "glass": "header header--glass",
+    "scrollWidth": 390
+  },
+  {
+    "width": 414,
+    "controls": [
+      {
+        "class": "header__icon header__icon--menu header__icon--summary",
+        "label": "Menú",
+        "x": 25.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button button-unstyled search-modal__button header-actions__action",
+        "label": "Abrir búsqueda",
+        "x": 69.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "size-style spacing-style header-logo",
+        "label": null,
+        "x": 113.1875,
+        "y": 14,
+        "width": 187.625,
+        "height": 60
+      },
+      {
+        "class": "account-button header-actions__action",
+        "label": "Abrir menú de cuenta",
+        "x": 300.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button header-actions__action button-unstyled",
+        "label": "Abrir carrito Total de artículos en el carrito: 0",
+        "x": 344.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      }
+    ],
+    "overlaps": [],
+    "header": {
+      "x": 0,
+      "y": 12,
+      "width": 414,
+      "height": 64
+    },
+    "panel": {
+      "x": 12,
+      "y": 12,
+      "width": 390,
+      "height": 64
+    },
+    "glass": "header header--glass",
+    "scrollWidth": 414
+  },
+  {
+    "width": 749,
+    "controls": [
+      {
+        "class": "header__icon header__icon--menu header__icon--summary",
+        "label": "Menú",
+        "x": 25.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button button-unstyled search-modal__button header-actions__action",
+        "label": "Abrir búsqueda",
+        "x": 69.1875,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "size-style spacing-style header-logo",
+        "label": null,
+        "x": 113.1875,
+        "y": 14,
+        "width": 522.625,
+        "height": 60
+      },
+      {
+        "class": "account-button header-actions__action",
+        "label": "Abrir menú de cuenta",
+        "x": 635.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button header-actions__action button-unstyled",
+        "label": "Abrir carrito Total de artículos en el carrito: 0",
+        "x": 679.8125,
+        "y": 22,
+        "width": 44,
+        "height": 44
+      }
+    ],
+    "overlaps": [],
+    "header": {
+      "x": 0,
+      "y": 12,
+      "width": 749,
+      "height": 64
+    },
+    "panel": {
+      "x": 12,
+      "y": 12,
+      "width": 725,
+      "height": 64
+    },
+    "glass": "header header--glass",
+    "scrollWidth": 749
+  },
+  {
+    "width": 750,
+    "controls": [
+      {
+        "class": "size-style spacing-style header-logo",
+        "label": null,
+        "x": 62,
+        "y": 25.1875,
+        "width": 111,
+        "height": 48
+      },
+      {
+        "class": "button button-unstyled search-modal__button header-actions__action",
+        "label": "Abrir búsqueda",
+        "x": 579.125,
+        "y": 27.1875,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "account-button header-actions__action",
+        "label": "Abrir menú de cuenta",
+        "x": 628.734375,
+        "y": 27.1875,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button header-actions__action button-unstyled",
+        "label": "Abrir carrito Total de artículos en el carrito: 0",
+        "x": 672.734375,
+        "y": 27.1875,
+        "width": 44,
+        "height": 44
+      }
+    ],
+    "overlaps": [],
+    "header": {
+      "x": 0,
+      "y": 12,
+      "width": 750,
+      "height": 74.375
+    },
+    "panel": {
+      "x": 40,
+      "y": 12,
+      "width": 670,
+      "height": 74.375
+    },
+    "glass": "header header--glass",
+    "scrollWidth": 750
+  },
+  {
+    "width": 1280,
+    "controls": [
+      {
+        "class": "size-style spacing-style header-logo",
+        "label": null,
+        "x": 62,
+        "y": 25.1875,
+        "width": 111,
+        "height": 48
+      },
+      {
+        "class": "button button-unstyled search-modal__button header-actions__action",
+        "label": "Abrir búsqueda",
+        "x": 1080.390625,
+        "y": 27.1875,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "account-button header-actions__action",
+        "label": "Abrir menú de cuenta",
+        "x": 1130,
+        "y": 27.1875,
+        "width": 44,
+        "height": 44
+      },
+      {
+        "class": "button header-actions__action button-unstyled",
+        "label": "Abrir carrito Total de artículos en el carrito: 0",
+        "x": 1174,
+        "y": 27.1875,
+        "width": 44,
+        "height": 44
+      }
+    ],
+    "overlaps": [],
+    "header": {
+      "x": 0,
+      "y": 12,
+      "width": 1280,
+      "height": 74.375
+    },
+    "panel": {
+      "x": 40,
+      "y": 12,
+      "width": 1200,
+      "height": 74.375
+    },
+    "glass": "header header--glass",
+    "scrollWidth": 1280
+  }
+]
