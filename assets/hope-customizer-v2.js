@@ -295,7 +295,21 @@
       $$("#size-options .hopecfg__choice").forEach(function (btn) {
         var v = findSizeVariant(SIZE_NAME[btn.dataset.id]);
         var sub = btn.querySelector("[data-size-price]");
-        if (sub && v) sub.textContent = formatMoney(v.price);
+        if (sub && v) {
+          var formatted = formatMoney(v.price);
+          if (sub.dataset.price === formatted) return;
+          sub.dataset.price = formatted;
+          var parts = formatted.match(/^(\D*)(\d[\d\s.,'’]*?)([.,]\d{2})?(\D*)$/);
+          if (!parts) { sub.textContent = formatted; return; }
+          sub.replaceChildren();
+          ["currency", "integer", "fraction", "currency"].forEach(function (part, index) {
+            if (!parts[index + 1]) return;
+            var span = document.createElement("span");
+            span.className = "hope2__size-price-" + part;
+            span.textContent = parts[index + 1];
+            sub.appendChild(span);
+          });
+        }
       });
 
       var countEl = $("[data-topping-count]");
@@ -334,6 +348,7 @@
 
       $$("[data-group='size'] .hopecfg__choice").forEach(function (b) {
         b.classList.toggle("is-active", b.dataset.id === state.size);
+        b.setAttribute("aria-pressed", String(b.dataset.id === state.size));
       });
       var basicTopR = basicToppings();
       $$("[data-group='topping'] .hopecfg__choice").forEach(function (b) {

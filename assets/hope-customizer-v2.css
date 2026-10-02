@@ -292,34 +292,79 @@
   align-items: center;
   gap: 0.6rem;
   margin: 0.5rem 0 0.25rem;
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 0.85rem;
   border-radius: 14px;
-  border: 1.5px solid #f7b7d0;
-  background: #fff0f6;
-  color: #a03c68;
-  font-size: 13px;
-  font-weight: 800;
+  border: 1px solid #efd5e1;
+  background: #fff8fb;
+  color: #8c5c71;
+  font-size: 12px;
+  font-weight: 500;
   line-height: 1.3;
 }
 .hope2__delivery-notice svg {
   flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  color: var(--hopecfg-hope, #ed5d96);
+  width: 16px;
+  height: 16px;
+  color: inherit;
 }
 
-/* ===== Tonos por tamaño (Pequeño → Grande) =====
-   Cada botón de tamaño tiene un tono rosa pastel progresivo (más intenso a mayor
-   tamaño) para diferenciarlos de un vistazo. Son tintes claros a propósito: el
-   texto se mantiene oscuro (var(--hopecfg-ink)) y perfectamente legible.
-   SIN BORDE: la selección se marca con una elevación sutil (sombra) + el punto
-   rosa (.hopecfg__check), no con borde. Solo aplica a V2. */
-.hopecfg--v2 #size-options .hopecfg__choice--size { border: 0; }
-.hopecfg--v2 #size-options .hopecfg__choice--size[data-id="small"]  { background: #fff5fa; }
-.hopecfg--v2 #size-options .hopecfg__choice--size[data-id="medium"] { background: #ffe6f1; }
-.hopecfg--v2 #size-options .hopecfg__choice--size[data-id="large"]  { background: #ffd6e8; }
+/* Tarjetas de precio neutras; el acento rosa identifica la selección. */
+.hopecfg--v2 #size-options .hopecfg__choice--size {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  padding: 0.45rem 0.6rem;
+  border: 0;
+  background: #fff;
+  color: var(--hopecfg-ink, #392f36);
+  box-shadow: inset 0 0 0 1px #e8dfe3;
+}
+.hopecfg--v2 #size-options .hopecfg__choice-name {
+  order: 2;
+  width: 100%;
+  margin-block-start: 0.25rem;
+  padding-block-start: 0.3rem;
+  border-block-start: 1px solid #e8dfe3;
+}
 .hopecfg--v2 #size-options .hopecfg__choice--size.is-active {
-  box-shadow: 0 2px 6px rgba(237, 93, 150, 0.22);
+  background: #fff3f8;
+  color: #873552;
+  box-shadow: inset 0 0 0 1.5px #b87996, 0 2px 6px rgba(160, 60, 104, 0.06);
+}
+.hopecfg--v2 #size-options .hopecfg__check {
+  display: none;
+}
+
+/* El precio es el dato principal para comparar tamaños, también en móvil. */
+.hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options [data-size-price] {
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  padding: 0.2rem 0.25rem;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  color: var(--hopecfg-ink, #392f36);
+}
+.hopecfg--v2 #size-options .hope2__size-price-currency,
+.hopecfg--v2 #size-options .hope2__size-price-fraction {
+  margin-block-start: 0.2rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.hopecfg--v2 #size-options .hope2__size-price-currency {
+  margin-inline: 0.1rem;
+}
+.hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice--size.is-active [data-size-price] {
+  background: #f3dfe8;
+  color: #873552;
 }
 
 /* Título del configurador ("Crea tu ...") en mayúsculas. */
@@ -555,9 +600,9 @@
     border-width: 1px;
     border-color: #fbd7e6;
     background: #fff6fa;
-    color: #b56487;
+    color: #8c5c71;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 500;
   }
   .hopecfg--v2 .hope2__delivery-notice svg {
     width: 15px;
@@ -566,13 +611,16 @@
 
   /* Selectores de tamaño más pequeños y sutiles en móvil (sin borde). */
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice--size {
-    padding: 0.35rem 0.4rem;
+    padding: 0.4rem;
     border: 0;
     border-radius: 9px;
   }
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice-name {
     font-size: 0.68rem;
     font-weight: 800;
+  }
+  .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options [data-size-price] {
+    font-size: 1.65rem;
   }
 
   /* Título en una sola línea y la nota (incluye/precios) debajo, en otra línea. */
