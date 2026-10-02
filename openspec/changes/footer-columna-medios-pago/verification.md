@@ -23,3 +23,9 @@ Para elegir los logos definitivos: editor de Shopify → Footer → Medios de pa
 ## Entrega y reversión
 
 Cambios sincronizados al tema de desarrollo; sin publicación al tema activo. Para revertir esta unidad, eliminar el grupo group_medios_pago y su entrada en block_order de sections/footer-group.json, retirar el bloque blocks/hope-payment-method.liquid y los estilos y registro añadidos en sections/footer.liquid. Conservar las modificaciones previas del usuario en otros archivos y en los bloques originales del footer.
+
+## Ajuste posterior: logos en fila
+
+La columna presenta los tres logos en una misma fila, con gap de 12 px y padding lateral de 8 px. A partir de 1200 px recibe una fracción mayor del ancho disponible; entre 750 y 1199 px ocupa dos columnas de la grilla. Se conservaron las imágenes seleccionadas y el ajuste de horario existente al comenzar esta corrección.
+
+Playwright: 14 casos aprobados en inicio y producto a 320, 390, 749, 750, 1024, 1280 y 1440 px, con logos reales Stripe, Zelle y Pago Móvil. Se comprobó alineación horizontal, separación mínima de 12 px, imágenes cargadas y ausencia de desbordamiento. Theme Check: cero incidencias nuevas. Capturas y medidas en verification/horizontal-*.

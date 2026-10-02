@@ -33,6 +33,20 @@
 </div>
 
 {% stylesheet %}
+  footer .group-block-content:has(> .hope-payment-method) {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-content: start;
+    align-items: center;
+    gap: 12px;
+    padding-inline: 8px;
+    box-sizing: border-box;
+  }
+
+  footer .group-block-content:has(> .hope-payment-method) > :not(.hope-payment-method) {
+    grid-column: 1 / -1;
+  }
+
   /* Only the footer row containing the custom payment column. */
   footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content > * {
     min-width: 0;
@@ -50,12 +64,20 @@
       width: 100%;
       max-width: 100%;
     }
+
+    footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content > .group-block:has(.hope-payment-method) {
+      grid-column: span 2;
+    }
   }
 
   @media screen and (min-width: 1200px) {
     footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content {
-      grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.75fr) minmax(0, 0.85fr) minmax(0, 0.9fr) minmax(0, 1.6fr);
       gap: clamp(24px, 3vw, 48px);
+    }
+
+    footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content > .group-block:has(.hope-payment-method) {
+      grid-column: auto;
     }
   }
 {% endstylesheet %}

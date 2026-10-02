@@ -290,7 +290,7 @@
                   "type": "text",
                   "name": "Horario",
                   "settings": {
-                    "text": "<p><strong>Horario<br/></strong>Lunes&nbsp;a&nbsp;jueves<br/>9:00&nbsp;–&nbsp;22:00<br/>Viernes&nbsp;a&nbsp;domingo<br/>9:00&nbsp;–&nbsp;12:00</p>",
+                    "text": "<p><strong>Horario<br/></strong>Lunes&nbsp;a&nbsp;jueves<br/>9:00&nbsp;am –&nbsp;22:00 pm<br/>Viernes&nbsp;a&nbsp;domingo<br/>9:00 am –&nbsp;12:00 pm</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -386,7 +386,8 @@
                   "type": "hope-payment-method",
                   "name": "Stripe",
                   "settings": {
-                    "name": "Stripe"
+                    "name": "Stripe",
+                    "image": "shopify://shop_images/stripe.png"
                   },
                   "blocks": {}
                 },
@@ -394,7 +395,8 @@
                   "type": "hope-payment-method",
                   "name": "Zelle",
                   "settings": {
-                    "name": "Zelle"
+                    "name": "Zelle",
+                    "image": "shopify://shop_images/zelle.png"
                   },
                   "blocks": {}
                 },
@@ -402,7 +404,8 @@
                   "type": "hope-payment-method",
                   "name": "Pago Móvil",
                   "settings": {
-                    "name": "Pago Móvil"
+                    "name": "Pago Móvil",
+                    "image": "shopify://shop_images/pago-movil.png"
                   },
                   "blocks": {}
                 }
