@@ -106,6 +106,7 @@
       toppings: [], // estándar + premium (mismo pool); primeros FREE_TOPPINGS incluidos
       syrups: [],   // siropes; primeros FREE_SYRUPS incluidos
       lastKey: null,
+      hasInteracted: false,
     };
 
     var SIZE_NAME = { small: "Pequeño", medium: "Mediano", large: "Grande" };
@@ -336,7 +337,13 @@
         var ok = valid && hasVariant;
         buyBtn.disabled = !ok;
         buyBtn.classList.toggle("is-disabled", !ok);
-        if (hintEl) hintEl.textContent = valid ? (hasVariant ? "" : "Combinación no disponible") : "Falta: " + missingMessage();
+        if (hintEl) {
+          var isMobile = window.matchMedia("(max-width: 1023px)").matches;
+          var showMissing = isMobile ? currentStep() === 2 : state.hasInteracted;
+          hintEl.textContent = valid
+            ? (hasVariant ? "" : "Combinación no disponible")
+            : (showMissing ? "Falta: " + missingMessage() : "");
+        }
       }
     }
 
@@ -398,6 +405,7 @@
           var addedS = toggleInArray(state.syrups, id);
           state.lastKey = addedS ? "syrup:" + id : (state.lastKey === "syrup:" + id ? null : state.lastKey);
         }
+        state.hasInteracted = true;
         render();
       });
     }
@@ -409,6 +417,7 @@
         state.toppings = [];
         state.syrups = [];
         state.lastKey = null;
+        state.hasInteracted = false;
         render();
       });
     }
@@ -444,6 +453,7 @@
       if (nextLabel && step < STEP_LABELS.length - 1) {
         nextLabel.textContent = "Continuar paso " + (step + 2);
       }
+      updatePrice();
     }
     function currentStep() { return parseInt(root.dataset.step || "0", 10) || 0; }
     var stepNextBtn = $("[data-step-next]");
