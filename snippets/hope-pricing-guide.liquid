@@ -1,0 +1,37 @@
+{% doc %}
+  Explains included basics and per-item extra prices in the Hope configurator.
+  @param {number} included_count - Number of included basic items.
+  @param {string} kind - 'topping' or 'syrup'.
+  @param {number} extra_cents - Price of an additional basic item, in cents.
+  @param {number} premium_cents - Price of each premium item, in cents.
+  @example
+  {% render 'hope-pricing-guide', included_count: 2, kind: 'topping', extra_cents: 100, premium_cents: 150 %}
+{% enddoc %}
+
+{%- liquid
+  assign extra_price = extra_cents | money | strip_html
+  assign premium_price = premium_cents | money | strip_html
+-%}
+<div class="hope2__pricing-guide">
+  <ul class="hope2__pricing-rows" role="list">
+    <li>
+      <span>{{ 'hope_customizer.pricing.included' | t }}</span>
+      <strong class="hope2__pricing-included">
+        {%- if kind == 'topping' -%}
+          {{- 'hope_customizer.pricing.toppings' | t: count: included_count -}}
+        {%- else -%}
+          {{- 'hope_customizer.pricing.syrups' | t: count: included_count -}}
+        {%- endif -%}
+      </strong>
+    </li>
+    <li>
+      <span>{{ 'hope_customizer.pricing.basic_extra' | t }}</span>
+      <strong>{{ 'hope_customizer.pricing.per_item' | t: price: extra_price }}</strong>
+    </li>
+    <li>
+      <span>{{ 'hope_customizer.pricing.premium' | t }}</span>
+      <strong>{{ 'hope_customizer.pricing.per_item' | t: price: premium_price }}</strong>
+    </li>
+  </ul>
+  <p class="hope2__pricing-note">{{ 'hope_customizer.pricing.premium_note' | t }}</p>
+</div>

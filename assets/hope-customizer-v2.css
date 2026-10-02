@@ -278,6 +278,45 @@
 }
 
 /* Desglose de extras bajo el precio total */
+.hopecfg--v2 .hope2__pricing-guide {
+  margin-block-end: 0.75rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #eadde3;
+  border-radius: 12px;
+  background: #fff8fb;
+  color: var(--hopecfg-ink, #392f36);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+.hopecfg--v2 .hope2__pricing-rows {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hopecfg--v2 .hope2__pricing-rows li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+  gap: 0.65rem;
+}
+.hopecfg--v2 .hope2__pricing-rows strong {
+  color: #873552;
+  text-align: end;
+  font-weight: 700;
+}
+.hopecfg--v2 .hope2__pricing-rows .hope2__pricing-included {
+  color: #286247;
+}
+.hopecfg--v2 .hope2__pricing-note {
+  margin: 0.55rem 0 0;
+  padding-block-start: 0.55rem;
+  border-block-start: 1px solid #eadde3;
+  color: #765e69;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
 .hopecfg--v2 .hopecfg__extras-breakdown {
   margin: 2px 0 0;
   font-size: 11px;
@@ -285,6 +324,21 @@
   color: var(--hopecfg-hope, #ed5d96);
 }
 .hopecfg--v2 .hopecfg__extras-breakdown:empty { display: none; }
+
+.hopecfg--v2 .hopecfg__buy-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+}
+.hopecfg--v2 .hopecfg__buy-hint:not(:empty)::before {
+  content: "";
+  flex-shrink: 0;
+  width: 1.15em;
+  height: 1.15em;
+  margin-block-start: 0.1em;
+  background-color: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10.3 4.5 2.6 18a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.5a2 2 0 0 0-3.4 0Z'/%3E%3Cpath d='M12 9v4'/%3E%3Ccircle cx='12' cy='17' r='.8' fill='black' stroke='none'/%3E%3C/svg%3E") center / contain no-repeat;
+}
 
 /* Aviso: producto solo disponible para delivery (Mixo Hope) */
 .hope2__delivery-notice {
@@ -557,66 +611,73 @@
   }
   .hopecfg--v2 .hopecfg__buy-arrow { margin-left: 0.1rem; }
 
-  /* Aviso de costos ("Los primeros 2 toppings...") más pequeño en móvil. */
+  /* Avisos legibles en móvil, con espacio para varias líneas. */
   .hopecfg--v2 .hope2__cost-warning {
     align-items: flex-start;
     gap: 0.4rem;
     margin-bottom: 0.5rem;
-    padding: 0.5rem 0.65rem;
+    padding: 0.65rem 0.8rem;
     border-radius: 10px;
     border-width: 1px;
-    font-size: 10px;
+    font-size: 0.875rem;
     font-weight: 600;
-    line-height: 1.35;
+    line-height: 1.5;
   }
   .hopecfg--v2 .hope2__cost-warning svg {
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     margin-top: 0.08rem;
   }
 
   /* Nota "aparece sobre tu helado con un +1": más sutil y separada en móvil. */
   .hopecfg--v2 .hope2__hint {
-    gap: 0.45rem;
+    gap: 0.4rem;
     margin-top: 0.3rem;
-    padding: 0.45rem 0.7rem;
+    padding: 0.45rem 0.65rem;
     border-radius: 10px;
-    background: #fff4f9;
-    color: #b56487;
-    font-size: 10.5px;
-    font-weight: 600;
+    background: #fff8fb;
+    color: #8c5c71;
+    font-size: 0.75rem;
+    font-weight: 400;
+    line-height: 1.4;
   }
   .hopecfg--v2 .hope2__hint svg {
     width: 14px;
     height: 14px;
+    color: inherit;
   }
 
-  /* Aviso de delivery más pequeño y sutil en móvil. */
+  /* Aviso de delivery discreto, sin reducir la legibilidad. */
   .hopecfg--v2 .hope2__delivery-notice {
     gap: 0.4rem;
     margin: 0.35rem 0 0.15rem;
-    padding: 0.4rem 0.65rem;
+    padding: 0.65rem 0.8rem;
     border-radius: 10px;
     border-width: 1px;
     border-color: #fbd7e6;
     background: #fff6fa;
     color: #8c5c71;
-    font-size: 11px;
+    font-size: 0.875rem;
     font-weight: 500;
+    line-height: 1.5;
   }
   .hopecfg--v2 .hope2__delivery-notice svg {
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
   }
 
-  /* Selectores de tamaño más pequeños y sutiles en móvil (sin borde). */
+  /* Separación y superficies de toque cómodas para seleccionar tamaños. */
+  .hopecfg--v2 #size-options .hopecfg__grid {
+    gap: 0.625rem;
+  }
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice--size {
-    padding: 0.4rem;
+    min-height: max(3rem, var(--minimum-touch-target, 44px));
+    padding: 0.6rem 0.4rem;
     border: 0;
     border-radius: 9px;
   }
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options .hopecfg__choice-name {
-    font-size: 0.68rem;
+    font-size: 0.8125rem;
     font-weight: 800;
   }
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #size-options [data-size-price] {
@@ -624,24 +685,35 @@
   }
 
   /* Título en una sola línea y la nota (incluye/precios) debajo, en otra línea. */
-  .hopecfg--v2 .hopecfg__legend { align-items: flex-start; }
+  .hopecfg--v2 .hopecfg__legend {
+    align-items: flex-start;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
   .hopecfg--v2 .hopecfg__legend-hint {
     display: block;
     margin-top: 0.2rem;
-    font-size: 9.5px;
+    font-size: 0.8125rem;
     font-weight: 600;
-    line-height: 1.3;
+    line-height: 1.5;
+    color: #765e69;
   }
   /* Contador de toppings (ej. "3 (1 con costo)"): pequeño y en una sola línea. */
   .hopecfg--v2 .hopecfg__legend-count {
     flex-shrink: 0;
     white-space: nowrap;
-    font-size: 9px;
+    font-size: 0.75rem;
     letter-spacing: 0.02em;
   }
 
-  /* Toppings, siropes y premium en columna vertical (uno por fila),
-     con scroll: se ven ~4 y se avisa que hay más. Solo móvil y armador v2. */
+  .hopecfg--v2 .hopecfg__buy-hint,
+  .hopecfg--v2 .hopecfg__extras-breakdown,
+  .hopecfg--v2 .hopecfg__chip-price {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  /* Opciones de al menos 48px, separadas 10px; la lista permite scroll. */
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #topping-options,
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options {
     position: relative;
@@ -652,8 +724,8 @@
     flex-direction: column;
     flex-wrap: nowrap;
     width: 100%;
-    gap: 0.4rem;
-    max-height: 11rem; /* ~4 opciones visibles */
+    gap: 0.625rem;
+    max-height: 15rem; /* ~4 opciones de 48px con separación */
     overflow-x: visible;
     overflow-y: auto;
     scroll-snap-type: none;
@@ -679,24 +751,25 @@
     flex-shrink: 0;
     justify-content: flex-start;
     scroll-snap-align: none;
-    /* Más pequeñas y sutiles en móvil */
-    min-height: 0;
-    gap: 0.45rem;
-    padding: 0.4rem 0.6rem;
-    font-size: 0.72rem;
+    min-height: max(3rem, var(--minimum-touch-target, 44px));
+    gap: 0.65rem;
+    padding: 0.65rem 0.8rem;
+    font-size: 0.875rem;
     font-weight: 600;
+    line-height: 1.4;
+    text-align: start;
     border-width: 1px;
     border-color: #f1e2e8;
     border-radius: 9px;
   }
   .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid .hopecfg__choice .topping-img,
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options .hopecfg__choice .topping-img {
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 1.5rem;
+    height: 1.5rem;
   }
   .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid .hopecfg__choice .topping-icon,
   .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options .hopecfg__choice .topping-icon {
-    font-size: 0.95rem;
+    font-size: 1.25rem;
   }
 
   /* Indicador "desliza para ver más": degradado + chevron al fondo.
@@ -722,11 +795,11 @@
     bottom: 0.35rem;
     transform: translateX(-50%);
     z-index: 2;
-    font-size: 0.6rem;
+    font-size: 0.6875rem;
     font-weight: 800;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--hopecfg-hope);
+    color: #873552;
     background: rgba(255, 255, 255, 0.95);
     padding: 0.12rem 0.5rem;
     border-radius: 999px;

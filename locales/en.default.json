@@ -8,6 +8,17 @@
  * ------------------------------------------------------------
  */
 {
+  "hope_customizer": {
+    "pricing": {
+      "included": "Included",
+      "toppings": { "one": "{{ count }} basic topping", "other": "{{ count }} basic toppings" },
+      "syrups": { "one": "{{ count }} basic syrup", "other": "{{ count }} basic syrups" },
+      "basic_extra": "Extra basic item",
+      "premium": "Premium ★",
+      "per_item": "+{{ price }} each",
+      "premium_note": "Premium items are charged separately and do not count as included items."
+    }
+  },
   "accessibility": {
     "account": "Open account menu",
     "cart": "Cart",

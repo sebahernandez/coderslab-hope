@@ -194,9 +194,10 @@
           {%- comment -%} Toppings (estándar + premium): los primeros 2 van incluidos; cada extra +$1.00 {%- endcomment -%}
           <fieldset id="topping-options" class="hopecfg__group" data-group="topping">
             <legend class="hopecfg__legend">
-              <span id="topping-title">2 · Elige tus toppings <span class="hopecfg__legend-hint">({{ free_toppings }} básicos incluidos · básico extra {{ extra_topping_cents | money }} · premium ★ {{ premium_cents | money }})</span></span>
+              <span id="topping-title">2 · Elige tus toppings</span>
               <span class="hopecfg__legend-count" data-topping-count>0/{{ free_toppings }}</span>
             </legend>
+            {%- render 'hope-pricing-guide', included_count: free_toppings, kind: 'topping', extra_cents: extra_topping_cents, premium_cents: premium_cents -%}
             <div id="topping-warning" class="hope2__cost-warning" role="note" hidden>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" />
@@ -228,7 +229,8 @@
           </fieldset>
 
           <fieldset id="syrup-options" class="hopecfg__group" data-group="syrup">
-            <legend class="hopecfg__legend"><span class="hopecfg__legend-title">3 · Elige tu sirope <span class="hopecfg__legend-hint">({{ free_syrups }} básico incluido · básico extra {{ extra_topping_cents | money }} · premium ★ {{ premium_cents | money }})</span></span></legend>
+            <legend class="hopecfg__legend"><span class="hopecfg__legend-title">3 · Elige tu sirope</span></legend>
+            {%- render 'hope-pricing-guide', included_count: free_syrups, kind: 'syrup', extra_cents: extra_topping_cents, premium_cents: premium_cents -%}
             <div class="hopecfg__chips">
               {%- if cat_sirope.items.size > 0 -%}
                 {%- for item in cat_sirope.items -%}

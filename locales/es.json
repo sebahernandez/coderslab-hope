@@ -8,6 +8,17 @@
  * ------------------------------------------------------------
  */
 {
+  "hope_customizer": {
+    "pricing": {
+      "included": "Incluidos",
+      "toppings": { "one": "{{ count }} topping básico", "other": "{{ count }} toppings básicos" },
+      "syrups": { "one": "{{ count }} sirope básico", "other": "{{ count }} siropes básicos" },
+      "basic_extra": "Básico adicional",
+      "premium": "Premium ★",
+      "per_item": "+{{ price }} cada uno",
+      "premium_note": "Los premium se cobran aparte y no cuentan como incluidos."
+    }
+  },
   "blocks": {
     "load_video": "Cargar video: {{ description }}",
     "sold_out": "Agotado",
