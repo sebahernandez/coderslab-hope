@@ -647,25 +647,6 @@
     color: inherit;
   }
 
-  /* Aviso de delivery discreto, sin reducir la legibilidad. */
-  .hopecfg--v2 .hope2__delivery-notice {
-    gap: 0.4rem;
-    margin: 0.35rem 0 0.15rem;
-    padding: 0.65rem 0.8rem;
-    border-radius: 10px;
-    border-width: 1px;
-    border-color: #fbd7e6;
-    background: #fff6fa;
-    color: #8c5c71;
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1.5;
-  }
-  .hopecfg--v2 .hope2__delivery-notice svg {
-    width: 18px;
-    height: 18px;
-  }
-
   /* Separación y superficies de toque cómodas para seleccionar tamaños. */
   .hopecfg--v2 #size-options .hopecfg__grid {
     gap: 0.625rem;
