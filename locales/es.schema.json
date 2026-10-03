@@ -774,6 +774,8 @@
     "subtle_zoom": "Ampliar"
   },
   "content": {
+    "mobile_social_media": "Redes sociales del menú móvil",
+    "mobile_social_media_info": "Ingresa la URL de cada perfil. Deja un campo vacío para ocultar su icono. Para WhatsApp, usa https://wa.me/ seguido del código de país y número, sin espacios ni +.",
     "advanced": "Avanzado",
     "background_image": "Imagen de fondo",
     "background_video": "Video de fondo",

@@ -774,6 +774,8 @@
     "subtle_zoom": "Zoom"
   },
   "content": {
+    "mobile_social_media": "Sociale medier i mobilmenuen",
+    "mobile_social_media_info": "Indtast URL-adressen til hver profil. Lad et felt være tomt for at skjule ikonet.",
     "advanced": "Avanceret",
     "background_image": "Baggrundsbillede",
     "background_video": "Baggrundsvideo",

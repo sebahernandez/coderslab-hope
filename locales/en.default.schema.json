@@ -28,6 +28,8 @@
     "storytelling": "Storytelling"
   },
   "content": {
+    "mobile_social_media": "Mobile menu social media",
+    "mobile_social_media_info": "Enter each profile URL. Leave a field empty to hide its icon. For WhatsApp, use https://wa.me/ followed by the country code and phone number, without spaces or +.",
     "visible_if_collection_has_more_products": "Visible if collection has more products than shown",
     "adjustments_affect_all_content": "Applies to all content in this block",
     "advanced": "Advanced",

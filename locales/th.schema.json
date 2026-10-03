@@ -775,6 +775,8 @@
     "subtle_zoom": "ซูม"
   },
   "content": {
+    "mobile_social_media": "โซเชียลมีเดียในเมนูมือถือ",
+    "mobile_social_media_info": "ป้อน URL ของแต่ละโปรไฟล์ เว้นช่องว่างไว้เพื่อซ่อนไอคอน",
     "advanced": "Advanced",
     "background_image": "รูปภาพพื้นหลัง",
     "background_video": "วิดีโอพื้นหลัง",

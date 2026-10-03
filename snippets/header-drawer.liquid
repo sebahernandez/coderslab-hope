@@ -5,7 +5,7 @@
   @param {string} [class] - Additional classes to add to the drawer
   @param {string} [data_header_drawer_type] - The type of header drawer to render
   @param {object} [block] - The block that can be used to provide settings
-  @param {object} [section] - The section that can be used to provide settings
+  @param {object} [section] - The header section, including mobile social URL settings
 
   @example
   {% render 'header-drawer', linklist: section.settings.menu, class: 'header-drawer--mobile' %}
@@ -530,45 +530,53 @@
       </nav>
       {%- if data_header_drawer_type == 'mobile-drawer' -%}
         {%- liquid
-          assign social_instagram = settings.social_instagram_link | default: '#'
-          assign social_facebook = settings.social_facebook_link | default: '#'
-          assign social_whatsapp = settings.social_whatsapp_link | default: '#'
+          assign social_instagram = section.settings.social_instagram_link
+          assign social_facebook = section.settings.social_facebook_link
+          assign social_whatsapp = section.settings.social_whatsapp_link
         -%}
-        <div class="menu-drawer__social menu-drawer__animated-element">
-          <a
-            class="menu-drawer__social-icon"
-            href="{{ social_instagram }}"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Instagram"
-          >
-            <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-              {%- render 'icon', icon: 'instagram' -%}
-            </svg>
-          </a>
-          <a
-            class="menu-drawer__social-icon"
-            href="{{ social_facebook }}"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="Facebook"
-          >
-            <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-              {%- render 'icon', icon: 'facebook' -%}
-            </svg>
-          </a>
-          <a
-            class="menu-drawer__social-icon"
-            href="{{ social_whatsapp }}"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="WhatsApp"
-          >
-            <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
-              {%- render 'icon', icon: 'whatsapp' -%}
-            </svg>
-          </a>
-        </div>
+        {%- if social_instagram != blank or social_facebook != blank or social_whatsapp != blank -%}
+          <div class="menu-drawer__social menu-drawer__animated-element">
+            {%- if social_instagram != blank -%}
+              <a
+                class="menu-drawer__social-icon"
+                href="{{ social_instagram | escape }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+              >
+                <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                  {%- render 'icon', icon: 'instagram' -%}
+                </svg>
+              </a>
+            {%- endif -%}
+            {%- if social_facebook != blank -%}
+              <a
+                class="menu-drawer__social-icon"
+                href="{{ social_facebook | escape }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+              >
+                <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                  {%- render 'icon', icon: 'facebook' -%}
+                </svg>
+              </a>
+            {%- endif -%}
+            {%- if social_whatsapp != blank -%}
+              <a
+                class="menu-drawer__social-icon"
+                href="{{ social_whatsapp | escape }}"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="WhatsApp"
+              >
+                <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+                  {%- render 'icon', icon: 'whatsapp' -%}
+                </svg>
+              </a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
       {%- endif -%}
       <div
         class="menu-drawer__utility-links menu-drawer__animated-element"

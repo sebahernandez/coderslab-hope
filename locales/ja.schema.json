@@ -774,6 +774,8 @@
     "subtle_zoom": "ズーム"
   },
   "content": {
+    "mobile_social_media": "モバイルメニューのSNS",
+    "mobile_social_media_info": "各プロフィールのURLを入力してください。欄を空にするとアイコンが非表示になります。",
     "advanced": "高度",
     "background_image": "背景画像",
     "background_video": "背景ビデオ",

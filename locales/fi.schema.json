@@ -774,6 +774,8 @@
     "subtle_zoom": "Zoomaus"
   },
   "content": {
+    "mobile_social_media": "Mobiilivalikon sosiaalinen media",
+    "mobile_social_media_info": "Anna kunkin profiilin URL-osoite. Piilota kuvake jättämällä kenttä tyhjäksi.",
     "advanced": "Kehittynyt",
     "background_image": "Taustakuva",
     "background_video": "Taustavideo",

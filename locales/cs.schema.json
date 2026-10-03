@@ -774,6 +774,8 @@
     "subtle_zoom": "Přiblížení"
   },
   "content": {
+    "mobile_social_media": "Sociální sítě v mobilním menu",
+    "mobile_social_media_info": "Zadejte URL každého profilu. Prázdné pole skryje jeho ikonu.",
     "advanced": "Pokročilé",
     "background_image": "Obrázek na pozadí",
     "background_video": "Video na pozadí",

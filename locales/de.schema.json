@@ -774,6 +774,8 @@
     "subtle_zoom": "Zoomen"
   },
   "content": {
+    "mobile_social_media": "Soziale Medien im mobilen Menü",
+    "mobile_social_media_info": "Gib die URL jedes Profils ein. Lass ein Feld leer, um das Symbol auszublenden.",
     "background_video": "Hintergrund-Video",
     "describe_the_video_for": "Beschreibe das Video für Kunden, die Bildschirmlesegeräte benutzen. [Mehr Informationen](https://help.shopify.com/manual/online-store/themes/theme-structure/theme-features#video-block)",
     "width_is_automatically_optimized": "Breite wird automatisch für die mobile Nutzung optimiert.",

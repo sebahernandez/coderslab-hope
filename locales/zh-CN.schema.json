@@ -774,6 +774,8 @@
     "subtle_zoom": "缩放"
   },
   "content": {
+    "mobile_social_media": "移动菜单社交媒体",
+    "mobile_social_media_info": "输入每个个人资料的 URL。将字段留空可隐藏对应图标。",
     "advanced": "高级",
     "background_image": "背景图片",
     "background_video": "背景视频",

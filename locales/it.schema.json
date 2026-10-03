@@ -774,6 +774,8 @@
     "subtle_zoom": "Zoom"
   },
   "content": {
+    "mobile_social_media": "Social media nel menu mobile",
+    "mobile_social_media_info": "Inserisci l’URL di ogni profilo. Lascia un campo vuoto per nascondere la sua icona.",
     "advanced": "Avanzato",
     "background_image": "Immagine di sfondo",
     "background_video": "Video in background",

@@ -774,6 +774,8 @@
     "subtle_zoom": "Powiększenie"
   },
   "content": {
+    "mobile_social_media": "Media społecznościowe w menu mobilnym",
+    "mobile_social_media_info": "Wpisz adres URL każdego profilu. Pozostaw puste pole, aby ukryć jego ikonę.",
     "background_video": "Film w tle",
     "describe_the_video_for": "Opisz film dla klientów korzystających z czytników ekranu. [Dowiedz się więcej](https://help.shopify.com/manual/online-store/themes/theme-structure/theme-features#video-block)",
     "width_is_automatically_optimized": "Szerokość jest automatycznie dostosowywana do urządzeń mobilnych.",

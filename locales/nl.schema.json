@@ -774,6 +774,8 @@
     "subtle_zoom": "Zoomen"
   },
   "content": {
+    "mobile_social_media": "Sociale media in het mobiele menu",
+    "mobile_social_media_info": "Voer de URL van elk profiel in. Laat een veld leeg om het pictogram te verbergen.",
     "background_video": "Achtergrondvideo",
     "describe_the_video_for": "Geef een beschrijving van de video voor klanten die schermlezers gebruiken. [Meer informatie](https://help.shopify.com/manual/online-store/themes/theme-structure/theme-features#video-block)",
     "width_is_automatically_optimized": "De breedte wordt automatisch geoptimaliseerd voor mobiel.",

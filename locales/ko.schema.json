@@ -774,6 +774,8 @@
     "subtle_zoom": "확대/축소"
   },
   "content": {
+    "mobile_social_media": "모바일 메뉴 소셜 미디어",
+    "mobile_social_media_info": "각 프로필의 URL을 입력하세요. 필드를 비워 두면 해당 아이콘이 숨겨집니다.",
     "background_video": "배경 동영상",
     "describe_the_video_for": "스크린리더를 사용하는 고객에게 슬라이드 쇼를 설명합니다. [자세히 알아보기](https://help.shopify.com/manual/online-store/themes/theme-structure/theme-features#video-block)",
     "width_is_automatically_optimized": "너비는 자동으로 모바일에 최적화됩니다.",

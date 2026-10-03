@@ -774,6 +774,8 @@
     "subtle_zoom": "Zooma"
   },
   "content": {
+    "mobile_social_media": "Sociala medier i mobilmenyn",
+    "mobile_social_media_info": "Ange URL:en till varje profil. Lämna ett fält tomt för att dölja ikonen.",
     "advanced": "Avancerat",
     "background_image": "Bakgrundsbild",
     "background_video": "Bakgrundsvideo",

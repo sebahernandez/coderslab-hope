@@ -1,5 +1,8 @@
-
-
+{% comment %}
+  Header contract: owns navigation, including social URLs for the mobile drawer.
+  @example
+  Configure social links in the header section's mobile social media settings.
+{% endcomment %}
 {% liquid
   assign order = 'logo,menu,localization,search,mobile_search,actions'
 
@@ -817,6 +820,29 @@
         }
       ],
       "default": "top"
+    },
+    {
+      "type": "header",
+      "content": "t:content.mobile_social_media"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:content.mobile_social_media_info"
+    },
+    {
+      "type": "url",
+      "id": "social_instagram_link",
+      "label": "t:options.social_instagram"
+    },
+    {
+      "type": "url",
+      "id": "social_facebook_link",
+      "label": "t:options.social_facebook"
+    },
+    {
+      "type": "url",
+      "id": "social_whatsapp_link",
+      "label": "t:options.social_whatsapp"
     },
     {
       "type": "header",

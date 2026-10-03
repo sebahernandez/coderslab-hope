@@ -774,6 +774,8 @@
     "subtle_zoom": "縮放"
   },
   "content": {
+    "mobile_social_media": "行動版選單社群媒體",
+    "mobile_social_media_info": "輸入每個個人檔案的 URL。將欄位留空即可隱藏對應圖示。",
     "advanced": "進階",
     "background_image": "背景圖片",
     "background_video": "背景影片",
