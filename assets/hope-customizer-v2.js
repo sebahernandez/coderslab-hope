@@ -63,6 +63,93 @@
     // Precio plano por item premium (topping o sirope) y variante del add-on que lo cobra.
     var PREMIUM_CENTS = parseInt(root.dataset.premiumCents || "150", 10);
     var EXTRAS_VARIANT_ID = parseInt(root.dataset.extrasVariantId || "0", 10) || null;
+    var deliveryAvailability = { status: "loading", request: null, dismissed: false };
+    var addingToCart = false;
+    var availabilityDialog = $(".hope2__availability-modal");
+
+    if (availabilityDialog) {
+      var acceptAvailability = availabilityDialog.querySelector("[data-availability-accept]");
+      if (acceptAvailability) {
+        acceptAvailability.addEventListener("click", function () { availabilityDialog.close(); });
+      }
+      availabilityDialog.addEventListener("click", function (event) {
+        if (event.target !== availabilityDialog) return;
+        var bounds = availabilityDialog.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right ||
+            event.clientY < bounds.top || event.clientY > bounds.bottom) {
+          availabilityDialog.close();
+        }
+      });
+      availabilityDialog.addEventListener("close", function () {
+        if (deliveryAvailability.status === "blocked") deliveryAvailability.dismissed = true;
+      });
+    }
+
+    function syncDeliveryAvailability() {
+      if (deliveryAvailability.request) return deliveryAvailability.request;
+
+      var notice = $(".hope2__delivery-notice span");
+      var endpoint = root.dataset.deliveryAvailabilityUrl;
+      var shopDomain = root.dataset.shopDomain;
+      var url;
+
+      try {
+        if (!endpoint || !shopDomain) throw new Error("Falta la configuración de disponibilidad");
+        url = new URL(endpoint, window.location.origin);
+        url.searchParams.set("shopDomain", shopDomain);
+      } catch (error) {
+        deliveryAvailability.status = "error";
+        if (notice) notice.textContent = "No pudimos verificar la disponibilidad. Intenta más tarde.";
+        updatePrice();
+        return Promise.resolve();
+      }
+
+      deliveryAvailability.request = fetch(url.toString(), { cache: "no-store", credentials: "omit" })
+        .then(function (response) {
+          if (!response.ok) throw new Error("Disponibilidad: " + response.status);
+          return response.json();
+        })
+        .then(function (result) {
+          if (typeof result.shippingEnabled !== "boolean" || typeof result.pickupEnabled !== "boolean") {
+            throw new Error("Respuesta de disponibilidad inválida");
+          }
+
+          var shipping = result.shippingEnabled;
+          var pickup = result.pickupEnabled;
+          var blocked = !shipping && !pickup;
+          deliveryAvailability.status = blocked ? "blocked" : "available";
+
+          if (notice) {
+            notice.textContent = shipping && pickup
+              ? "Disponible para delivery y compra presencial"
+              : shipping
+                ? "Disponible solo para delivery"
+                : pickup
+                  ? "Disponible solo para compra presencial"
+                  : "Delivery y compra presencial no disponibles";
+          }
+
+          root.classList.toggle("is-delivery-unavailable", blocked);
+          if (blocked) {
+            if (availabilityDialog && !availabilityDialog.open && !deliveryAvailability.dismissed) {
+              availabilityDialog.showModal();
+            }
+          } else {
+            if (availabilityDialog && availabilityDialog.open) availabilityDialog.close();
+            deliveryAvailability.dismissed = false;
+          }
+          updatePrice();
+        })
+        .catch(function (error) {
+          if (deliveryAvailability.status === "loading") deliveryAvailability.status = "error";
+          if (notice) notice.textContent = "No pudimos verificar la disponibilidad. Reintentaremos pronto.";
+          updatePrice();
+          console.error("hope-delivery-availability", error);
+        })
+        .then(function () { deliveryAvailability.request = null; });
+
+      return deliveryAvailability.request;
+    }
 
     function catalogUrl(asset, width) {
       width = width || 1000;
@@ -334,7 +421,7 @@
       if (buyBtn) {
         var valid = isValidSelection();
         var hasVariant = !!variantForState();
-        var ok = valid && hasVariant;
+        var ok = valid && hasVariant && !addingToCart;
         buyBtn.disabled = !ok;
         buyBtn.classList.toggle("is-disabled", !ok);
         if (hintEl) {
@@ -543,6 +630,7 @@
 
     if (buyBtn) {
       buyBtn.addEventListener("click", function () {
+        if (addingToCart) return;
         if (!isValidSelection()) { showToast("Falta: " + missingMessage(), true); return; }
         var variant = variantForState();
         if (!variant) { showToast("Este producto aún no está vinculado. Configúralo en el tema.", true); return; }
@@ -581,6 +669,7 @@
           payload.sections_url = window.location.pathname;
         }
 
+        addingToCart = true;
         buyBtn.disabled = true;
         flyToCart();
 
@@ -614,7 +703,10 @@
             if (drawer && typeof drawer.open === "function") drawer.open();
           })
           .catch(function () { showToast("No se pudo añadir al carrito. Inténtalo de nuevo.", true); })
-          .then(function () { buyBtn.disabled = false; });
+          .then(function () {
+            addingToCart = false;
+            updatePrice();
+          });
       });
     }
 
@@ -659,6 +751,32 @@
     render();
     setupScrollIndicators();
     setStep(0);
+    syncDeliveryAvailability();
+
+    function refreshAvailabilityIfVisible() {
+      if (!root.isConnected) {
+        clearInterval(availabilityInterval);
+        document.removeEventListener("visibilitychange", refreshAvailabilityIfVisible);
+        window.removeEventListener("focus", refreshAvailabilityIfVisible);
+        document.removeEventListener("shopify:section:unload", onSectionUnload);
+        return;
+      }
+      if (!document.hidden) syncDeliveryAvailability();
+    }
+
+    function onSectionUnload(event) {
+      if (!event.target || !event.target.contains(root)) return;
+      if (availabilityDialog && availabilityDialog.open) availabilityDialog.close();
+      clearInterval(availabilityInterval);
+      document.removeEventListener("visibilitychange", refreshAvailabilityIfVisible);
+      window.removeEventListener("focus", refreshAvailabilityIfVisible);
+      document.removeEventListener("shopify:section:unload", onSectionUnload);
+    }
+
+    var availabilityInterval = window.setInterval(refreshAvailabilityIfVisible, 60000);
+    document.addEventListener("visibilitychange", refreshAvailabilityIfVisible);
+    window.addEventListener("focus", refreshAvailabilityIfVisible);
+    document.addEventListener("shopify:section:unload", onSectionUnload);
   }
 
   function initAll() {

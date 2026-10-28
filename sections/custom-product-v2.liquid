@@ -17,7 +17,7 @@
 <script src="{{ 'hope-customizer-v2.js' | asset_url }}" defer></script>
 
 {%- liquid
-  assign p_helado = section.settings.producto_helado | default: closest.product | default: product
+  assign p_helado = product | default: closest.product | default: section.settings.producto_helado
   assign cfg_product = p_helado
   assign cfg_cats = cfg_product.metafields.custom.opciones_customizador.value.categorias
   assign cat_sirope = cfg_cats | where: 'nombre', 'Sirope' | first
@@ -75,6 +75,23 @@
   if section.settings.producto_extras and section.settings.producto_extras.selected_or_first_available_variant
     assign extras_variant_id = section.settings.producto_extras.selected_or_first_available_variant.id
   endif
+ comment
+    Precios reales de Shopify (los cambia el panel). Premium = precio de "Extras personalizados".
+    Basico = variante con 1 extra menos la de 0 extras del mismo tamano. Si algo falta, quedan los de arriba.
+  endcomment
+  if section.settings.producto_extras
+    assign premium_cents = section.settings.producto_extras.price
+  endif
+  if p_helado
+    assign hope_v0 = p_helado.variants | where: 'option2', '0' | first
+    if hope_v0
+      assign hope_same = p_helado.variants | where: 'option1', hope_v0.option1
+      assign hope_v1 = hope_same | where: 'option2', '1' | first
+      if hope_v1
+        assign extra_topping_cents = hope_v1.price | minus: hope_v0.price
+      endif
+    endif
+  endif
 -%}
 
 {%- capture products_json -%}
@@ -97,6 +114,8 @@
   class="hopecfg hopecfg--v2"
   data-hopecfg-v2
   data-modo="helado"
+  data-shop-domain="{{ shop.permanent_domain | escape }}"
+  data-delivery-availability-url="{{ section.settings.delivery_availability_url | default: 'https://back.hopeicecream.shop/api/v1/store-operations/delivery-availability' | escape }}"
   data-money-format="{{ shop.money_format | escape }}"
   data-cloudinary-account="{{ section.settings.cloudinary_account | default: 'slealu5f' | escape }}"
   data-cloudinary-folder="{{ section.settings.cloudinary_folder | default: 'hope/catalog' | escape }}"
@@ -120,6 +139,7 @@
             src="{{ section.settings.logo | image_url: width: 320 }}"
             alt="{{ shop.name | escape }}"
             width="160"
+            height="auto"
             loading="eager"
           >
         </div>
@@ -127,6 +147,8 @@
 
       <div class="hopecfg__stage">
         <img
+          width=""
+          height=""
           id="product-preview"
           class="hopecfg__cup"
           data-mode="2d"
@@ -157,14 +179,14 @@
           <h2 class="hopecfg__title">{{ titulo_dinamico }}</h2>
         </div>
 
-        <div class="hope2__delivery-notice" role="note">
+        <div class="hope2__delivery-notice" role="note" aria-live="polite">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M1 3h15v13H1z" />
             <path d="M16 8h4l3 3v5h-7V8z" />
             <circle cx="5.5" cy="18.5" r="2.5" />
             <circle cx="18.5" cy="18.5" r="2.5" />
           </svg>
-          <span>Disponible para delivery y compra presencial</span>
+          <span>Consultando disponibilidad...</span>
         </div>
 
         <p class="hope2__stepbar" data-step-indicator hidden>Paso 1 de 3 · <span data-step-name>Elige tu tamaño</span></p>
@@ -328,6 +350,33 @@
     </section>
   </div>
 
+  <dialog
+    class="hope2__availability-modal"
+    aria-labelledby="hope2-availability-title-{{ section.id }}"
+    aria-describedby="hope2-availability-description-{{ section.id }}"
+  >
+    <div class="hope2__availability-card">
+      <div class="hope2__availability-icons" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 3h15v13H1z" />
+          <path d="M16 8h4l3 3v5h-7V8z" />
+          <circle cx="5.5" cy="18.5" r="2.5" />
+          <circle cx="18.5" cy="18.5" r="2.5" />
+          <path d="M3 21 21 3" />
+        </svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 10h18v11H3z" />
+          <path d="M2 10 4 3h16l2 7" />
+          <path d="M9 21v-7h6v7" />
+          <path d="M2 10c0 2 3 3 5 1 2 2 4 2 5 0 1 2 3 2 5 0 2 2 5 1 5-1" />
+        </svg>
+      </div>
+      <h3 id="hope2-availability-title-{{ section.id }}">Opciones de entrega no disponibles</h3>
+      <p id="hope2-availability-description-{{ section.id }}">En este momento no contamos con delivery ni retiro en tienda.<br>Por favor, vuelve a intentarlo más tarde.</p>
+      <button type="button" class="hope2__availability-accept" data-availability-accept>Entendido</button>
+    </div>
+  </dialog>
+
   <div id="toast" class="hopecfg__toast" role="status" aria-live="polite">¡Tu selección fue añadida! ✨</div>
 </div>
 
@@ -361,6 +410,12 @@
       "id": "texto_boton",
       "label": "Texto botón carrito",
       "default": "AÑADIR AL CARRITO"
+    },
+    {
+      "type": "text",
+      "id": "delivery_availability_url",
+      "label": "URL de disponibilidad de entrega",
+      "default": "https://back.hopeicecream.shop/api/v1/store-operations/delivery-availability"
     },
     {
       "type": "text",

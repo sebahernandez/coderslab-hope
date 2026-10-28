@@ -36,6 +36,87 @@
     var MONEY_FORMAT = root.dataset.moneyFormat || "${{amount}}";
     var BASE_ASSET = root.dataset.baseAsset || "hope-milkshake-strawberry-cutout-v3";
 
+    var deliveryAvailability = { request: null, dismissed: false };
+    var availabilityDialog = $(".hope2__availability-modal");
+
+    if (availabilityDialog) {
+      var acceptAvailability = availabilityDialog.querySelector("[data-availability-accept]");
+      if (acceptAvailability) {
+        acceptAvailability.addEventListener("click", function () { availabilityDialog.close(); });
+      }
+      availabilityDialog.addEventListener("click", function (event) {
+        if (event.target !== availabilityDialog) return;
+        var bounds = availabilityDialog.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right ||
+            event.clientY < bounds.top || event.clientY > bounds.bottom) {
+          availabilityDialog.close();
+        }
+      });
+      availabilityDialog.addEventListener("close", function () {
+        if (root.classList.contains("is-delivery-unavailable")) deliveryAvailability.dismissed = true;
+      });
+    }
+
+    function syncDeliveryAvailability() {
+      if (deliveryAvailability.request) return deliveryAvailability.request;
+
+      var notice = $(".hope2__delivery-notice span");
+      var endpoint = root.dataset.deliveryAvailabilityUrl;
+      var shopDomain = root.dataset.shopDomain;
+      var url;
+
+      try {
+        if (!endpoint || !shopDomain) throw new Error("Falta la configuración de disponibilidad");
+        url = new URL(endpoint, window.location.origin);
+        url.searchParams.set("shopDomain", shopDomain);
+      } catch (error) {
+        if (notice) notice.textContent = "No pudimos verificar la disponibilidad. Intenta más tarde.";
+        return Promise.resolve();
+      }
+
+      deliveryAvailability.request = fetch(url.toString(), { cache: "no-store", credentials: "omit" })
+        .then(function (response) {
+          if (!response.ok) throw new Error("Disponibilidad: " + response.status);
+          return response.json();
+        })
+        .then(function (result) {
+          if (typeof result.shippingEnabled !== "boolean" || typeof result.pickupEnabled !== "boolean") {
+            throw new Error("Respuesta de disponibilidad inválida");
+          }
+
+          var shipping = result.shippingEnabled;
+          var pickup = result.pickupEnabled;
+          var blocked = !shipping && !pickup;
+
+          if (notice) {
+            notice.textContent = shipping && pickup
+              ? "Disponible para delivery y compra presencial"
+              : shipping
+                ? "Disponible solo para delivery"
+                : pickup
+                  ? "Disponible solo para compra presencial"
+                  : "Delivery y compra presencial no disponibles";
+          }
+
+          root.classList.toggle("is-delivery-unavailable", blocked);
+          if (blocked) {
+            if (availabilityDialog && !availabilityDialog.open && !deliveryAvailability.dismissed) {
+              availabilityDialog.showModal();
+            }
+          } else {
+            if (availabilityDialog && availabilityDialog.open) availabilityDialog.close();
+            deliveryAvailability.dismissed = false;
+          }
+        })
+        .catch(function (error) {
+          if (notice) notice.textContent = "No pudimos verificar la disponibilidad. Reintentaremos pronto.";
+          console.error("hope-delivery-availability", error);
+        })
+        .then(function () { deliveryAvailability.request = null; });
+
+      return deliveryAvailability.request;
+    }
+
     // Assets del vaso que tienen fondo y requieren e_background_removal.
     function needsBackgroundRemoval(asset) {
       return (
@@ -326,6 +407,21 @@
 
     // ---- Arranque ----
     render();
+    syncDeliveryAvailability();
+
+    function refreshAvailabilityIfVisible() {
+      if (!root.isConnected) {
+        clearInterval(availabilityInterval);
+        document.removeEventListener("visibilitychange", refreshAvailabilityIfVisible);
+        window.removeEventListener("focus", refreshAvailabilityIfVisible);
+        return;
+      }
+      if (!document.hidden) syncDeliveryAvailability();
+    }
+
+    var availabilityInterval = window.setInterval(refreshAvailabilityIfVisible, 60000);
+    document.addEventListener("visibilitychange", refreshAvailabilityIfVisible);
+    window.addEventListener("focus", refreshAvailabilityIfVisible);
   }
 
   function initAll() {
