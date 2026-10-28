@@ -77,7 +77,7 @@
             "letter_spacing": 0,
             "max_width": 600,
             "font_type": "theme",
-            "font": "sans_serif_n4",
+            "font": "poppins_n4",
             "custom_font_name": "",
             "custom_font_url": "",
             "custom_font_weight": "auto",
@@ -128,17 +128,20 @@
       ],
       "name": "Hero Banner Helados",
       "settings": {
+        "vertical_alignment": "center",
+        "vertical_alignment_mobile": "center",
         "height_type": "custom",
         "min_height": 760,
-        "min_height_mobile": 650,
+        "min_height_mobile": 590,
         "height_custom": 70,
         "height_unit": "vh",
-        "height_custom_mobile": 80,
+        "height_custom_mobile": 65,
         "height_unit_mobile": "vh",
         "background_color": "#ffb6d9",
         "background_image": "shopify://shop_images/banner-principal.avif",
-        "background_image_mobile": "shopify://shop_images/hope-movil-home-bd.webp",
-        "show_image": false
+        "background_image_mobile": "shopify://shop_images/hope-home.avif",
+        "show_image": false,
+        "image": "shopify://shop_images/movil-home-hope.avif"
       }
     },
     "hope_features_DjnWDG": {
@@ -232,7 +235,7 @@
             "weight": "auto",
             "bold": true,
             "font_size": 64,
-            "font_size_mobile": 24,
+            "font_size_mobile": 30,
             "line_height": 1.2,
             "line_height_mobile": 1.2,
             "spacing_bottom": 0,
@@ -287,7 +290,7 @@
             "weight": "auto",
             "bold": true,
             "font_size": 16,
-            "font_size_mobile": 14,
+            "font_size_mobile": 11,
             "alignment": "left",
             "alignment_mobile": "left"
           },
@@ -301,6 +304,8 @@
       ],
       "name": "Hero Banner Helados",
       "settings": {
+        "vertical_alignment": "center",
+        "vertical_alignment_mobile": "center",
         "height_type": "auto",
         "min_height": 700,
         "min_height_mobile": 400,
@@ -308,9 +313,9 @@
         "height_unit": "vh",
         "height_custom_mobile": 60,
         "height_unit_mobile": "vh",
-        "background_color": "#FFFFFF",
+        "background_color": "#ffffff",
         "background_image": "shopify://shop_images/arma-tu-hope-helado.avif",
-        "background_image_mobile": "shopify://shop_images/hope-helado-bg.avif",
+        "background_image_mobile": "shopify://shop_images/arma-tu-hope-movil.avif",
         "show_image": false
       }
     },
@@ -335,7 +340,7 @@
             "weight": "auto",
             "bold": true,
             "font_size": 64,
-            "font_size_mobile": 24,
+            "font_size_mobile": 30,
             "line_height": 1.2,
             "line_height_mobile": 1.2,
             "spacing_bottom": 0,
@@ -347,7 +352,7 @@
         "text_subheading": {
           "type": "_hero-text-row",
           "settings": {
-            "content": "Sabores irresistibles en  Tucacas.",
+            "content": "Sabores irresistibles  <br> en Tucacas.",
             "convert_newlines": false,
             "tag": "h2",
             "color": "#630022",
@@ -417,7 +422,7 @@
             "weight": "auto",
             "bold": true,
             "font_size": 16,
-            "font_size_mobile": 14,
+            "font_size_mobile": 11,
             "alignment": "right",
             "alignment_mobile": "right"
           },
@@ -432,6 +437,8 @@
       ],
       "name": "Hero Banner Helados",
       "settings": {
+        "vertical_alignment": "center",
+        "vertical_alignment_mobile": "flex-end",
         "height_type": "auto",
         "min_height": 700,
         "min_height_mobile": 400,
@@ -441,7 +448,7 @@
         "height_unit_mobile": "vh",
         "background_color": "#ffffff",
         "background_image": "shopify://shop_images/arma-tu-mixo.avif",
-        "background_image_mobile": "shopify://shop_images/mixo-movil-bg.webp",
+        "background_image_mobile": "shopify://shop_images/arma-tu-mixo-movil.avif",
         "show_image": true
       }
     },
@@ -466,7 +473,7 @@
             "weight": "auto",
             "bold": true,
             "font_size": 64,
-            "font_size_mobile": 24,
+            "font_size_mobile": 30,
             "line_height": 1.2,
             "line_height_mobile": 1.2,
             "spacing_bottom": 0,
@@ -521,7 +528,7 @@
             "weight": "auto",
             "bold": true,
             "font_size": 16,
-            "font_size_mobile": 14,
+            "font_size_mobile": 11,
             "alignment": "left",
             "alignment_mobile": "left"
           },
@@ -535,6 +542,8 @@
       ],
       "name": "Hero Banner Helados",
       "settings": {
+        "vertical_alignment": "center",
+        "vertical_alignment_mobile": "flex-end",
         "height_type": "auto",
         "min_height": 700,
         "min_height_mobile": 400,
@@ -544,7 +553,7 @@
         "height_unit_mobile": "vh",
         "background_color": "#ffffff",
         "background_image": "shopify://shop_images/arma-tu-milkshake.avif",
-        "background_image_mobile": "shopify://shop_images/automovil-hope-heladeria.avif",
+        "background_image_mobile": "shopify://shop_images/arma-tu-milkshake-movil.avif",
         "show_image": true
       }
     },
@@ -560,7 +569,7 @@
         "overlay_opacity": 0,
         "overlay_color": "#000000",
         "title": "¿Qué hace tan especial un helado de Hope?",
-        "title_color": "#ffffff",
+        "title_color": "#630022",
         "title_size": 44,
         "subtitle": "Cada cucharada fue una mezcla de amor, sabor y color...",
         "subtitle_color": "#3d1f2b",
@@ -613,7 +622,7 @@
             "avatar": "shopify://shop_images/avatar-02.png",
             "nombre": "Usuario",
             "rating": 5,
-            "texto": "El helado de Hope es de lo mejor, de mis favoritos por su increíble sabor y calidad. Amo visitarlos, una increíble experiencia."
+            "texto": "Un lugar perfecto para disfrutar algo dulce y refrescante. Probé un milkshake y estaba espectacular. Excelente atención y muy buena presentación."
           }
         },
         "testimonio_jX7zkE": {
@@ -622,34 +631,7 @@
             "avatar": "shopify://shop_images/avatar-03.png",
             "nombre": "Usuario",
             "rating": 5,
-            "texto": "El helado de Hope es de lo mejor, de mis favoritos por su increíble sabor y calidad. Amo visitarlos, una increíble experiencia."
-          }
-        },
-        "testimonio_bJVXVg": {
-          "type": "testimonio",
-          "settings": {
-            "avatar": "shopify://shop_images/avatar-01.png",
-            "nombre": "Usuario",
-            "rating": 5,
-            "texto": "El helado de Hope es de lo mejor, de mis favoritos por su increíble sabor y calidad. Amo visitarlos, una increíble experiencia."
-          }
-        },
-        "testimonio_nMkxz3": {
-          "type": "testimonio",
-          "settings": {
-            "avatar": "shopify://shop_images/avatar-02.png",
-            "nombre": "Usuario",
-            "rating": 5,
-            "texto": "El helado de Hope es de lo mejor, de mis favoritos por su increíble sabor y calidad. Amo visitarlos, una increíble experiencia."
-          }
-        },
-        "testimonio_CbjM94": {
-          "type": "testimonio",
-          "settings": {
-            "avatar": "shopify://shop_images/avatar-03.png",
-            "nombre": "Usuario",
-            "rating": 5,
-            "texto": "El helado de Hope es de lo mejor, de mis favoritos por su increíble sabor y calidad. Amo visitarlos, una increíble experiencia."
+            "texto": "¡Mi heladería favorita en Tucacas! Los helados tienen muchísimo sabor, los toppings son variados y las porciones generosas. Ideal para compartir en familia."
           }
         },
         "instagram_card_3TpXLG": {
@@ -681,9 +663,6 @@
         "testimonio_gthmWt",
         "testimonio_ECEMEr",
         "testimonio_jX7zkE",
-        "testimonio_bJVXVg",
-        "testimonio_nMkxz3",
-        "testimonio_CbjM94",
         "instagram_card_3TpXLG",
         "instagram_card_gMXbwX",
         "instagram_card_9chxwC"

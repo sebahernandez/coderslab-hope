@@ -1,8 +1,32 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "custom-product-v2",
-      "settings": {}
+      "settings": {
+        "eyebrow": "Helado de yogurt griego",
+        "titulo": "",
+        "texto_boton": "AÑADIR AL CARRITO",
+        "hint_text": "Cada extra es +1 en tu helado",
+        "producto_helado": "helado-hope",
+        "producto_extras": "extras-personalizados",
+        "free_toppings": 2,
+        "extra_topping_cents": 100,
+        "max_extra_toppings": 20,
+        "free_syrups": 1,
+        "premium_cents": 150,
+        "cloudinary_account": "slealu5f",
+        "cloudinary_folder": "hope/catalog",
+        "base_asset": ""
+      }
     }
   },
   "order": [

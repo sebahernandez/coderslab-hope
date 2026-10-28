@@ -142,6 +142,8 @@
       ],
       "name": "Hero Banner Helados",
       "settings": {
+        "vertical_alignment": "center",
+        "vertical_alignment_mobile": "center",
         "height_type": "auto",
         "min_height": 700,
         "min_height_mobile": 400,
@@ -150,7 +152,7 @@
         "height_custom_mobile": 60,
         "height_unit_mobile": "vh",
         "background_color": "#ffb6d9",
-        "background_image": "shopify://shop_images/bg-contact.png",
+        "background_image": "shopify://shop_images/banner-principal.avif",
         "show_image": true
       }
     },
@@ -180,7 +182,7 @@
             "icon_padding_bottom": 0,
             "icon_padding_left": 0,
             "title": "UBICACIÓN",
-            "title_font": "anonymous_pro_n4",
+            "title_font": "poppins_n4",
             "title_weight": "bold",
             "title_size": 20,
             "title_alignment": "inherit",
@@ -189,8 +191,8 @@
             "title_padding_right": 0,
             "title_padding_bottom": 0,
             "title_padding_left": 0,
-            "text": "<p>Roseta Market, Tucacas 2054, Falcón, Venezuela</p>",
-            "text_font": "work_sans_n4",
+            "text": "<p>Tucacas 2054, Falcón, Venezuela</p>",
+            "text_font": "poppins_n4",
             "text_weight": "auto",
             "text_size": 15,
             "text_color": "#444444",
@@ -218,7 +220,7 @@
             "icon_padding_bottom": 0,
             "icon_padding_left": 0,
             "title": "CONTACTO",
-            "title_font": "anonymous_pro_n4",
+            "title_font": "poppins_n4",
             "title_weight": "bold",
             "title_size": 20,
             "title_alignment": "inherit",
@@ -227,7 +229,7 @@
             "title_padding_right": 0,
             "title_padding_bottom": 0,
             "title_padding_left": 0,
-            "text": "<p>servicioalcliente@heladeriahope.com</p>",
+            "text": "<p>contacto@hopeheladeria.com</p>",
             "text_font": "work_sans_n4",
             "text_weight": "auto",
             "text_size": 15,
@@ -256,7 +258,7 @@
             "icon_padding_bottom": 0,
             "icon_padding_left": 0,
             "title": "HORARIO",
-            "title_font": "anonymous_pro_n4",
+            "title_font": "poppins_n4",
             "title_weight": "bold",
             "title_size": 20,
             "title_alignment": "inherit",
@@ -265,7 +267,7 @@
             "title_padding_right": 0,
             "title_padding_bottom": 0,
             "title_padding_left": 0,
-            "text": "<p>Lunes a jueves 9:00 a 10:00 pm<br/>Viernes a domindo 9:00 a 12:00</p>",
+            "text": "<p>Lunes a jueves 9:00 am a 10:00 pm<br/>Viernes a domindo 9:00 am a 12:00 pm</p>",
             "text_font": "work_sans_n4",
             "text_weight": "auto",
             "text_size": 15,
@@ -294,7 +296,7 @@
         "heading": "<p>¿Cómo encontrarnos?</p>",
         "heading_font": "poppins_n7",
         "heading_weight": "auto",
-        "heading_size": 50,
+        "heading_size": 26,
         "heading_alignment": "inherit",
         "heading_color": "#630022",
         "background_color": "#fce4ec",
@@ -314,28 +316,28 @@
           "type": "social",
           "settings": {
             "platform": "instagram",
-            "url": "#hope"
+            "url": "https://www.instagram.com/hopesweetvzla"
           }
         },
         "social_ETWfdQ": {
           "type": "social",
           "settings": {
             "platform": "facebook",
-            "url": "#hope"
+            "url": "https://www.facebook.com/61573392755789/videos"
           }
         },
-        "social_KRzqJG": {
+        "social_GpGm4t": {
           "type": "social",
           "settings": {
-            "platform": "messenger",
-            "url": "#hope"
+            "platform": "whatsapp",
+            "url": "https://www.facebook.com/61573392755789/videos"
           }
         }
       },
       "block_order": [
         "social_kY9eRt",
         "social_ETWfdQ",
-        "social_KRzqJG"
+        "social_GpGm4t"
       ],
       "name": "Formulario de contacto",
       "settings": {
