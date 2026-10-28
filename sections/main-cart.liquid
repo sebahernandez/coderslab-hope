@@ -39,7 +39,7 @@
      no tiene hero, así que su contenido quedaría tapado por el navbar. Reservamos
      el alto del header + aire arriba. Solo cuando el header glass está activo
      (si no, el header es sticky/in-flow y no haría falta). */
-  body:has(#header-component.header--glass) .cart-items-component {
+  body:has(#header-component.header--glass) .cart-items-component:has(.cart-page) {
     padding-block-start: calc(var(--header-group-height, 86px) + var(--padding-xl));
   }
 
