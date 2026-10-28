@@ -13,7 +13,7 @@
 ## 3. Verificación de integración
 
 - [x] 3.1 Con Playwright contra `shopify theme dev` (127.0.0.1:9292), con red lenta o JS bloqueado, verificar en Helado Hope y Mixo Hope (desktop y móvil) que las tarjetas muestran dólares desde el primer frame ($6/$7.50/$9 y $5/$7/$9) y que seleccionar tamaños sigue actualizando el total
-- [ ] 3.2 Actualizar la spec principal `openspec/specs/configurador-helado/spec.md` mediante sync/archive y verificar con `openspec validate armador-precio-tamano-inicial`
+- [x] 3.2 Actualizar la spec principal `openspec/specs/configurador-helado/spec.md` mediante sync/archive y verificar con `openspec validate armador-precio-tamano-inicial`
 
 ## Workflow follow-up
 
