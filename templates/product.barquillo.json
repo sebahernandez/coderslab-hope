@@ -1,0 +1,19 @@
+{
+  "sections": {
+    "main": {
+      "type": "custom-product-barquillo",
+      "settings": {
+        "eyebrow": "Barquillo de vainilla",
+        "titulo": "",
+        "texto_boton": "AÑADIR AL CARRITO",
+        "hint_text": "Tu sirope aparece sobre el barquillo con un +1",
+        "cloudinary_account": "slealu5f",
+        "cloudinary_folder": "hope/catalog",
+        "base_image_url": ""
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}
