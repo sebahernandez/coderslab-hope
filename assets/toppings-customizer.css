@@ -268,27 +268,54 @@ body:has(.hopecfg) {
 @media (min-width: 640px) { .hopecfg__config-scroll { padding: 1rem 1.5rem; } }
 @media (min-width: 1024px) { .hopecfg__config-scroll { gap: 1.25rem; padding: 1.5rem 2.5rem; } }
 
-/* Scrollbar glass rosa para la lista de añadidos/siropes/toppings */
+/* Scrollbar glass (estilo Apple) para la lista de añadidos/siropes/toppings.
+   Chrome 121+ ignora ::-webkit-scrollbar si el elemento define scrollbar-width/color,
+   por eso las propiedades estándar quedan solo para navegadores sin ::-webkit-scrollbar (Firefox).
+   `auto` corta el scrollbar-color heredado de html (base.css). */
 .hopecfg__config-scroll {
-  scrollbar-width: thin;                       /* Firefox */
-  scrollbar-color: rgba(237, 93, 150, 0.45) transparent;
+  scrollbar-color: auto;
+  scrollbar-width: auto;
+}
+@supports not selector(::-webkit-scrollbar) {
+  .hopecfg__config-scroll {
+    scrollbar-width: auto;
+    scrollbar-color: rgba(237, 93, 150, 0.5) rgba(255, 255, 255, 0.35);
+  }
 }
 .hopecfg__config-scroll::-webkit-scrollbar {
-  width: 10px;
+  width: 14px;
 }
 .hopecfg__config-scroll::-webkit-scrollbar-track {
-  background: transparent;
-  margin-block: 0.5rem;
+  /* Canal de vidrio esmerilado: blanco translúcido con filo claro */
+  background: rgba(237, 93, 150, 0.07);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 3px rgba(99, 0, 34, 0.08);
+  margin-block: 0.75rem;
 }
 .hopecfg__config-scroll::-webkit-scrollbar-thumb {
-  background: rgba(237, 93, 150, 0.35);        /* rosa acento translúcido (glass) */
-  border: 2px solid rgba(255, 255, 255, 0.5);  /* borde blanco translúcido */
-  border-radius: 999px;                        /* pill */
-  background-clip: padding-box;                /* respeta el borde translúcido */
-  backdrop-filter: blur(6px);                  /* efecto vidrio */
+  /* Pastilla de vidrio: brillo blanco a la izquierda que se funde al rosa de marca */
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.05) 55%, rgba(255, 255, 255, 0.25) 100%),
+    rgba(237, 93, 150, 0.55);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 999px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 1px 2px rgba(99, 0, 34, 0.12);
 }
 .hopecfg__config-scroll::-webkit-scrollbar-thumb:hover {
-  background: rgba(237, 93, 150, 0.55);        /* más intenso al pasar el cursor */
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.05) 55%, rgba(255, 255, 255, 0.2) 100%),
+    rgba(237, 93, 150, 0.75);
+  background-clip: padding-box;
+}
+.hopecfg__config-scroll::-webkit-scrollbar-button {
+  display: none;
 }
 
 .hopecfg__heading { flex-shrink: 0; }
