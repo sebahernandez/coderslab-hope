@@ -229,7 +229,22 @@
       var cup = $("#product-preview");
       if (!cup) return;
       var asset = state.combo ? readAsset(state.combo) : "";
-      cup.src = catalogUrl(asset || BASE_ASSET);
+      var nextSrc = catalogUrl(asset || BASE_ASSET);
+      if (cup.getAttribute("src") === nextSrc) return;
+      var stage = cup.closest(".hopecfg__stage");
+      function revealCup() {
+        cup.classList.add("is-loaded");
+        if (stage) stage.classList.remove("is-loading");
+        cup.removeEventListener("load", revealCup);
+        cup.removeEventListener("error", revealCup);
+      }
+      cup.classList.remove("is-loaded");
+      if (stage) stage.classList.add("is-loading");
+      cup.addEventListener("load", revealCup);
+      cup.addEventListener("error", revealCup);
+      cup.src = nextSrc;
+      // Si ya estaba en caché y cargó antes de enganchar el evento.
+      if (cup.complete && cup.naturalWidth > 0) revealCup();
     }
 
     // ---- Render general ----
