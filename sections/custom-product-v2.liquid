@@ -173,21 +173,49 @@
           <fieldset id="size-options" class="hopecfg__group" data-group="size">
             <legend class="hopecfg__legend">1 · Elige tu tamaño</legend>
             <div class="hopecfg__grid hopecfg__grid--3">
-              <button class="hopecfg__choice hopecfg__choice--size is-active" data-id="small" type="button">
-                <span class="hopecfg__check"></span>
-                <span class="hopecfg__choice-sub" data-size-price>4 oz</span>
-                <span class="hopecfg__choice-name">Pequeño</span>
-              </button>
-              <button class="hopecfg__choice hopecfg__choice--size" data-id="medium" type="button">
-                <span class="hopecfg__check"></span>
-                <span class="hopecfg__choice-sub" data-size-price>8 oz</span>
-                <span class="hopecfg__choice-name">Mediano</span>
-              </button>
-              <button class="hopecfg__choice hopecfg__choice--size" data-id="large" type="button">
-                <span class="hopecfg__check"></span>
-                <span class="hopecfg__choice-sub" data-size-price>12 oz</span>
-                <span class="hopecfg__choice-name">Grande</span>
-              </button>
+              {%- comment -%}
+                Server-render each size's base price (variant without extras) with the same
+                span structure and data-price that updatePrice() builds, so the JS finds it
+                already in place and the card never flashes a placeholder.
+              {%- endcomment -%}
+              {%- assign size_ids = 'small,medium,large' | split: ',' -%}
+              {%- assign size_names = 'Pequeño,Mediano,Grande' | split: ',' -%}
+              {%- for size_id in size_ids -%}
+                {%- liquid
+                  assign size_name = size_names[forloop.index0]
+                  assign size_variant = p_helado.variants | where: 'option1', size_name | where: 'option2', '0' | first
+                  assign size_formatted = ''
+                  if size_variant
+                    assign size_formatted = size_variant.price | money | strip_html
+                    assign size_amount = size_variant.price | money_without_currency | strip_html
+                    assign size_currency_parts = size_formatted | split: size_amount
+                    assign size_prefix = size_currency_parts | first
+                    assign size_suffix = size_formatted | remove_first: size_prefix | remove_first: size_amount
+                    assign size_fraction = size_amount | slice: -3, 3
+                    assign size_fraction_sep = size_fraction | slice: 0, 1
+                    if size_fraction_sep == '.' or size_fraction_sep == ','
+                      assign size_integer = size_amount | remove_last: size_fraction
+                    else
+                      assign size_fraction = ''
+                      assign size_integer = size_amount
+                    endif
+                  endif
+                -%}
+                <button class="hopecfg__choice hopecfg__choice--size{% if forloop.first %} is-active{% endif %}" data-id="{{ size_id }}" type="button">
+                  <span class="hopecfg__check"></span>
+                  {%- if size_variant %}
+                    <span class="hopecfg__choice-sub" data-size-price data-price="{{ size_formatted | escape }}">
+                      {%- if size_prefix != blank %}<span class="hope2__size-price-currency">{{ size_prefix }}</span>{% endif -%}
+                      <span class="hope2__size-price-integer">{{ size_integer }}</span>
+                      {%- if size_fraction != blank %}<span class="hope2__size-price-fraction">{{ size_fraction }}</span>{% endif -%}
+                      {%- if size_suffix != blank %}<span class="hope2__size-price-currency">{{ size_suffix }}</span>{% endif -%}
+                    </span>
+                  {%- else %}
+                    <span class="hopecfg__choice-sub" data-size-price>—</span>
+                  {%- endif %}
+                  <span class="hopecfg__choice-name">{{ size_name }}</span>
+                </button>
+              {%- endfor -%}
             </div>
           </fieldset>
 
