@@ -149,7 +149,7 @@
         "feature_CeHeeq": {
           "type": "feature",
           "settings": {
-            "icon": "shopify://shop_images/icon-fruit-01.png",
+            "icon": "shopify://shop_images/guinda.png",
             "icon_size": 64,
             "icon_size_mobile": 40,
             "title": "Sin conservantes:",
@@ -159,7 +159,7 @@
         "feature_KripDe": {
           "type": "feature",
           "settings": {
-            "icon": "shopify://shop_images/icon-fruid-02.png",
+            "icon": "shopify://shop_images/pina.png",
             "icon_size": 64,
             "icon_size_mobile": 40,
             "title": "Ingredientes naturales:",
@@ -169,7 +169,7 @@
         "feature_UPqhUD": {
           "type": "feature",
           "settings": {
-            "icon": "shopify://shop_images/icon-vegan-01.png",
+            "icon": "shopify://shop_images/hoja.png",
             "icon_size": 64,
             "icon_size_mobile": 40,
             "title": "Opciones veganas:",
