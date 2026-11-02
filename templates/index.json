@@ -138,7 +138,7 @@
         "height_custom_mobile": 65,
         "height_unit_mobile": "vh",
         "background_color": "#ffb6d9",
-        "background_image": "shopify://shop_images/banner-principal.avif",
+        "background_image": "shopify://shop_images/Header.jpg",
         "background_image_mobile": "shopify://shop_images/hope-home.avif",
         "show_image": false,
         "image": "shopify://shop_images/movil-home-hope.avif"
@@ -314,7 +314,7 @@
         "height_custom_mobile": 60,
         "height_unit_mobile": "vh",
         "background_color": "#ffffff",
-        "background_image": "shopify://shop_images/arma-tu-hope-helado.avif",
+        "background_image": "shopify://shop_images/Helado.png",
         "background_image_mobile": "shopify://shop_images/arma-tu-hope-movil.avif",
         "show_image": false
       }
@@ -447,7 +447,7 @@
         "height_custom_mobile": 60,
         "height_unit_mobile": "vh",
         "background_color": "#ffffff",
-        "background_image": "shopify://shop_images/arma-tu-mixo.avif",
+        "background_image": "shopify://shop_images/MIxo.jpg",
         "background_image_mobile": "shopify://shop_images/arma-tu-mixo-movil.avif",
         "show_image": true
       }
@@ -552,7 +552,7 @@
         "height_custom_mobile": 60,
         "height_unit_mobile": "vh",
         "background_color": "#ffffff",
-        "background_image": "shopify://shop_images/arma-tu-milkshake.avif",
+        "background_image": "shopify://shop_images/Milkshake.jpg",
         "background_image_mobile": "shopify://shop_images/arma-tu-milkshake-movil.avif",
         "show_image": true
       }
