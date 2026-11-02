@@ -95,13 +95,12 @@
         },
         "hero_button": {
           "type": "_hero-button",
-          "disabled": true,
           "settings": {
-            "label": "TU HELADO FAVORITO",
-            "link": "#helado",
+            "label": "ARMA TU HELADO",
+            "link": "shopify://collections/all",
             "spacing_top": 20,
             "glass_background": "#ffffff40",
-            "glass_border_color": "#ffffff80",
+            "glass_border_color": "#630023",
             "glass_blur": 10,
             "text_color": "#630022",
             "border_radius": 25,
