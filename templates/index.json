@@ -81,7 +81,7 @@
             "custom_font_name": "",
             "custom_font_url": "",
             "custom_font_weight": "auto",
-            "weight": "auto",
+            "weight": "400",
             "bold": true,
             "font_size": 27,
             "font_size_mobile": 16,
