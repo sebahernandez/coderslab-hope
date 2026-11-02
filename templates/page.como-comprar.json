@@ -128,6 +128,8 @@
       ],
       "name": "Hero Banner Helados",
       "settings": {
+        "vertical_alignment": "center",
+        "vertical_alignment_mobile": "center",
         "height_type": "auto",
         "min_height": 700,
         "min_height_mobile": 400,
@@ -147,7 +149,7 @@
         "opcion_gR9we6": {
           "type": "opcion",
           "settings": {
-            "image": "shopify://shop_images/hope1.avif",
+            "image": "shopify://shop_images/hope-helado.jpg",
             "eyebrow": "EL CLÁSICO",
             "title": "HELADO",
             "card_title_font": "assistant_n7",
@@ -161,7 +163,7 @@
         "opcion_NjceaT": {
           "type": "opcion",
           "settings": {
-            "image": "shopify://shop_images/Mixo1.avif",
+            "image": "shopify://shop_images/mixo_20dcec6b-0c24-459c-bb60-6296cf46907c.jpg",
             "eyebrow": "CAPAS DE SABOR",
             "title": "MIXO",
             "card_title_font": "assistant_n7",
@@ -175,7 +177,7 @@
         "opcion_qJrt9Q": {
           "type": "opcion",
           "settings": {
-            "image": "shopify://shop_images/milkshake1.avif",
+            "image": "shopify://shop_images/Malteada.jpg",
             "eyebrow": "PARA TOMAR",
             "title": "MILKSHAKE",
             "card_title_font": "assistant_n7",
@@ -441,6 +443,8 @@
       ],
       "name": "Hero Banner Helados",
       "settings": {
+        "vertical_alignment": "center",
+        "vertical_alignment_mobile": "center",
         "height_type": "auto",
         "min_height": 400,
         "min_height_mobile": 430,
