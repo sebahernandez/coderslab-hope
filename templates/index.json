@@ -139,7 +139,7 @@
         "height_unit_mobile": "vh",
         "background_color": "#ffb6d9",
         "background_image": "shopify://shop_images/Header.jpg",
-        "background_image_mobile": "shopify://shop_images/hope-home.avif",
+        "background_image_mobile": "shopify://shop_images/Header.jpg",
         "show_image": false,
         "image": "shopify://shop_images/movil-home-hope.avif"
       }
