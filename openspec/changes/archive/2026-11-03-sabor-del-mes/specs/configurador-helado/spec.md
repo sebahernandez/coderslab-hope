@@ -5,8 +5,8 @@
 ### Requirement: Flujo de armado en tres pasos
 
 El sistema SHALL guiar el armado en tres pasos ordenados: (1) elegir tamaño, (2) elegir toppings,
-(3) elegir sirope (`STEP_LABELS = ["Elige tu tamaño", "Elige tus toppings", "Elige tu sirope"]`). El
-tamaño SHALL ser de selección única; toppings y siropes SHALL ser de selección múltiple. Cuando hay
+(3) elegir sirope. El tamaño SHALL ser de selección única; toppings y siropes SHALL ser de
+selección múltiple. Cuando hay
 un sabor del mes vigente (ver capacidad `sabor-del-mes`), el sistema SHALL anteponer el paso
 "Elige la base del helado" (selección única), quedando cuatro pasos ordenados: base, tamaño,
 toppings, sirope; la numeración visible de los grupos SHALL ajustarse en consecuencia.
