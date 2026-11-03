@@ -16,10 +16,14 @@ context: |
   Convenciones:
     - CSS/JS de los armadores scopeados bajo .hopecfg; assets en assets/, secciones en sections/.
     - Imágenes por swap Cloudinary (cuenta slealu5f, carpeta hope/catalog).
-    - Despliegue del tema: `shopify theme push`; mutaciones de datos/tienda:
-      `shopify store execute --allow-mutations`.
+    - Despliegue del tema: commit + push a `main` en GitHub (el tema live
+      `coderslab-hope/main` sincroniza solo, ~30 s). NO usar `shopify theme push`.
+      Antes de pushear: `git fetch` + rebase, porque el editor de Shopify commitea
+      cambios ("Update from Shopify"). Confirmar con el usuario: publica en vivo.
+      Mutaciones de datos/tienda: `shopify store execute --allow-mutations`.
     - Verificación de UI: Playwright contra `shopify theme dev` (127.0.0.1:9292).
-    - Las carpetas openspec/ y .claude/ NO se suben con `theme push` (no son dirs de tema).
+    - Las carpetas openspec/ y .claude/ viajan en el repo pero Shopify las ignora
+      (no son dirs de tema).
 
   Cobertura de specs sembrados: configurador-helado, cobro-extras, carrito-nativo,
   productos-catalogo. Reflejan el estado desplegado al 2026-09-30 a partir de notas previas;
