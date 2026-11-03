@@ -125,7 +125,7 @@
         <div id="hope-options" class="hopecfg__groups">
           {%- if ms_sizes != blank -%}
             <fieldset id="size-options" class="hopecfg__group" data-group="size">
-              <legend class="hopecfg__legend">Elige tu tamaño</legend>
+              <legend class="hopecfg__legend">1 · Elige tu tamaño</legend>
               <div class="hopecfg__grid hopecfg__grid--3">
                 {%- comment -%}
                   Same card markup as the Helado Hope size step: big split price on top,
@@ -181,7 +181,7 @@
           {%- endif -%}
 
           <fieldset id="combo-options" class="hopecfg__group" data-group="combo">
-            <legend class="hopecfg__legend">Elige tu combo</legend>
+            <legend class="hopecfg__legend">{% if ms_sizes != blank %}2{% else %}1{% endif %} · Elige tu combo</legend>
             <div class="ms__grid">
               {%- if ms_combos and ms_combos.size > 0 -%}
                 {%- for combo in ms_combos -%}
