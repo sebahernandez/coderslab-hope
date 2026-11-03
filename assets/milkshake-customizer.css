@@ -43,6 +43,10 @@
   border-radius: 16px;
   text-align: left;
 }
+/* Stack the size and combo steps; the shared desktop rule spreads groups apart. */
+@media (min-width: 1024px) {
+  .hopecfg--milkshake .hopecfg__groups { justify-content: flex-start; }
+}
 .hopecfg--milkshake .ms__sizes {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
