@@ -140,7 +140,10 @@
         "background_image": "shopify://shop_images/Header.jpg",
         "background_image_mobile": "shopify://shop_images/Helado_arcoiris_de_esperanzaeriwa.jpg",
         "show_image": false,
-        "image": "shopify://shop_images/movil-home-hope.avif"
+        "image": "shopify://shop_images/movil-home-hope.avif",
+        "overlay_style": "gradient",
+        "overlay_color": "#ffb6d9",
+        "overlay_opacity": 75
       }
     },
     "hope_features_DjnWDG": {
@@ -553,7 +556,10 @@
         "background_color": "#ffffff",
         "background_image": "shopify://shop_images/Milkshake.jpg",
         "background_image_mobile": "shopify://shop_images/Malteada_de_chocolate_con_galletas_y_crema_VEVENT.jpg",
-        "show_image": true
+        "show_image": true,
+        "overlay_style": "gradient",
+        "overlay_color": "#c4a8f7",
+        "overlay_opacity": 90
       }
     },
     "video_hope_xtYyXx": {

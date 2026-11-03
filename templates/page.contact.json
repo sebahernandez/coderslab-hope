@@ -153,7 +153,10 @@
         "height_unit_mobile": "vh",
         "background_color": "#ffb6d9",
         "background_image": "shopify://shop_images/Vasitos_de_yogur_helado_con_fresas_y_pistacho.jpg",
-        "show_image": true
+        "show_image": true,
+        "overlay_style": "gradient",
+        "overlay_color": "#ffd6e9",
+        "overlay_opacity": 90
       }
     },
     "custom_contact_fKYEWW": {

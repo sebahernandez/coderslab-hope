@@ -1,15 +1,102 @@
-<div class="hero-banner-section" data-section-id="{{ section.id }}">
-  <div class="hero-banner-container section--page-width section">
+{% comment %}
+  Section contract.
+  Hero banner with a cover background image (desktop + optional mobile source), an optional
+  contrast overlay that follows the content zone, and theme blocks for texts and the button.
+  Background framing uses the Shopify focal point unless a per-breakpoint position is chosen.
+  @example
+  <!-- Add "Hero Banner Helados" from the theme editor and add text/button blocks -->
+{% endcomment %}
+{%- liquid
+  assign bg = section.settings.background_image
+  assign bg_mobile = section.settings.background_image_mobile | default: bg
+
+  # Background framing: manual position wins, then the image focal point, then center.
+  assign bg_pos = section.settings.background_position
+  if bg_pos == 'auto' or bg_pos == blank
+    assign bg_pos = bg.presentation.focal_point | default: '50% 50%'
+  endif
+  assign bg_pos_mobile = section.settings.background_position_mobile
+  if bg_pos_mobile == 'auto' or bg_pos_mobile == blank
+    assign bg_pos_mobile = bg_mobile.presentation.focal_point | default: '50% 50%'
+  endif
+
+  # Effective horizontal zone per breakpoint (left|center|right). "auto" follows the first block.
+  assign first_block = section.blocks.first
+  assign zone_x = section.settings.content_position_x | default: 'auto'
+  if zone_x == 'auto'
+    assign zone_x = first_block.settings.alignment | default: 'left'
+  endif
+  assign zone_x_mobile = section.settings.content_position_x_mobile | default: 'auto'
+  if zone_x_mobile == 'auto'
+    assign zone_x_mobile = first_block.settings.alignment_mobile | default: 'center'
+  endif
+  assign zone_y = section.settings.vertical_alignment | default: 'center'
+  assign zone_y_mobile = section.settings.vertical_alignment_mobile | default: 'center'
+
+  # Overlay: strongest on the content side, fading toward the opposite side.
+  assign overlay_style = section.settings.overlay_style | default: 'none'
+  assign overlay_color = section.settings.overlay_color | default: '#ffffff'
+  assign overlay_rgb = overlay_color.red | append: ' ' | append: overlay_color.green | append: ' ' | append: overlay_color.blue
+  assign overlay_alpha = section.settings.overlay_opacity | default: 60 | divided_by: 100.0
+
+  capture overlay_bg
+    render 'hero-overlay-background', style: overlay_style, x: zone_x, y: zone_y
+  endcapture
+  capture overlay_bg_mobile
+    render 'hero-overlay-background', style: overlay_style, x: zone_x_mobile, y: zone_y_mobile, prefer_vertical: true
+  endcapture
+
+  assign mobile_widths = '375,550,750,1100,1500' | split: ','
+  if section.index == 1
+    assign bg_loading = 'eager'
+    assign bg_priority = 'high'
+  else
+    assign bg_loading = 'lazy'
+    assign bg_priority = 'auto'
+  endif
+-%}
+<div
+  class="hero-banner-section hero-banner{% if overlay_style != 'none' %} hero-banner--overlay{% endif %}{% if section.settings.text_shadow %} hero-banner--text-shadow{% endif %}{% if section.settings.height_type_mobile == 'image' and bg_mobile != blank %} hero-banner--mobile-ratio{% endif %}"
+  data-section-id="{{ section.id }}"
+>
+  {%- if bg != blank -%}
+    <picture class="hero-banner__media">
+      {%- if section.settings.background_image_mobile != blank -%}
+        <source
+          media="(max-width: 768px)"
+          srcset="{% for w in mobile_widths %}{% assign wn = w | plus: 0 %}{% if wn <= bg_mobile.width %}{{ bg_mobile | image_url: width: wn }} {{ wn }}w, {% endif %}{% endfor %}{{ bg_mobile | image_url }} {{ bg_mobile.width }}w"
+          sizes="100vw"
+          width="{{ bg_mobile.width }}"
+          height="{{ bg_mobile.height }}"
+        >
+      {%- endif -%}
+      {{
+        bg
+        | image_url: width: 3000
+        | image_tag:
+          class: 'hero-banner__image',
+          widths: '375, 550, 750, 1100, 1500, 1780, 2000, 2400, 3000',
+          sizes: '100vw',
+          alt: '',
+          loading: bg_loading,
+          fetchpriority: bg_priority
+      }}
+    </picture>
+  {%- endif -%}
+
+  {%- if overlay_style != 'none' -%}
+    <div class="hero-banner__overlay" aria-hidden="true"></div>
+  {%- endif -%}
+
+  <div class="hero-banner-container hero-banner__container section--page-width section">
     <div class="hero-banner-content">
       {%- if section.settings.show_image and section.settings.image != blank -%}
         <div class="hero-banner-image">
-          <img
-            src="{{ section.settings.image | image_url: width: 800 }}"
-            alt="{{ section.settings.image.alt }}"
-            loading="lazy"
-            width="auto"
-            height="auto"
-          >
+          {{
+            section.settings.image
+            | image_url: width: 800
+            | image_tag: widths: '300, 400, 600, 800', sizes: '(max-width: 768px) 300px, 400px', loading: 'lazy'
+          }}
         </div>
       {%- endif -%}
 
@@ -20,43 +107,98 @@
   </div>
 </div>
 
-<style>
-    #shopify-section-{{ section.id }} .hero-banner-section {
-      background-color: {{ section.settings.background_color }};
-      --hero-vertical-alignment: {{ section.settings.vertical_alignment | default: 'center' }};
-      --hero-vertical-alignment-mobile: {{ section.settings.vertical_alignment_mobile | default: 'center' }};
-      {% if section.settings.background_image != blank %}--hero-bg-image: url('{{ section.settings.background_image | image_url }}');{% endif %}
-      {% if section.settings.background_image_mobile != blank %}--hero-bg-image-mobile: url('{{ section.settings.background_image_mobile | image_url }}');{% endif %}
-      {% if section.settings.height_type == 'full' %}
-        --hero-height: 100vh;
-        --hero-height-mobile: 100vh;
-      {% elsif section.settings.height_type == 'custom' %}
-        --hero-height: {{ section.settings.height_custom }}{{ section.settings.height_unit }};
-        --hero-height-mobile: {{ section.settings.height_custom_mobile }}{{ section.settings.height_unit_mobile }};
-      {% else %}
-        --hero-height: auto;
-        --hero-height-mobile: auto;
-      {% endif %}
-      --hero-min-height: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height }}px{% else %}var(--hero-height){% endif %};
-      --hero-min-height-mobile: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height_mobile }}px{% else %}var(--hero-height-mobile){% endif %};
-    }
-  .hero-banner-section {
-    background-image: var(--hero-bg-image, none);
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
+{% style %}
+  #shopify-section-{{ section.id }} .hero-banner {
+    background-color: {{ section.settings.background_color }};
+    --hero-vertical-alignment: {{ zone_y }};
+    --hero-vertical-alignment-mobile: {{ zone_y_mobile }};
+    --hero-bg-pos: {{ bg_pos }};
+    --hero-bg-pos-mobile: {{ bg_pos_mobile }};
+    {%- assign px = section.settings.content_position_x | default: 'auto' %}
+    {%- unless px == 'auto' %}
+      --hero-text-flex: 0 1 auto;
+      --hero-text-ml: {% if px == 'left' %}0{% else %}auto{% endif %};
+      --hero-text-mr: {% if px == 'right' %}0{% else %}auto{% endif %};
+    {%- endunless %}
+    {%- assign pxm = section.settings.content_position_x_mobile | default: 'auto' %}
+    {%- unless pxm == 'auto' %}
+      --hero-text-ml-mobile: {% if pxm == 'left' %}0{% else %}auto{% endif %};
+      --hero-text-mr-mobile: {% if pxm == 'right' %}0{% else %}auto{% endif %};
+    {%- endunless %}
+    {%- if overlay_style != 'none' %}
+      --hero-overlay-rgb: {{ overlay_rgb }};
+      --hero-overlay-alpha: {{ overlay_alpha }};
+      --hero-overlay-bg: {{ overlay_bg | strip }};
+      --hero-overlay-bg-mobile: {{ overlay_bg_mobile | strip }};
+    {%- endif %}
+    {%- if section.settings.height_type == 'full' %}
+      --hero-height: 100vh;
+      --hero-height-mobile: 100vh;
+    {%- elsif section.settings.height_type == 'custom' %}
+      --hero-height: {{ section.settings.height_custom }}{{ section.settings.height_unit }};
+      --hero-height-mobile: {{ section.settings.height_custom_mobile }}{{ section.settings.height_unit_mobile }};
+    {%- else %}
+      --hero-height: auto;
+      --hero-height-mobile: auto;
+    {%- endif %}
+    --hero-min-height: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height }}px{% else %}var(--hero-height){% endif %};
+    --hero-min-height-mobile: {% if section.settings.height_type == 'auto' %}{{ section.settings.min_height_mobile }}px{% else %}var(--hero-height-mobile){% endif %};
+    {%- if bg_mobile != blank %}
+      --hero-aspect-mobile: {{ bg_mobile.aspect_ratio }};
+    {%- endif %}
+  }
+{% endstyle %}
+
+{% stylesheet %}
+  /* Media and overlay fill the section without contributing to its height; the content
+     (one grid cell) and the height settings decide the size. */
+  .hero-banner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    isolation: isolate;
     width: 100%;
     height: var(--hero-height, auto);
     min-height: var(--hero-min-height, 700px);
-    display: flex;
-    align-items: var(--hero-vertical-alignment, center);
+  }
+
+  .hero-banner__media,
+  .hero-banner__overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-banner__media {
+    z-index: 0;
+    display: block;
+    overflow: hidden;
+  }
+
+  .hero-banner__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--hero-bg-pos, 50% 50%);
+  }
+
+  .hero-banner__overlay {
+    z-index: 1;
+    pointer-events: none;
+    background: var(--hero-overlay-bg, none);
+  }
+
+  .hero-banner__container {
+    z-index: 2;
+    align-self: var(--hero-vertical-alignment, center);
+    min-width: 0;
   }
 
   .hero-banner-content {
     display: flex;
     align-items: center;
     gap: 40px;
-    flex-wrap: wrap;
+    min-width: 0;
   }
 
   .hero-banner-image {
@@ -64,32 +206,74 @@
     max-width: 400px;
   }
 
+  .hero-banner-image img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
   .hero-banner-text {
-    flex: 1;
-    min-width: 300px;
+    flex: var(--hero-text-flex, 1 1 0%);
+    min-width: 0;
+    max-width: 100%;
+    /* Physical margins on purpose: they mirror the blocks' physical left/right alignment. */
+    margin-left: var(--hero-text-ml, 0);
+    margin-right: var(--hero-text-mr, 0);
     display: flex;
     flex-direction: column;
+    overflow-wrap: break-word;
+  }
+
+  .hero-banner--text-shadow .hero-text-row {
+    text-shadow:
+      0 1px 2px rgb(var(--hero-overlay-rgb, 0 0 0) / 0.45),
+      0 0 14px rgb(var(--hero-overlay-rgb, 0 0 0) / 0.55);
   }
 
   @media screen and (max-width: 768px) {
-    .hero-banner-section {
-      padding: 40px 15px;
-      align-items: var(--hero-vertical-alignment-mobile, center);
+    .hero-banner {
+      padding-block: 40px;
+      padding-inline: 0;
       height: var(--hero-height-mobile, auto);
       min-height: var(--hero-min-height-mobile, 400px);
-      background-image: var(--hero-bg-image-mobile, var(--hero-bg-image, none));
+    }
+
+    .hero-banner--mobile-ratio {
+      height: auto;
+      min-height: auto;
+      aspect-ratio: var(--hero-aspect-mobile, auto);
+    }
+
+    .hero-banner__media img {
+      object-position: var(--hero-bg-pos-mobile, var(--hero-bg-pos, 50% 50%));
+    }
+
+    .hero-banner__overlay {
+      background: var(--hero-overlay-bg-mobile, var(--hero-overlay-bg, none));
+    }
+
+    .hero-banner__container {
+      align-self: var(--hero-vertical-alignment-mobile, center);
     }
 
     .hero-banner-content {
       flex-direction: column;
+      align-items: stretch;
       gap: 30px;
     }
 
     .hero-banner-image {
+      align-self: center;
       max-width: 300px;
     }
+
+    .hero-banner-text {
+      flex: var(--hero-text-flex-mobile, 0 0 auto);
+      margin-left: var(--hero-text-ml-mobile, 0);
+      margin-right: var(--hero-text-mr-mobile, 0);
+    }
   }
-</style>
+{% endstylesheet %}
 
 {% schema %}
 {
@@ -112,9 +296,18 @@
       "id": "vertical_alignment",
       "label": "Posición Vertical (Escritorio)",
       "options": [
-        { "value": "flex-start", "label": "Arriba" },
-        { "value": "center", "label": "Al medio" },
-        { "value": "flex-end", "label": "Abajo" }
+        {
+          "value": "flex-start",
+          "label": "Arriba"
+        },
+        {
+          "value": "center",
+          "label": "Al medio"
+        },
+        {
+          "value": "flex-end",
+          "label": "Abajo"
+        }
       ],
       "default": "center",
       "info": "Mueve textos, botón e imagen juntos dentro de la altura disponible."
@@ -124,12 +317,71 @@
       "id": "vertical_alignment_mobile",
       "label": "Posición Vertical (Mobile)",
       "options": [
-        { "value": "flex-start", "label": "Arriba" },
-        { "value": "center", "label": "Al medio" },
-        { "value": "flex-end", "label": "Abajo" }
+        {
+          "value": "flex-start",
+          "label": "Arriba"
+        },
+        {
+          "value": "center",
+          "label": "Al medio"
+        },
+        {
+          "value": "flex-end",
+          "label": "Abajo"
+        }
       ],
       "default": "center",
       "info": "Aplica en pantallas de 768px o menos, respetando el padding de la sección."
+    },
+    {
+      "type": "select",
+      "id": "content_position_x",
+      "label": "Posición Horizontal (Escritorio)",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automática (según los bloques)"
+        },
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ],
+      "default": "auto",
+      "info": "Automática respeta la alineación de cada bloque. Izquierda/Centro/Derecha mueve el grupo de textos completo."
+    },
+    {
+      "type": "select",
+      "id": "content_position_x_mobile",
+      "label": "Posición Horizontal (Mobile)",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automática (según los bloques)"
+        },
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        }
+      ],
+      "default": "auto",
+      "info": "Aplica en pantallas de 768px o menos."
     },
     {
       "type": "header",
@@ -140,9 +392,18 @@
       "id": "height_type",
       "label": "Tipo de Altura",
       "options": [
-        { "value": "auto", "label": "Automática (según contenido)" },
-        { "value": "full", "label": "Pantalla completa (100vh)" },
-        { "value": "custom", "label": "Personalizada" }
+        {
+          "value": "auto",
+          "label": "Automática (según contenido)"
+        },
+        {
+          "value": "full",
+          "label": "Pantalla completa (100vh)"
+        },
+        {
+          "value": "custom",
+          "label": "Personalizada"
+        }
       ],
       "default": "auto",
       "info": "Elige cómo se calcula la altura de la sección"
@@ -192,9 +453,18 @@
       "id": "height_unit",
       "label": "Unidad (Escritorio)",
       "options": [
-        { "value": "vh", "label": "vh (% de la pantalla)" },
-        { "value": "rem", "label": "rem" },
-        { "value": "px", "label": "px" }
+        {
+          "value": "vh",
+          "label": "vh (% de la pantalla)"
+        },
+        {
+          "value": "rem",
+          "label": "rem"
+        },
+        {
+          "value": "px",
+          "label": "px"
+        }
       ],
       "default": "vh"
     },
@@ -213,11 +483,37 @@
       "id": "height_unit_mobile",
       "label": "Unidad (Mobile)",
       "options": [
-        { "value": "vh", "label": "vh (% de la pantalla)" },
-        { "value": "rem", "label": "rem" },
-        { "value": "px", "label": "px" }
+        {
+          "value": "vh",
+          "label": "vh (% de la pantalla)"
+        },
+        {
+          "value": "rem",
+          "label": "rem"
+        },
+        {
+          "value": "px",
+          "label": "px"
+        }
       ],
       "default": "vh"
+    },
+    {
+      "type": "select",
+      "id": "height_type_mobile",
+      "label": "Altura en Mobile",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "Igual que el tipo de altura"
+        },
+        {
+          "value": "image",
+          "label": "Según la imagen (sin recorte)"
+        }
+      ],
+      "default": "inherit",
+      "info": "'Según la imagen' usa la proporción de la imagen de fondo mobile (o la de escritorio) para mostrarla completa."
     },
     {
       "type": "header",
@@ -240,6 +536,153 @@
       "id": "background_image_mobile",
       "label": "Imagen de Fondo (Mobile)",
       "info": "Opcional. Si se agrega, reemplaza a la Imagen de Fondo solo en mobile (768px o menos)"
+    },
+    {
+      "type": "select",
+      "id": "background_position",
+      "label": "Encuadre de la imagen (Escritorio)",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automática (punto focal)"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "top",
+          "label": "Arriba"
+        },
+        {
+          "value": "bottom",
+          "label": "Abajo"
+        },
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        },
+        {
+          "value": "left top",
+          "label": "Arriba a la izquierda"
+        },
+        {
+          "value": "right top",
+          "label": "Arriba a la derecha"
+        },
+        {
+          "value": "left bottom",
+          "label": "Abajo a la izquierda"
+        },
+        {
+          "value": "right bottom",
+          "label": "Abajo a la derecha"
+        }
+      ],
+      "default": "auto",
+      "info": "Automática usa el punto focal definido en Contenido → Archivos (editar imagen → punto focal)."
+    },
+    {
+      "type": "select",
+      "id": "background_position_mobile",
+      "label": "Encuadre de la imagen (Mobile)",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automática (punto focal)"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "top",
+          "label": "Arriba"
+        },
+        {
+          "value": "bottom",
+          "label": "Abajo"
+        },
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        },
+        {
+          "value": "left top",
+          "label": "Arriba a la izquierda"
+        },
+        {
+          "value": "right top",
+          "label": "Arriba a la derecha"
+        },
+        {
+          "value": "left bottom",
+          "label": "Abajo a la izquierda"
+        },
+        {
+          "value": "right bottom",
+          "label": "Abajo a la derecha"
+        }
+      ],
+      "default": "auto"
+    },
+    {
+      "type": "header",
+      "content": "Contraste del Texto"
+    },
+    {
+      "type": "select",
+      "id": "overlay_style",
+      "label": "Velo sobre la imagen",
+      "options": [
+        {
+          "value": "none",
+          "label": "Ninguno"
+        },
+        {
+          "value": "gradient",
+          "label": "Degradado hacia el texto"
+        },
+        {
+          "value": "solid",
+          "label": "Sólido"
+        }
+      ],
+      "default": "none",
+      "info": "El degradado es más intenso donde está el texto y se desvanece hacia el lado opuesto."
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color del velo",
+      "default": "#FFFFFF",
+      "visible_if": "{{ section.settings.overlay_style != 'none' }}"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacidad del velo",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "default": 60,
+      "visible_if": "{{ section.settings.overlay_style != 'none' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "text_shadow",
+      "label": "Sombra suave en los textos",
+      "info": "Usa el color del velo (negro si no hay velo).",
+      "default": false
     },
     {
       "type": "header",

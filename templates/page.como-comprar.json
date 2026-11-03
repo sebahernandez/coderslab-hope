@@ -45,7 +45,7 @@
             "content": "TU HOPE?",
             "convert_newlines": false,
             "tag": "h2",
-            "color": "#ed83b5",
+            "color": "#c2457f",
             "text_transform": "uppercase",
             "letter_spacing": 0,
             "max_width": 0,
@@ -454,7 +454,11 @@
         "height_unit_mobile": "vh",
         "background_color": "#ffffff",
         "background_image": "shopify://shop_images/como-comprar-bg_01.webp",
-        "show_image": true
+        "show_image": true,
+        "overlay_style": "gradient",
+        "overlay_color": "#400724",
+        "overlay_opacity": 65,
+        "text_shadow": true
       }
     }
   },

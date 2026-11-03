@@ -1,0 +1,49 @@
+{%- doc -%}
+  Outputs the CSS `background` value for the hero contrast overlay. The gradient is strongest on
+  the side where the content sits and fades toward the opposite side. Colors are read from the
+  `--hero-overlay-rgb` and `--hero-overlay-alpha` custom properties set by the section.
+
+  @param {string} style - Overlay style: 'none', 'gradient' or 'solid'
+  @param {string} x - Horizontal content zone: 'left', 'center' or 'right'
+  @param {string} y - Vertical content zone: 'flex-start', 'center' or 'flex-end'
+  @param {boolean} [prefer_vertical] - When the content has a vertical zone, use only the vertical direction (full-width content on mobile)
+
+  @example
+  {% render 'hero-overlay-background', style: 'gradient', x: 'left', y: 'flex-end', prefer_vertical: true %}
+{%- enddoc -%}
+{%- liquid
+  assign strong = 'rgb(var(--hero-overlay-rgb) / var(--hero-overlay-alpha))'
+  assign soft = 'rgb(var(--hero-overlay-rgb) / calc(var(--hero-overlay-alpha) * 0.6))'
+
+  case style
+    when 'solid'
+      echo strong
+    when 'gradient'
+      assign hdir = ''
+      if x == 'left'
+        assign hdir = 'right'
+      elsif x == 'right'
+        assign hdir = 'left'
+      endif
+
+      assign vdir = ''
+      if y == 'flex-start'
+        assign vdir = 'bottom'
+      elsif y == 'flex-end'
+        assign vdir = 'top'
+      endif
+
+      if prefer_vertical and vdir != ''
+        assign hdir = ''
+      endif
+
+      if hdir == '' and vdir == ''
+        echo 'radial-gradient(ellipse at center, ' | append: strong | append: ' 0%, ' | append: soft | append: ' 60%, transparent 100%)'
+      else
+        assign dir = 'to ' | append: vdir | append: ' ' | append: hdir | strip
+        echo 'linear-gradient(' | append: dir | append: ', ' | append: strong | append: ' 0%, ' | append: soft | append: ' 40%, transparent 85%)'
+      endif
+    else
+      echo 'none'
+  endcase
+-%}
