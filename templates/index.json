@@ -587,7 +587,7 @@
         "background_position_mobile": "auto",
         "overlay_style": "gradient",
         "overlay_color": "#c4a8f7",
-        "overlay_opacity": 90,
+        "overlay_opacity": 85,
         "text_shadow": false,
         "show_image": true
       }
