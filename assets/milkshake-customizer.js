@@ -200,7 +200,7 @@
       }
       return null;
     }
-    // Cheapest variant of a combo (used for "Desde ..." labels).
+    // Cheapest variant of a combo (price shown while no size is chosen).
     function cheapestForCombo(comboName) {
       var p = PRODUCTS.milkshake;
       if (!p || !p.variants) return null;
@@ -216,7 +216,7 @@
       if (!state.size) return null;
       return variantForComboSize(state.combo, state.size);
     }
-    // Price label for a combo given the current size ("Desde X" while no size is chosen).
+    // Price label for a combo given the current size (cheapest price while no size is chosen).
     function priceLabelForCombo(comboName) {
       if (!hasSizes()) {
         var v0 = variantForCombo(comboName);
@@ -227,7 +227,7 @@
         return v1 ? v1.price_formatted : "";
       }
       var min = cheapestForCombo(comboName);
-      return min ? "Desde " + min.price_formatted : "";
+      return min ? min.price_formatted : "";
     }
 
     // ---- Lectura de datos de la card activa ----
