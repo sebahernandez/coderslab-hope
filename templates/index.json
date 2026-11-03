@@ -298,7 +298,7 @@
             "weight": "auto",
             "bold": true,
             "font_size": 16,
-            "font_size_mobile": 11,
+            "font_size_mobile": 14,
             "alignment": "left",
             "alignment_mobile": "left"
           },
@@ -439,7 +439,7 @@
             "weight": "auto",
             "bold": true,
             "font_size": 16,
-            "font_size_mobile": 11,
+            "font_size_mobile": 14,
             "alignment": "right",
             "alignment_mobile": "right"
           },
@@ -554,7 +554,7 @@
             "weight": "auto",
             "bold": true,
             "font_size": 16,
-            "font_size_mobile": 11,
+            "font_size_mobile": 14,
             "alignment": "left",
             "alignment_mobile": "left"
           },
