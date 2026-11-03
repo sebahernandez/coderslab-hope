@@ -3,7 +3,7 @@
 ## Purpose
 
 Documentar los productos del catálogo Hope más allá del Helado Hope base: Mixo Hope (clon del armador
-con aviso de delivery), Milkshake (combos pre-armados de opción única con armador dedicado), Barquillo
+con aviso de delivery), Milkshake (combos pre-armados por tamaño con armador dedicado), Barquillo
 (solo 1 sirope, con armador dedicado) y la vitrina de colección (grid minimalista con filtro por chips).
 
 ## Requirements
@@ -20,17 +20,63 @@ base de precios ($5/$7/$9), mostrando título dinámico ("Crea tu Mixo Hope") e 
 - **THEN** ve el armador con el título "Crea tu Mixo Hope" y su imagen base propia, reutilizando la
   sección `custom-product-v2`
 
-### Requirement: Milkshake como combos de opción única
+### Requirement: Milkshake como combos por tamaño
 
-El sistema SHALL servir Milkshake (gid 9461419311356) como producto de opción única "Combo" con 3
-variantes a $7.00 (Fresa / Vainilla / Chocolate), renderizando una card por combo desde el metafield
-`custom.milkshake_combos`.
+El sistema SHALL servir Milkshake (gid 9461419311356) con dos opciones nativas: "Combo" (option1:
+Fresa / Vainilla / Chocolate) y "Tamaño" (option2: Pequeño / Mediano / Grande), es decir 9 variantes.
+Los precios SHALL venir de las variantes de Shopify y nunca fijarse en el código. Los precios vigentes
+son Fresa $5 / $6 / $7.50, Chocolate $5 / $7 / $8 y Vainilla $5 / $7 / $8. El armador SHALL mostrar
+primero el paso "1 · Elige tu tamaño" y después "2 · Elige tu combo", con una card por combo tomada
+del metafield `custom.milkshake_combos`. El tamaño SHALL ser obligatorio y no venir preseleccionado.
+Si el producto no tiene la opción "Tamaño", el armador SHALL comportarse como antes: solo combo,
+numerado "1 · Elige tu combo".
 
-#### Scenario: Elegir un combo
+#### Scenario: Sin tamaño elegido
 
-- **WHEN** el cliente elige el combo "Vainilla" en el armador de Milkshake
-- **THEN** la vista previa carga el cutout del combo y "Añadir" mete la variante correcta con la
-  property `Combo: Vainilla`
+- **WHEN** el cliente abre `/products/milkshake` y todavía no eligió tamaño
+- **THEN** el total y las cards de combo muestran "Desde $X", el botón "Añadir al carrito" está
+  deshabilitado y se ve "Elige un tamaño para continuar."
+
+#### Scenario: Elegir tamaño y combo
+
+- **WHEN** el cliente elige "Grande" y el combo "Vainilla"
+- **THEN** el total muestra el precio de la variante "Vainilla / Grande" ($8.00) y "Añadir" mete esa
+  variante. El carrito la muestra como "Vainilla, Grande" sin las properties redundantes
+  `Combo`/`Tamaño`.
+
+### Requirement: Selector de tamaño con tarjeta de precio
+
+Todo selector de tamaño de un armador Hope (Helado Hope, Mixo Hope, Milkshake y cualquier producto
+nuevo con tamaños) SHALL usar el mismo formato y diseño de tarjeta:
+
+- Paso numerado "N · Elige tu tamaño" (`hopecfg__legend`).
+- Grilla de 3 columnas (`hopecfg__grid hopecfg__grid--3`) con un botón
+  `hopecfg__choice hopecfg__choice--size` por tamaño.
+- Arriba, el precio grande dentro de `[data-size-price]`, partido en
+  `hope2__size-price-currency` / `-integer` / `-fraction`. El `$` y los centavos van chicos y
+  elevados, el entero grande.
+- Abajo, el nombre del tamaño (`hopecfg__choice-name`) separado por una línea divisoria superior.
+- Tarjeta neutra (fondo blanco, borde fino `#e8dfe3`). El tamaño elegido usa fondo `#fff3f8`, borde
+  `#b87996`, texto `#873552` y una pastilla `#f3dfe8` detrás del precio.
+- Sin check visible. Alto mínimo de toque de 44px.
+- El precio SHALL venir de la variante de Shopify: se renderiza en el servidor y el JS lo actualiza
+  con el mismo marcado.
+
+La referencia canónica es el paso de tamaño de `sections/custom-product-v2.liquid` con sus estilos en
+`assets/hope-customizer-v2.css`. Un armador dedicado puede replicar esos estilos en su propio CSS,
+acotados a su raíz (como `.hopecfg--milkshake` en `assets/milkshake-customizer.css`), pero no
+SHALL inventar otro diseño de tamaño.
+
+#### Scenario: Nuevo armador con tamaños
+
+- **WHEN** se agrega un selector de tamaño a cualquier armador
+- **THEN** se ve igual que el paso de tamaño de Helado Hope: precio grande partido arriba, nombre
+  debajo con divisoria, y el tamaño elegido resaltado en rosa
+
+#### Scenario: El precio del tamaño depende de otra opción
+
+- **WHEN** el precio del tamaño depende de otra elección (por ejemplo, el combo del Milkshake)
+- **THEN** la tarjeta actualiza su precio partido al cambiar esa elección, sin perder el formato
 
 ### Requirement: Armador de Milkshake aislado del JS global v1
 
