@@ -525,18 +525,22 @@
     to   { opacity: 1; transform: translateY(0); }
   }
   .hopecfg--v2 .hopecfg__group { display: none; }
-  .hopecfg--v2[data-step="0"] #size-options,
-  .hopecfg--v2[data-step="1"] #topping-options,
-  .hopecfg--v2[data-step="2"] #syrup-options {
+  /* El paso activo se identifica por clave (data-step-key), no por índice: con
+     sabor del mes vigente se antepone el paso "base" y los índices se corren. */
+  .hopecfg--v2[data-step-key="base"] #base-step,
+  .hopecfg--v2[data-step-key="size"] #size-options,
+  .hopecfg--v2[data-step-key="topping"] #topping-options,
+  .hopecfg--v2[data-step-key="syrup"] #syrup-options {
     display: block;
     animation: hope2-step-in 0.34s cubic-bezier(0.22, 0.75, 0.25, 1) both;
   }
   /* El indicador de paso también entra suave: el JS reinicia esta animación en
      cada cambio de paso (respeta prefers-reduced-motion). */
   @media (prefers-reduced-motion: reduce) {
-    .hopecfg--v2[data-step="0"] #size-options,
-    .hopecfg--v2[data-step="1"] #topping-options,
-    .hopecfg--v2[data-step="2"] #syrup-options { animation: none; }
+    .hopecfg--v2[data-step-key="base"] #base-step,
+    .hopecfg--v2[data-step-key="size"] #size-options,
+    .hopecfg--v2[data-step-key="topping"] #topping-options,
+    .hopecfg--v2[data-step-key="syrup"] #syrup-options { animation: none; }
   }
 
   /* Botones de navegación Atrás/Siguiente (misma línea gráfica que el CTA).
@@ -589,15 +593,14 @@
     border: 1px solid #fbd7e6;
   }
 
-  /* Atrás oculto en el paso 0; Siguiente oculto en el paso 2 (sirope). */
-  .hopecfg--v2[data-step="0"] .hope2__nav--prev { display: none; }
-  .hopecfg--v2[data-step="2"] .hope2__nav--next { display: none; }
+  /* Atrás oculto en el primer paso; Siguiente oculto en el último (sirope). */
+  .hopecfg--v2[data-step-first] .hope2__nav--prev { display: none; }
+  .hopecfg--v2[data-step-last] .hope2__nav--next { display: none; }
 
-  /* Reset + Añadir al carrito solo en el último paso (sirope). */
-  .hopecfg--v2[data-step="0"] #reset-view,
-  .hopecfg--v2[data-step="0"] #buy,
-  .hopecfg--v2[data-step="1"] #reset-view,
-  .hopecfg--v2[data-step="1"] #buy { display: none; }
+  /* Reset + Añadir al carrito solo en el último paso (sirope). Acotado a raíces con
+     wizard ([data-step-key]): Barquillo reutiliza este CSS sin pasos y debe verlos. */
+  .hopecfg--v2[data-step-key]:not([data-step-last]) #reset-view,
+  .hopecfg--v2[data-step-key]:not([data-step-last]) #buy { display: none; }
 
   .hope2__bubble { width: 38px; height: 38px; border-width: 2px; }
   .hope2__bubble-emoji { font-size: 1.05rem; }
@@ -867,4 +870,111 @@
   .hopecfg--v2 #syrup-options.hope2__scrollmore.is-scroll-bottom::before {
     opacity: 0;
   }
+}
+
+/* ===== Sabor del mes: paso "Elige la base del helado" =====
+   El contenedor #base-step agrupa banner + fieldset para que el wizard móvil
+   los muestre juntos como un único paso. */
+.hopecfg--v2 .hope2__base-group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.hopecfg--v2 .hope2__base-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+.hopecfg--v2 .hope2__base-choice {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0.6rem 0.75rem;
+  border-radius: 14px;
+  text-align: start;
+}
+/* Radio visual (reemplaza el punto de check genérico) */
+.hopecfg--v2 .hope2__base-choice .hopecfg__check {
+  position: static;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #d9c6cf;
+  background: #fff;
+  opacity: 1;
+  transform: none;
+}
+.hopecfg--v2 .hope2__base-choice.is-active .hopecfg__check {
+  border-color: var(--hopecfg-hope, #ed5d96);
+  box-shadow: inset 0 0 0 3.5px #fff;
+  background: var(--hopecfg-hope, #ed5d96);
+}
+.hopecfg--v2 .hope2__base-thumb {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  object-fit: cover;
+  object-position: 50% 15%;
+  background: #fff4f9;
+}
+.hopecfg--v2 .hope2__base-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.hopecfg--v2 .hope2__base-name {
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--hopecfg-ink, #392f36);
+  overflow-wrap: anywhere;
+}
+.hopecfg--v2 .hope2__base-sub {
+  font-size: 11.5px;
+  line-height: 1.3;
+  color: #8c5c71;
+  overflow-wrap: anywhere;
+}
+.hopecfg--v2 .hope2__base-choice:focus-visible {
+  outline: 2px solid var(--hopecfg-hope, #ed5d96);
+  outline-offset: 2px;
+}
+@media (max-width: 749px) {
+  .hopecfg--v2 .hope2__base-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Insignia "Sabor del Mes" sobre el preview: solo con la base del sabor elegida. */
+.hopecfg--v2 .hope2__flavor-badge {
+  position: absolute;
+  inset-block-start: 12%;
+  inset-inline-end: 10%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: clamp(76px, 18%, 120px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffc94d, #f0a019);
+  box-shadow: 0 8px 20px rgba(196, 120, 10, 0.3);
+  color: #fff;
+  font-size: clamp(13px, 1.6vw, 19px);
+  font-weight: 900;
+  line-height: 1.05;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(120, 60, 0, 0.35);
+  opacity: 0;
+  transform: scale(0.6) rotate(-12deg);
+  transition: opacity 0.25s ease, transform 0.35s cubic-bezier(0.22, 0.75, 0.25, 1);
+  pointer-events: none;
+}
+.hopecfg--v2.is-flavor-month .hope2__flavor-badge {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hopecfg--v2 .hope2__flavor-badge { transition: none; }
 }

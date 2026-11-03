@@ -57,6 +57,51 @@
     endif
   endif
 
+  # Flavor of the month: a forced entry wins; otherwise the active `sabor_del_mes`
+  # entry (start <= today <= end) for this product. Entries linked to the product
+  # (`producto`) beat entries without one (shared by Helado and Mixo); ties go to
+  # the latest start date. Entries linked to another product are skipped. No
+  # flavor keeps the original 3-step customizer untouched.
+  assign flavor = nil
+  if section.settings.mostrar_sabor_del_mes
+    if section.settings.sabor_del_mes_forzado != blank
+      assign flavor = section.settings.sabor_del_mes_forzado
+    else
+      assign today = 'now' | date: '%Y-%m-%d'
+      assign flavor_key = ''
+      for entry in metaobjects.sabor_del_mes.values
+        assign entry_product = entry.producto.value
+        if entry_product == blank
+          assign entry_rank = '0'
+        elsif entry_product.id == product.id
+          assign entry_rank = '1'
+        else
+          continue
+        endif
+        assign entry_start = entry.fecha_inicio.value | date: '%Y-%m-%d'
+        assign entry_end = entry.fecha_fin.value | date: '%Y-%m-%d'
+        assign entry_key = entry_rank | append: '|' | append: entry_start
+        if entry_start <= today and entry_end >= today and entry_key > flavor_key
+          assign flavor = entry
+          assign flavor_key = entry_key
+        endif
+      endfor
+    endif
+  endif
+
+  assign step_offset = 0
+  assign flavor_cup_url = ''
+  assign flavor_cup_asset = ''
+  if flavor
+    assign step_offset = 1
+    assign flavor_cup_asset = flavor.cloudinary_vaso.value | strip
+    if flavor_cup_asset == blank and flavor.imagen_vaso.value != blank
+      assign flavor_cup_url = flavor.imagen_vaso.value | image_url: width: 1000
+    endif
+    assign flavor_thumb = flavor.miniatura.value | default: flavor.imagen_banner.value
+    assign flavor_option_sub = flavor.subtitulo_opcion.value | default: 'Sabor del Mes · Edición Limitada'
+  endif
+
   comment
     Modelo de cobro HÍBRIDO:
     - Básicos (no premium): 2 toppings + 1 sirope incluidos; cada básico adicional = $1,
@@ -126,6 +171,12 @@
   data-max-extra-toppings="{{ max_extra_toppings }}"
   data-premium-cents="{{ premium_cents }}"
   data-extras-variant-id="{{ extras_variant_id }}"
+  {%- if flavor %}
+    data-flavor-name="{{ flavor.nombre.value | escape }}"
+    data-flavor-cup-url="{{ flavor_cup_url }}"
+    data-flavor-cup-asset="{{ flavor_cup_asset | escape }}"
+    data-classic-name="{{ section.settings.base_clasica_nombre | default: 'Yogurt Griego Clásico' | escape }}"
+  {%- endif %}
 >
   <script type="application/json" data-hopecfg-products>{{ products_json }}</script>
 
@@ -158,6 +209,9 @@
         >
         {%- comment -%} Capa de burbujas "+1" que el JS rellena según los extras {%- endcomment -%}
         <div id="hope-bubbles" class="hope2__bubbles" aria-hidden="true"></div>
+        {%- if flavor -%}
+          <span class="hope2__flavor-badge" data-flavor-badge aria-hidden="true">Sabor<br>del Mes</span>
+        {%- endif -%}
       </div>
     </section>
 
@@ -171,11 +225,53 @@
 
         {%- render 'hope-delivery-notice' -%}
 
-        <p class="hope2__stepbar" data-step-indicator hidden>Paso 1 de 3 · <span data-step-name>Elige tu tamaño</span></p>
+        <p class="hope2__stepbar" data-step-indicator hidden>Paso 1 de {{ 3 | plus: step_offset }} · <span data-step-name>{% if flavor %}Elige la base{% else %}Elige tu tamaño{% endif %}</span></p>
 
         <div id="hope-options" class="hopecfg__groups">
+          {%- if flavor -%}
+            {%- liquid
+              assign classic_thumb_url = ''
+              if section.settings.base_clasica_miniatura != blank
+                assign classic_thumb_url = section.settings.base_clasica_miniatura | image_url: width: 160
+              else
+                assign classic_cloud = section.settings.cloudinary_account | default: 'slealu5f'
+                assign classic_folder = section.settings.cloudinary_folder | default: 'hope/catalog'
+                assign classic_transform = 'f_auto,q_auto,w_160'
+                if base_asset_val == 'hope-mixo-fixed-default-v1'
+                  assign classic_transform = 'e_background_removal/' | append: classic_transform
+                endif
+                assign classic_thumb_url = 'https://res.cloudinary.com/' | append: classic_cloud | append: '/image/upload/' | append: classic_transform | append: '/' | append: classic_folder | append: '/' | append: base_asset_val
+              endif
+            -%}
+            <div id="base-step" class="hopecfg__group hope2__base-step">
+              {%- render 'hope-flavor-banner', flavor: flavor -%}
+              <fieldset id="base-options" class="hope2__base-group" data-group="base">
+                <legend class="hopecfg__legend">1 · Elige la base del helado</legend>
+                <div class="hope2__base-grid">
+                  <button class="hopecfg__choice hope2__base-choice is-active" data-id="clasico" type="button" aria-pressed="true">
+                    <span class="hopecfg__check"></span>
+                    <img class="hope2__base-thumb" src="{{ classic_thumb_url }}" alt="" width="48" height="48" loading="lazy">
+                    <span class="hope2__base-text">
+                      <span class="hope2__base-name">{{ section.settings.base_clasica_nombre | default: 'Yogurt Griego Clásico' | escape }}</span>
+                      <span class="hope2__base-sub">{{ section.settings.base_clasica_subtitulo | default: 'Nuestro sabor tradicional' | escape }}</span>
+                    </span>
+                  </button>
+                  <button class="hopecfg__choice hope2__base-choice" data-id="mes" type="button" aria-pressed="false">
+                    <span class="hopecfg__check"></span>
+                    {%- if flavor_thumb != blank -%}
+                      {{ flavor_thumb | image_url: width: 160 | image_tag: class: 'hope2__base-thumb', alt: '', width: 48, height: 48, loading: 'lazy' }}
+                    {%- endif -%}
+                    <span class="hope2__base-text">
+                      <span class="hope2__base-name">{{ flavor.nombre.value | escape }}</span>
+                      <span class="hope2__base-sub">{{ flavor_option_sub | escape }}</span>
+                    </span>
+                  </button>
+                </div>
+              </fieldset>
+            </div>
+          {%- endif -%}
           <fieldset id="size-options" class="hopecfg__group" data-group="size">
-            <legend class="hopecfg__legend">1 · Elige tu tamaño</legend>
+            <legend class="hopecfg__legend">{{ 1 | plus: step_offset }} · Elige tu tamaño</legend>
             <div class="hopecfg__grid hopecfg__grid--3">
               {%- comment -%}
                 Server-render each size's base price (variant without extras) with the same
@@ -226,7 +322,7 @@
           {%- comment -%} Toppings (estándar + premium): los primeros 2 van incluidos; cada extra +$1.00 {%- endcomment -%}
           <fieldset id="topping-options" class="hopecfg__group" data-group="topping">
             <legend class="hopecfg__legend">
-              <span id="topping-title">2 · Elige tus toppings</span>
+              <span id="topping-title">{{ 2 | plus: step_offset }} · Elige tus toppings</span>
               <span class="hopecfg__legend-count" data-topping-count>0/{{ free_toppings }}</span>
             </legend>
             {%- render 'hope-pricing-guide', included_count: free_toppings, kind: 'topping', extra_cents: extra_topping_cents, premium_cents: premium_cents -%}
@@ -261,7 +357,7 @@
           </fieldset>
 
           <fieldset id="syrup-options" class="hopecfg__group" data-group="syrup">
-            <legend class="hopecfg__legend"><span class="hopecfg__legend-title">3 · Elige tu sirope</span></legend>
+            <legend class="hopecfg__legend"><span class="hopecfg__legend-title">{{ 3 | plus: step_offset }} · Elige tu sirope</span></legend>
             {%- render 'hope-pricing-guide', included_count: free_syrups, kind: 'syrup', extra_cents: extra_topping_cents, premium_cents: premium_cents -%}
             <div class="hopecfg__chips">
               {%- if cat_sirope.items.size > 0 -%}
@@ -462,6 +558,45 @@
       "label": "Costo por item premium (centavos)",
       "default": 150,
       "info": "150 = $1.50 por cada topping/sirope premium (★). Se cobra en la línea add-on \"Extras personalizados\" (qty = nº premium). Debe coincidir con el precio de la variante del add-on."
+    },
+    {
+      "type": "header",
+      "content": "Sabor del mes"
+    },
+    {
+      "type": "checkbox",
+      "id": "mostrar_sabor_del_mes",
+      "label": "Mostrar sabor del mes",
+      "default": true,
+      "info": "Muestra el banner y el paso \"Elige la base del helado\" cuando hay un sabor vigente en Contenido › Metaobjetos › Sabor del mes."
+    },
+    {
+      "type": "metaobject",
+      "id": "sabor_del_mes_forzado",
+      "label": "Forzar sabor (opcional)",
+      "metaobject_type": "sabor_del_mes",
+      "info": "Si eliges uno, se muestra siempre, sin importar sus fechas. Déjalo vacío para usar el sabor vigente por fecha."
+    },
+    {
+      "type": "text",
+      "id": "base_clasica_nombre",
+      "label": "Nombre de la base clásica",
+      "default": "Yogurt Griego Clásico",
+      "visible_if": "{{ section.settings.mostrar_sabor_del_mes }}"
+    },
+    {
+      "type": "text",
+      "id": "base_clasica_subtitulo",
+      "label": "Subtítulo de la base clásica",
+      "default": "Nuestro sabor tradicional",
+      "visible_if": "{{ section.settings.mostrar_sabor_del_mes }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "base_clasica_miniatura",
+      "label": "Miniatura de la base clásica (opcional)",
+      "info": "Si se deja vacía, se usa la imagen del vaso clásico.",
+      "visible_if": "{{ section.settings.mostrar_sabor_del_mes }}"
     },
     {
       "type": "header",

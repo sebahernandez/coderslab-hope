@@ -1,0 +1,56 @@
+{%- doc -%}
+  Renders the "flavor of the month" promo banner for the Hope customizers.
+  The banner is a fully designed image (badge, dates, name and description are
+  baked in), so it is shown uncropped; its alt text is rebuilt from the entry's
+  fields so the content stays available to assistive technology. Month names
+  are mapped to Spanish because Liquid's `date` filter outputs English names.
+
+  @param {object} flavor - A `sabor_del_mes` metaobject entry (nombre, descripcion,
+    imagen_banner, fecha_fin).
+
+  @example
+  {% render 'hope-flavor-banner', flavor: flavor %}
+{%- enddoc -%}
+{%- liquid
+  assign month_names = 'enero,febrero,marzo,abril,mayo,junio,julio,agosto,septiembre,octubre,noviembre,diciembre' | split: ','
+  assign end_day = flavor.fecha_fin.value | date: '%-d'
+  assign end_month_index = flavor.fecha_fin.value | date: '%-m' | minus: 1
+  assign end_month = month_names[end_month_index]
+
+  assign banner_alt = 'Sabor del mes: ' | append: flavor.nombre.value
+  if end_month != blank
+    assign banner_alt = banner_alt | append: ', edición limitada hasta el ' | append: end_day | append: ' de ' | append: end_month
+  endif
+  if flavor.descripcion.value != blank
+    assign banner_alt = banner_alt | append: '. ' | append: flavor.descripcion.value
+  endif
+-%}
+{%- if flavor.imagen_banner.value != blank -%}
+  <div class="hope2-flavor">
+    {{
+      flavor.imagen_banner.value
+      | image_url: width: 1400
+      | image_tag:
+        class: 'hope2-flavor__img',
+        widths: '400, 600, 800, 1000, 1200, 1400',
+        sizes: '(min-width: 1024px) 640px, calc(100vw - 2rem)',
+        alt: banner_alt,
+        loading: 'eager',
+        fetchpriority: 'high'
+    }}
+  </div>
+{%- endif -%}
+
+{% stylesheet %}
+  .hope2-flavor {
+    min-width: 0;
+    margin-block: 0.4rem 0.75rem;
+  }
+
+  .hope2-flavor__img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    max-inline-size: 100%;
+  }
+{% endstylesheet %}

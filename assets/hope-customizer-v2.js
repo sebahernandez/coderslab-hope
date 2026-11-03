@@ -194,12 +194,30 @@
       syrups: [],   // siropes; primeros FREE_SYRUPS incluidos
       lastKey: null,
       hasInteracted: false,
+      base: "clasico",
     };
 
     var SIZE_NAME = { small: "Pequeño", medium: "Mediano", large: "Grande" };
 
     // Etiquetas del wizard móvil (paso a paso). Desktop las ignora (ver CSS).
-    var STEP_LABELS = ["Elige tu tamaño", "Elige tus toppings", "Elige tu sirope"];
+    // Con sabor del mes vigente (#base-step renderizado) se antepone el paso de base.
+    var HAS_FLAVOR = !!root.querySelector("#base-step");
+    var STEP_KEYS = (HAS_FLAVOR ? ["base"] : []).concat(["size", "topping", "syrup"]);
+    var STEP_NAMES = { base: "Elige la base", size: "Elige tu tamaño", topping: "Elige tus toppings", syrup: "Elige tu sirope" };
+    var STEP_LABELS = STEP_KEYS.map(function (k) { return STEP_NAMES[k]; });
+
+    // ---- Sabor del mes (base del helado) ----
+    var FLAVOR_NAME = root.dataset.flavorName || "";
+    var CLASSIC_NAME = root.dataset.classicName || "Yogurt Griego Clásico";
+    var FLAVOR_CUP_URL = root.dataset.flavorCupUrl || "";
+    var FLAVOR_CUP_ASSET = root.dataset.flavorCupAsset || "";
+    function cupSrc() {
+      if (state.base === "mes") {
+        if (FLAVOR_CUP_ASSET) return catalogUrl(FLAVOR_CUP_ASSET);
+        if (FLAVOR_CUP_URL) return FLAVOR_CUP_URL;
+      }
+      return catalogUrl(BASE_ASSET);
+    }
 
     // ---- Clasificación básicos vs premium (conserva el orden de selección) ----
     function basicIds(group, arr) { return arr.filter(function (id) { return !isPremium(group, id); }); }
@@ -438,7 +456,16 @@
     function render() {
       var zoom = { small: 0.86, medium: 0.94, large: 1 };
       var cup = $("#product-preview");
-      if (cup) cup.style.transform = "scale(" + (zoom[state.size] || 1) + ")";
+      if (cup) {
+        cup.style.transform = "scale(" + (zoom[state.size] || 1) + ")";
+        var src = cupSrc();
+        if (cup.getAttribute("src") && cup.getAttribute("src") !== src) cup.src = src;
+      }
+      root.classList.toggle("is-flavor-month", state.base === "mes");
+      $$("[data-group='base'] .hopecfg__choice").forEach(function (b) {
+        b.classList.toggle("is-active", b.dataset.id === state.base);
+        b.setAttribute("aria-pressed", String(b.dataset.id === state.base));
+      });
 
       $$("[data-group='size'] .hopecfg__choice").forEach(function (b) {
         b.classList.toggle("is-active", b.dataset.id === state.size);
@@ -483,7 +510,9 @@
         if (!b) return;
         var group = b.closest("fieldset").dataset.group;
         var id = b.dataset.id;
-        if (group === "size") {
+        if (group === "base") {
+          state.base = id === "mes" ? "mes" : "clasico";
+        } else if (group === "size") {
           state.size = id;
         } else if (group === "topping") {
           var added = toggleInArray(state.toppings, id);
@@ -501,6 +530,7 @@
     if (resetBtn) {
       resetBtn.addEventListener("click", function () {
         state.size = "small";
+        state.base = "clasico";
         state.toppings = [];
         state.syrups = [];
         state.lastKey = null;
@@ -515,6 +545,9 @@
     function setStep(i) {
       var step = Math.max(0, Math.min(STEP_LABELS.length - 1, i));
       root.dataset.step = String(step);
+      root.dataset.stepKey = STEP_KEYS[step];
+      if (step === 0) root.dataset.stepFirst = ""; else delete root.dataset.stepFirst;
+      if (step === STEP_KEYS.length - 1) root.dataset.stepLast = ""; else delete root.dataset.stepLast;
       var bar = $("[data-step-indicator]");
       if (bar) {
         bar.hidden = false;
@@ -563,6 +596,9 @@
 
     function buildMainProperties() {
       var props = {};
+      if (HAS_FLAVOR) {
+        props["Base"] = state.base === "mes" ? FLAVOR_NAME + " (Sabor del mes)" : CLASSIC_NAME;
+      }
       var bTop = basicToppings();
       var inclT = bTop.slice(0, FREE_TOPPINGS).map(function (id) { return readLabel("topping", id); });
       var addT = bTop.slice(FREE_TOPPINGS).map(function (id) { return readLabel("topping", id); });
@@ -743,7 +779,7 @@
       cupEl.addEventListener("error", revealCup);
       if (!cupEl.getAttribute("src")) {
         if (stageEl) stageEl.classList.add("is-loading");
-        cupEl.src = catalogUrl(BASE_ASSET);
+        cupEl.src = cupSrc();
       }
       // Si ya estaba en caché y cargó antes de enganchar el evento.
       if (cupEl.complete && cupEl.naturalWidth > 0) revealCup();
