@@ -471,7 +471,7 @@
         "background_image_mobile": "shopify://shop_images/mixo-movil.jpg",
         "background_position": "auto",
         "background_position_mobile": "auto",
-        "overlay_style": "none",
+        "overlay_style": "gradient",
         "overlay_color": "#ffffff",
         "overlay_opacity": 60,
         "text_shadow": false,
