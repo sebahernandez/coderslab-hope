@@ -329,9 +329,9 @@
         "background_image_mobile": "shopify://shop_images/Helado.png",
         "background_position": "auto",
         "background_position_mobile": "auto",
-        "overlay_style": "none",
+        "overlay_style": "gradient",
         "overlay_color": "#ffffff",
-        "overlay_opacity": 60,
+        "overlay_opacity": 30,
         "text_shadow": false,
         "show_image": false
       }
