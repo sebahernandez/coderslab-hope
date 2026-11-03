@@ -3,7 +3,7 @@
  *
  * Producto de combos pre-armados (opción única "Combo"). El cliente elige 1 combo,
  * que se resuelve a una variante nativa del producto y se añade al carrito. NO hay
- * tamaño, toppings ni siropes. La presentación de cada combo (emoji, ingredientes,
+ * toppings ni siropes; el tamaño (option2 "Tamaño") es opcional según los datos del producto. La presentación de cada combo (emoji, ingredientes,
  * imagen Cloudinary o Shopify) la aporta el metafield custom.milkshake_combos, renderizado por
  * la sección; este JS solo lee los data-attributes de cada card.
  *
@@ -168,7 +168,19 @@
     // ---- Estado: solo el combo elegido ----
     var comboButtons = $$("[data-group='combo'] .hopecfg__choice");
     var firstCombo = comboButtons.length ? comboButtons[0].dataset.id : null;
-    var state = { combo: firstCombo };
+    var sizeButtons = $$("[data-group='size'] .hopecfg__choice");
+    var state = { combo: firstCombo, size: null };
+
+    // The size step exists only when the product has a "Tamaño" option (option2).
+    function hasSizes() {
+      if (!sizeButtons.length) return false;
+      var p = PRODUCTS.milkshake;
+      if (!p || !p.variants) return false;
+      for (var i = 0; i < p.variants.length; i++) {
+        if (p.variants[i].option2) return true;
+      }
+      return false;
+    }
 
     // ---- Resolución de variante nativa por nombre de combo (option1) ----
     function variantForCombo(comboName) {
@@ -179,7 +191,44 @@
       }
       return null;
     }
-    function variantForState() { return variantForCombo(state.combo); }
+    function variantForComboSize(comboName, sizeName) {
+      var p = PRODUCTS.milkshake;
+      if (!p || !p.variants) return null;
+      for (var i = 0; i < p.variants.length; i++) {
+        var v = p.variants[i];
+        if (v.option1 === comboName && v.option2 === sizeName) return v;
+      }
+      return null;
+    }
+    // Cheapest variant of a combo (used for "Desde ..." labels).
+    function cheapestForCombo(comboName) {
+      var p = PRODUCTS.milkshake;
+      if (!p || !p.variants) return null;
+      var best = null;
+      for (var i = 0; i < p.variants.length; i++) {
+        var v = p.variants[i];
+        if (v.option1 === comboName && (!best || v.price < best.price)) best = v;
+      }
+      return best;
+    }
+    function variantForState() {
+      if (!hasSizes()) return variantForCombo(state.combo);
+      if (!state.size) return null;
+      return variantForComboSize(state.combo, state.size);
+    }
+    // Price label for a combo given the current size ("Desde X" while no size is chosen).
+    function priceLabelForCombo(comboName) {
+      if (!hasSizes()) {
+        var v0 = variantForCombo(comboName);
+        return v0 ? v0.price_formatted : "";
+      }
+      if (state.size) {
+        var v1 = variantForComboSize(comboName, state.size);
+        return v1 ? v1.price_formatted : "";
+      }
+      var min = cheapestForCombo(comboName);
+      return min ? "Desde " + min.price_formatted : "";
+    }
 
     // ---- Lectura de datos de la card activa ----
     function comboButton(id) {
@@ -194,20 +243,31 @@
       return el ? (el.dataset.label || id) : id;
     }
 
-    // Combo siempre válido (siempre hay uno activo por defecto).
-    function isValidSelection() { return !!state.combo && !!variantForState(); }
+    // Combo always has a default; when the product has sizes, a size is mandatory.
+    function isValidSelection() {
+      if (!state.combo) return false;
+      if (hasSizes() && !state.size) return false;
+      return !!variantForState();
+    }
 
     // ---- Precios ----
     function updatePrice() {
       var priceEl = $("#price");
       if (priceEl) {
         var variant = variantForState();
-        priceEl.textContent = variant ? variant.price_formatted : "—";
+        if (variant) priceEl.textContent = variant.price_formatted;
+        else if (hasSizes() && state.combo) priceEl.textContent = priceLabelForCombo(state.combo) || "—";
+        else priceEl.textContent = "—";
       }
       // Precio por card
       $$("[data-group='combo'] .hopecfg__choice").forEach(function (btn) {
-        var v = variantForCombo(btn.dataset.id);
         var sub = btn.querySelector("[data-combo-price]");
+        if (sub) sub.textContent = priceLabelForCombo(btn.dataset.id);
+      });
+      // Precio por tamaño (para el combo elegido)
+      sizeButtons.forEach(function (btn) {
+        var v = variantForComboSize(state.combo, btn.dataset.id);
+        var sub = btn.querySelector("[data-size-price]");
         if (sub) sub.textContent = v ? v.price_formatted : "";
       });
       // Etiqueta del combo en la vista previa
@@ -218,9 +278,12 @@
       var hintEl = $("#buy-hint");
       if (buyBtn) {
         var valid = isValidSelection();
+        var needsSize = hasSizes() && !state.size;
         buyBtn.disabled = !valid;
         buyBtn.classList.toggle("is-disabled", !valid);
-        if (hintEl) hintEl.textContent = valid ? "" : "Este producto aún no está vinculado.";
+        if (hintEl) {
+          hintEl.textContent = valid ? "" : (needsSize ? "Elige un tamaño para continuar." : "Este producto aún no está vinculado.");
+        }
       }
     }
 
@@ -252,6 +315,11 @@
       $$("[data-group='combo'] .hopecfg__choice").forEach(function (b) {
         b.classList.toggle("is-active", b.dataset.id === state.combo);
       });
+      sizeButtons.forEach(function (b) {
+        var active = b.dataset.id === state.size;
+        b.classList.toggle("is-active", active);
+        b.setAttribute("aria-pressed", active ? "true" : "false");
+      });
       updatePreview();
       updatePrice();
     }
@@ -263,8 +331,9 @@
         var b = e.target.closest("button[data-id]");
         if (!b) return;
         var group = b.closest("fieldset").dataset.group;
-        if (group !== "combo") return;
-        state.combo = b.dataset.id;
+        if (group === "combo") state.combo = b.dataset.id;
+        else if (group === "size") state.size = b.dataset.id;
+        else return;
         render();
       });
     }
@@ -273,6 +342,7 @@
     if (resetBtn) {
       resetBtn.addEventListener("click", function () {
         state.combo = firstCombo;
+        state.size = null;
         render();
       });
     }
@@ -294,6 +364,7 @@
       var props = {};
       if (state.combo) {
         props["Combo"] = readLabel(state.combo);
+        if (hasSizes() && state.size) props["Tamaño"] = state.size;
         // Imagen del combo para mostrarla como miniatura de la
         // línea del carrito. Property oculta (prefijo "_") → no aparece en el detalle.
         var asset = readAsset(state.combo);
@@ -351,9 +422,10 @@
 
     if (buyBtn) {
       buyBtn.addEventListener("click", function () {
+        if (hasSizes() && !state.size) { showToast("Elige un tamaño antes de añadir al carrito.", true); return; }
         var variant = variantForState();
         if (!variant) { showToast("Este producto aún no está vinculado. Configúralo en el tema.", true); return; }
-        if (variant.available === false) { showToast("Sin stock para este combo.", true); return; }
+        if (variant.available === false) { showToast(hasSizes() ? "Sin stock para este combo y tamaño." : "Sin stock para este combo.", true); return; }
 
         var routes = (window.Theme && window.Theme.routes) || {};
         var addUrl = routes.cart_add_url || "/cart/add.js";

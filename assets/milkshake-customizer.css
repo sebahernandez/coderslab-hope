@@ -43,6 +43,24 @@
   border-radius: 16px;
   text-align: left;
 }
+.hopecfg--milkshake .ms__sizes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.hopecfg--milkshake .ms__size {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 0;
+  padding: 0.75rem 0.4rem;
+  border-radius: 16px;
+  text-align: center;
+}
+.hopecfg--milkshake .ms__size-name { font-size: 0.95rem; font-weight: 900; line-height: 1.1; overflow-wrap: anywhere; }
+.hopecfg--milkshake .ms__size.is-active .ms__price { color: var(--hopecfg-hope, #ed5d96); }
 .hopecfg--milkshake .ms__thumb {
   position: relative;
   flex-shrink: 0;
