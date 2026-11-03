@@ -169,7 +169,9 @@
     var comboButtons = $$("[data-group='combo'] .hopecfg__choice");
     var firstCombo = comboButtons.length ? comboButtons[0].dataset.id : null;
     var sizeButtons = $$("[data-group='size'] .hopecfg__choice");
-    var state = { combo: firstCombo, size: null };
+    // Default size: the first "Tamaño" value (smallest), so a price is always resolved.
+    var defaultSize = sizeButtons.length ? sizeButtons[0].dataset.id : null;
+    var state = { combo: firstCombo, size: defaultSize };
 
     // The size step exists only when the product has a "Tamaño" option (option2).
     function hasSizes() {
@@ -358,7 +360,7 @@
     if (resetBtn) {
       resetBtn.addEventListener("click", function () {
         state.combo = firstCombo;
-        state.size = null;
+        state.size = defaultSize;
         render();
       });
     }
