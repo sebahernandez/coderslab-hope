@@ -313,7 +313,7 @@
       "name": "Hero Banner Helados",
       "settings": {
         "vertical_alignment": "center",
-        "vertical_alignment_mobile": "flex-end",
+        "vertical_alignment_mobile": "center",
         "content_position_x": "auto",
         "content_position_x_mobile": "left",
         "height_type": "auto",
