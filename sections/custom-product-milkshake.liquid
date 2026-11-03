@@ -126,23 +126,54 @@
           {%- if ms_sizes != blank -%}
             <fieldset id="size-options" class="hopecfg__group" data-group="size">
               <legend class="hopecfg__legend">Elige tu tamaño</legend>
-              <div class="ms__sizes">
+              <div class="hopecfg__grid hopecfg__grid--3">
+                {%- comment -%}
+                  Same card markup as the Helado Hope size step: big split price on top,
+                  size name below. Server-renders the first combo's price; JS keeps it in sync.
+                {%- endcomment -%}
+                {%- assign first_combo_name = ms_combos[0].combo -%}
                 {%- for size in ms_sizes -%}
+                  {%- liquid
+                    assign size_formatted = ''
+                    for v in p_milkshake.variants
+                      if v.option1 == first_combo_name and v.option2 == size
+                        assign size_formatted = v.price | money | strip_html
+                        assign size_amount = v.price | money_without_currency | strip_html
+                      endif
+                    endfor
+                    if size_formatted != blank
+                      assign size_currency_parts = size_formatted | split: size_amount
+                      assign size_prefix = size_currency_parts | first
+                      assign size_suffix = size_formatted | remove_first: size_prefix | remove_first: size_amount
+                      assign size_fraction = size_amount | slice: -3, 3
+                      assign size_fraction_sep = size_fraction | slice: 0, 1
+                      if size_fraction_sep == '.' or size_fraction_sep == ','
+                        assign size_integer = size_amount | remove_last: size_fraction
+                      else
+                        assign size_fraction = ''
+                        assign size_integer = size_amount
+                      endif
+                    endif
+                  -%}
                   <button
-                    class="hopecfg__choice ms__size"
+                    class="hopecfg__choice hopecfg__choice--size"
                     data-id="{{ size | escape }}"
                     data-label="{{ size | escape }}"
                     type="button"
                     aria-pressed="false"
                   >
                     <span class="hopecfg__check"></span>
-                    <span class="ms__size-name">{{ size }}</span>
-                    <span class="ms__price" data-size-price>
-                      {%- assign first_combo_name = ms_combos[0].combo -%}
-                      {%- for v in p_milkshake.variants -%}
-                        {%- if v.option1 == first_combo_name and v.option2 == size -%}{{ v.price | money }}{%- endif -%}
-                      {%- endfor -%}
+                    <span class="hopecfg__choice-sub" data-size-price data-price="{{ size_formatted | escape }}">
+                      {%- if size_formatted != blank -%}
+                        {%- if size_prefix != blank %}<span class="hope2__size-price-currency">{{ size_prefix }}</span>{% endif -%}
+                        <span class="hope2__size-price-integer">{{ size_integer }}</span>
+                        {%- if size_fraction != blank %}<span class="hope2__size-price-fraction">{{ size_fraction }}</span>{% endif -%}
+                        {%- if size_suffix != blank %}<span class="hope2__size-price-currency">{{ size_suffix }}</span>{% endif -%}
+                      {%- else -%}
+                        —
+                      {%- endif -%}
                     </span>
+                    <span class="hopecfg__choice-name">{{ size }}</span>
                   </button>
                 {%- endfor -%}
               </div>

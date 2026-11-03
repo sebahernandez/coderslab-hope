@@ -47,24 +47,75 @@
 @media (min-width: 1024px) {
   .hopecfg--milkshake .hopecfg__groups { justify-content: flex-start; }
 }
-.hopecfg--milkshake .ms__sizes {
-  display: grid;
+/* Size cards: same look as the Helado Hope size step (hope-customizer-v2.css). */
+.hopecfg--milkshake #size-options .hopecfg__grid--3 {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.5rem;
+  gap: 0.625rem;
 }
-.hopecfg--milkshake .ms__size {
+.hopecfg--milkshake #size-options .hopecfg__choice--size {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 2px;
   min-width: 0;
-  padding: 0.75rem 0.4rem;
-  border-radius: 16px;
-  text-align: center;
+  min-height: max(3rem, var(--minimum-touch-target, 44px));
+  padding: 0.45rem 0.6rem;
+  border: 0;
+  background: #fff;
+  color: var(--hopecfg-ink, #392f36);
+  box-shadow: inset 0 0 0 1px #e8dfe3;
 }
-.hopecfg--milkshake .ms__size-name { font-size: 0.95rem; font-weight: 900; line-height: 1.1; overflow-wrap: anywhere; }
-.hopecfg--milkshake .ms__size.is-active .ms__price { color: var(--hopecfg-hope, #ed5d96); }
+.hopecfg--milkshake #size-options .hopecfg__choice--size.is-active {
+  background: #fff3f8;
+  color: #873552;
+  box-shadow: inset 0 0 0 1.5px #b87996, 0 2px 6px rgba(160, 60, 104, 0.06);
+}
+.hopecfg--milkshake #size-options .hopecfg__check { display: none; }
+.hopecfg--milkshake #size-options .hopecfg__choice-name {
+  order: 2;
+  width: 100%;
+  margin-block-start: 0.25rem;
+  padding-block-start: 0.3rem;
+  border-block-start: 1px solid #e8dfe3;
+  overflow-wrap: anywhere;
+}
+.hopecfg--milkshake #size-options [data-size-price] {
+  display: inline-flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  padding: 0.2rem 0.25rem;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+  color: var(--hopecfg-ink, #392f36);
+}
+.hopecfg--milkshake #size-options .hopecfg__choice--size.is-active [data-size-price] {
+  background: #f3dfe8;
+  color: #873552;
+}
+.hopecfg--milkshake #size-options .hope2__size-price-currency,
+.hopecfg--milkshake #size-options .hope2__size-price-fraction {
+  margin-block-start: 0.2rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.hopecfg--milkshake #size-options .hope2__size-price-currency { margin-inline: 0.1rem; }
+@media (max-width: 1023px) {
+  .hopecfg--milkshake #size-options .hopecfg__choice--size {
+    padding: 0.6rem 0.4rem;
+    border-radius: 9px;
+  }
+  .hopecfg--milkshake #size-options .hopecfg__choice-name {
+    font-size: 0.8125rem;
+    font-weight: 800;
+  }
+  .hopecfg--milkshake #size-options [data-size-price] { font-size: 1.65rem; }
+}
 .hopecfg--milkshake .ms__thumb {
   position: relative;
   flex-shrink: 0;

@@ -251,6 +251,22 @@
     }
 
     // ---- Precios ----
+    // Renders "$7.50" as currency / integer / fraction spans (same markup as Helado Hope).
+    function setSplitPrice(el, formatted) {
+      if (el.dataset.price === formatted && el.childNodes.length) return;
+      el.dataset.price = formatted;
+      var parts = formatted.match(/^(\D*)(\d[\d\s.,'’]*?)([.,]\d{2})?(\D*)$/);
+      if (!parts) { el.textContent = formatted || "—"; return; }
+      el.replaceChildren();
+      ["currency", "integer", "fraction", "currency"].forEach(function (part, index) {
+        if (!parts[index + 1]) return;
+        var span = document.createElement("span");
+        span.className = "hope2__size-price-" + part;
+        span.textContent = parts[index + 1];
+        el.appendChild(span);
+      });
+    }
+
     function updatePrice() {
       var priceEl = $("#price");
       if (priceEl) {
@@ -268,7 +284,7 @@
       sizeButtons.forEach(function (btn) {
         var v = variantForComboSize(state.combo, btn.dataset.id);
         var sub = btn.querySelector("[data-size-price]");
-        if (sub) sub.textContent = v ? v.price_formatted : "";
+        if (sub) setSplitPrice(sub, v ? v.price_formatted : "");
       });
       // Etiqueta del combo en la vista previa
       var label = $("#ms-combo-label");
