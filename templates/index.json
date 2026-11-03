@@ -138,7 +138,7 @@
         "height_unit_mobile": "vh",
         "background_color": "#ffb6d9",
         "background_image": "shopify://shop_images/Header.jpg",
-        "background_image_mobile": "shopify://shop_images/Header.jpg",
+        "background_image_mobile": "shopify://shop_images/Helado_arcoiris_de_esperanzaeriwa.jpg",
         "show_image": false,
         "image": "shopify://shop_images/movil-home-hope.avif"
       }
@@ -206,7 +206,7 @@
         "feature_description_size_mobile": 14,
         "feature_description_line_height": 1.5,
         "feature_description_color": "#01669a",
-        "background_color": "#AED6EF",
+        "background_color": "#aed6ef",
         "text_color": "#01669a",
         "heading_color": "#01669a",
         "padding_top": 0,
