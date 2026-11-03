@@ -363,8 +363,9 @@
     function buildProperties() {
       var props = {};
       if (state.combo) {
-        props["Combo"] = readLabel(state.combo);
-        if (hasSizes() && state.size) props["Tamaño"] = state.size;
+        // With sizes, the variant title ("Fresa / Mediano") already carries combo and
+        // size through cart, checkout and order; a "Combo" property would duplicate it.
+        if (!hasSizes()) props["Combo"] = readLabel(state.combo);
         // Imagen del combo para mostrarla como miniatura de la
         // línea del carrito. Property oculta (prefijo "_") → no aparece en el detalle.
         var asset = readAsset(state.combo);
