@@ -26,9 +26,9 @@
   assign titulo_dinamico = section.settings.titulo
   if titulo_dinamico == blank
     if p_milkshake.title
-      assign titulo_dinamico = 'Crea tu ' | append: p_milkshake.title
+      assign titulo_dinamico = 'Elige tu ' | append: p_milkshake.title
     else
-      assign titulo_dinamico = 'Crea tu Milkshake'
+      assign titulo_dinamico = 'Elige tu Milkshake'
     endif
   endif
 
@@ -297,7 +297,7 @@
       "type": "text",
       "id": "titulo",
       "label": "Título (opcional)",
-      "info": "Si se deja vacío, se usa \"Crea tu \" + el nombre del producto."
+      "info": "Si se deja vacío, se usa \"Elige tu \" + el nombre del producto."
     },
     {
       "type": "text",

@@ -1,5 +1,5 @@
 /**
- * milkshake-customizer.js — Armador Milkshake ("Crea tu Milkshake")
+ * milkshake-customizer.js — Armador Milkshake ("Elige tu Milkshake")
  *
  * Producto de combos pre-armados (opción única "Combo"). El cliente elige 1 combo,
  * que se resuelve a una variante nativa del producto y se añade al carrito. NO hay
