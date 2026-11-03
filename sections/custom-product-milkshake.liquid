@@ -111,15 +111,7 @@
         </div>
 
         {%- if section.settings.solo_delivery -%}
-          <div class="hope2__delivery-notice" role="note" aria-live="polite">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M1 3h15v13H1z" />
-              <path d="M16 8h4l3 3v5h-7V8z" />
-              <circle cx="5.5" cy="18.5" r="2.5" />
-              <circle cx="18.5" cy="18.5" r="2.5" />
-            </svg>
-            <span>Consultando disponibilidad...</span>
-          </div>
+          {%- render 'hope-delivery-notice' -%}
         {%- endif -%}
 
         <div id="hope-options" class="hopecfg__groups">
@@ -156,11 +148,11 @@
                     endif
                   -%}
                   <button
-                    class="hopecfg__choice hopecfg__choice--size"
+                    class="hopecfg__choice hopecfg__choice--size{% if forloop.first %} is-active{% endif %}"
                     data-id="{{ size | escape }}"
                     data-label="{{ size | escape }}"
                     type="button"
-                    aria-pressed="false"
+                    aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
                   >
                     <span class="hopecfg__check"></span>
                     <span class="hopecfg__choice-sub" data-size-price data-price="{{ size_formatted | escape }}">

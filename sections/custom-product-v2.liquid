@@ -169,15 +169,7 @@
           <h2 class="hopecfg__title">{{ titulo_dinamico }}</h2>
         </div>
 
-        <div class="hope2__delivery-notice" role="note" aria-live="polite">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M1 3h15v13H1z" />
-            <path d="M16 8h4l3 3v5h-7V8z" />
-            <circle cx="5.5" cy="18.5" r="2.5" />
-            <circle cx="18.5" cy="18.5" r="2.5" />
-          </svg>
-          <span>Consultando disponibilidad...</span>
-        </div>
+        {%- render 'hope-delivery-notice' -%}
 
         <p class="hope2__stepbar" data-step-indicator hidden>Paso 1 de 3 · <span data-step-name>Elige tu tamaño</span></p>
 

@@ -1,0 +1,41 @@
+{%- doc -%}
+  Renders the availability notice shared by every Hope customizer (Helado Hope,
+  Mixo Hope, Barquillo, Milkshake). The customizer JS updates the text inside
+  `.hope2__delivery-notice span` after querying delivery availability.
+
+  @example
+  {% render 'hope-delivery-notice' %}
+{%- enddoc -%}
+<div class="hope2__delivery-notice" role="note" aria-live="polite">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <path d="M3 9.5 4.6 4h14.8L21 9.5" />
+    <path d="M3 9.5a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0" />
+    <path d="M4.5 12v8h15v-8" />
+    <path d="M10 20v-4.5h4V20" />
+  </svg>
+  <span>Consultando disponibilidad...</span>
+</div>
+
+{% stylesheet %}
+  .hope2__delivery-notice {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.5rem 0 0.25rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 14px;
+    border: 1px solid #efd5e1;
+    background: #fff8fb;
+    color: #8c5c71;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .hope2__delivery-notice svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    color: inherit;
+  }
+{% endstylesheet %}
