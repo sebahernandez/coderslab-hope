@@ -146,7 +146,7 @@
         "background_position_mobile": "auto",
         "overlay_style": "gradient",
         "overlay_color": "#ffb6d9",
-        "overlay_opacity": 75,
+        "overlay_opacity": 60,
         "text_shadow": false,
         "show_image": false,
         "image": "shopify://shop_images/movil-home-hope.avif"
