@@ -27,15 +27,23 @@ Fresa / Vainilla / Chocolate) y "Tamaño" (option2: Pequeño / Mediano / Grande)
 Los precios SHALL venir de las variantes de Shopify y nunca fijarse en el código. Los precios vigentes
 son Fresa $5 / $6 / $7.50, Chocolate $5 / $7 / $8 y Vainilla $5 / $7 / $8. El armador SHALL mostrar
 primero el paso "1 · Elige tu tamaño" y después "2 · Elige tu combo", con una card por combo tomada
-del metafield `custom.milkshake_combos`. El tamaño SHALL ser obligatorio y no venir preseleccionado.
-Si el producto no tiene la opción "Tamaño", el armador SHALL comportarse como antes: solo combo,
+del metafield `custom.milkshake_combos`. El tamaño SHALL ser obligatorio y SHALL venir preseleccionado en
+"Pequeño" (el primer valor de la opción "Tamaño"), tanto en el render del servidor (`is-active` y
+`aria-pressed="true"`) como en el estado inicial del JS. Reiniciar la vista SHALL volver a "Pequeño".
+Los precios del Milkshake NO SHALL mostrar el prefijo "Desde". Si el producto no tiene la opción "Tamaño", el armador SHALL comportarse como antes: solo combo,
 numerado "1 · Elige tu combo".
 
-#### Scenario: Sin tamaño elegido
+#### Scenario: Tamaño Pequeño preseleccionado al abrir
 
-- **WHEN** el cliente abre `/products/milkshake` y todavía no eligió tamaño
-- **THEN** el total y las cards de combo muestran "Desde $X", el botón "Añadir al carrito" está
-  deshabilitado y se ve "Elige un tamaño para continuar."
+- **WHEN** el cliente abre `/products/milkshake`
+- **THEN** la tarjeta "Pequeño" aparece seleccionada, el total y las cards de combo muestran el
+  precio de la variante Pequeño de cada combo sin el prefijo "Desde", y "Añadir al carrito" está
+  habilitado
+
+#### Scenario: Reiniciar la vista
+
+- **WHEN** el cliente eligió otro tamaño y pulsa reiniciar
+- **THEN** el armador vuelve al primer combo con el tamaño "Pequeño" seleccionado
 
 #### Scenario: Elegir tamaño y combo
 
