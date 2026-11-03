@@ -7,9 +7,10 @@
   @param {string} x - Horizontal content zone: 'left', 'center' or 'right'
   @param {string} y - Vertical content zone: 'flex-start', 'center' or 'flex-end'
   @param {boolean} [prefer_vertical] - When the content has a vertical zone, use only the vertical direction (full-width content on mobile)
+  @param {string} [side] - Strongest side chosen by the merchant: 'auto' (follow x/y), 'left', 'right', 'top', 'bottom' or 'center'
 
   @example
-  {% render 'hero-overlay-background', style: 'gradient', x: 'left', y: 'flex-end', prefer_vertical: true %}
+  {% render 'hero-overlay-background', style: 'gradient', side: 'auto', x: 'left', y: 'flex-end', prefer_vertical: true %}
 {%- enddoc -%}
 {%- liquid
   assign strong = 'rgb(var(--hero-overlay-rgb) / var(--hero-overlay-alpha))'
@@ -36,6 +37,25 @@
       if prefer_vertical and vdir != ''
         assign hdir = ''
       endif
+
+      # A merchant-chosen side overrides the direction derived from the content zone.
+      case side
+        when 'left'
+          assign hdir = 'right'
+          assign vdir = ''
+        when 'right'
+          assign hdir = 'left'
+          assign vdir = ''
+        when 'top'
+          assign hdir = ''
+          assign vdir = 'bottom'
+        when 'bottom'
+          assign hdir = ''
+          assign vdir = 'top'
+        when 'center'
+          assign hdir = ''
+          assign vdir = ''
+      endcase
 
       if hdir == '' and vdir == ''
         echo 'radial-gradient(ellipse at center, ' | append: strong | append: ' 0%, ' | append: soft | append: ' 60%, transparent 100%)'

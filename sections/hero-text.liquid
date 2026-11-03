@@ -1,7 +1,7 @@
 {% comment %}
   Section contract.
   Hero banner with a cover background image (desktop + optional mobile source), an optional
-  contrast overlay that follows the content zone, and theme blocks for texts and the button.
+  contrast overlay (configurable per breakpoint, following the content zone or a chosen side), and theme blocks for texts and the button.
   Background framing uses the Shopify focal point unless a per-breakpoint position is chosen.
   @example
   <!-- Add "Hero Banner Helados" from the theme editor and add text/button blocks -->
@@ -34,16 +34,25 @@
   assign zone_y_mobile = section.settings.vertical_alignment_mobile | default: 'center'
 
   # Overlay: strongest on the content side, fading toward the opposite side.
+  # Overlay style per breakpoint; mobile can inherit the desktop choice (saved instances keep working).
   assign overlay_style = section.settings.overlay_style | default: 'none'
+  assign overlay_style_mobile = section.settings.overlay_style_mobile | default: 'inherit'
+  if overlay_style_mobile == 'inherit'
+    assign overlay_style_mobile = overlay_style
+  endif
+  assign has_overlay = false
+  if overlay_style != 'none' or overlay_style_mobile != 'none'
+    assign has_overlay = true
+  endif
   assign overlay_color = section.settings.overlay_color | default: '#ffffff'
   assign overlay_rgb = overlay_color.red | append: ' ' | append: overlay_color.green | append: ' ' | append: overlay_color.blue
   assign overlay_alpha = section.settings.overlay_opacity | default: 60 | divided_by: 100.0
 
   capture overlay_bg
-    render 'hero-overlay-background', style: overlay_style, x: zone_x, y: zone_y
+    render 'hero-overlay-background', style: overlay_style, side: section.settings.overlay_side, x: zone_x, y: zone_y
   endcapture
   capture overlay_bg_mobile
-    render 'hero-overlay-background', style: overlay_style, x: zone_x_mobile, y: zone_y_mobile, prefer_vertical: true
+    render 'hero-overlay-background', style: overlay_style_mobile, side: section.settings.overlay_side_mobile, x: zone_x_mobile, y: zone_y_mobile, prefer_vertical: true
   endcapture
 
   assign mobile_widths = '375,550,750,1100,1500' | split: ','
@@ -56,7 +65,7 @@
   endif
 -%}
 <div
-  class="hero-banner-section hero-banner{% if overlay_style != 'none' %} hero-banner--overlay{% endif %}{% if section.settings.text_shadow %} hero-banner--text-shadow{% endif %}{% if section.settings.height_type_mobile == 'image' and bg_mobile != blank %} hero-banner--mobile-ratio{% endif %}"
+  class="hero-banner-section hero-banner{% if has_overlay %} hero-banner--overlay{% endif %}{% if section.settings.text_shadow %} hero-banner--text-shadow{% endif %}{% if section.settings.height_type_mobile == 'image' and bg_mobile != blank %} hero-banner--mobile-ratio{% endif %}"
   data-section-id="{{ section.id }}"
 >
   {%- if bg != blank -%}
@@ -84,7 +93,7 @@
     </picture>
   {%- endif -%}
 
-  {%- if overlay_style != 'none' -%}
+  {%- if has_overlay -%}
     <div class="hero-banner__overlay" aria-hidden="true"></div>
   {%- endif -%}
 
@@ -125,7 +134,7 @@
       --hero-text-ml-mobile: {% if pxm == 'left' %}0{% else %}auto{% endif %};
       --hero-text-mr-mobile: {% if pxm == 'right' %}0{% else %}auto{% endif %};
     {%- endunless %}
-    {%- if overlay_style != 'none' %}
+    {%- if has_overlay %}
       --hero-overlay-rgb: {{ overlay_rgb }};
       --hero-overlay-alpha: {{ overlay_alpha }};
       --hero-overlay-bg: {{ overlay_bg | strip }};
@@ -641,7 +650,7 @@
     {
       "type": "select",
       "id": "overlay_style",
-      "label": "Velo sobre la imagen",
+      "label": "Velo en Escritorio",
       "options": [
         {
           "value": "none",
@@ -657,14 +666,105 @@
         }
       ],
       "default": "none",
-      "info": "El degradado es más intenso donde está el texto y se desvanece hacia el lado opuesto."
+      "info": "Ninguno lo oculta en escritorio. El degradado es más intenso en el lado elegido abajo."
+    },
+    {
+      "type": "select",
+      "id": "overlay_side",
+      "label": "Lado más intenso (Escritorio)",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automático (donde está el texto)"
+        },
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        },
+        {
+          "value": "top",
+          "label": "Arriba"
+        },
+        {
+          "value": "bottom",
+          "label": "Abajo"
+        },
+        {
+          "value": "center",
+          "label": "Centro (radial)"
+        }
+      ],
+      "default": "auto",
+      "visible_if": "{{ section.settings.overlay_style == 'gradient' }}"
+    },
+    {
+      "type": "select",
+      "id": "overlay_style_mobile",
+      "label": "Velo en Mobile",
+      "options": [
+        {
+          "value": "inherit",
+          "label": "Igual que escritorio"
+        },
+        {
+          "value": "none",
+          "label": "Ninguno"
+        },
+        {
+          "value": "gradient",
+          "label": "Degradado"
+        },
+        {
+          "value": "solid",
+          "label": "Sólido"
+        }
+      ],
+      "default": "inherit",
+      "info": "Aplica en pantallas de 768px o menos."
+    },
+    {
+      "type": "select",
+      "id": "overlay_side_mobile",
+      "label": "Lado más intenso (Mobile)",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automático (donde está el texto)"
+        },
+        {
+          "value": "left",
+          "label": "Izquierda"
+        },
+        {
+          "value": "right",
+          "label": "Derecha"
+        },
+        {
+          "value": "top",
+          "label": "Arriba"
+        },
+        {
+          "value": "bottom",
+          "label": "Abajo"
+        },
+        {
+          "value": "center",
+          "label": "Centro (radial)"
+        }
+      ],
+      "default": "auto",
+      "visible_if": "{{ section.settings.overlay_style_mobile != 'none' }}"
     },
     {
       "type": "color",
       "id": "overlay_color",
       "label": "Color del velo",
       "default": "#FFFFFF",
-      "visible_if": "{{ section.settings.overlay_style != 'none' }}"
+      "visible_if": "{{ section.settings.overlay_style != 'none' or section.settings.overlay_style_mobile == 'gradient' or section.settings.overlay_style_mobile == 'solid' }}"
     },
     {
       "type": "range",
@@ -675,7 +775,7 @@
       "step": 5,
       "unit": "%",
       "default": 60,
-      "visible_if": "{{ section.settings.overlay_style != 'none' }}"
+      "visible_if": "{{ section.settings.overlay_style != 'none' or section.settings.overlay_style_mobile == 'gradient' or section.settings.overlay_style_mobile == 'solid' }}"
     },
     {
       "type": "checkbox",
