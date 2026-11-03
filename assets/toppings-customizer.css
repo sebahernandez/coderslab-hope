@@ -32,11 +32,12 @@ body:has(.hopecfg) {
 @media (min-width: 640px) {
   .hopecfg { padding-block: 7rem; }
 }
+/* Tablet/desktop: same page margin as the navbar (base.css page-width grid) */
 @media (min-width: 750px) {
-  .hopecfg { padding-inline: 0.75rem; }
+  .hopecfg { padding-inline: var(--page-margin, 40px); }
 }
 @media (min-width: 1024px) {
-  .hopecfg { padding-inline: 1.25rem; padding-block: 9.5rem; }
+  .hopecfg { padding-block: 9.5rem; }
 }
 
 /* Contenedor tarjeta con los 2 paneles */
@@ -45,7 +46,8 @@ body:has(.hopecfg) {
   flex-direction: column;
   overflow: hidden;
   margin: 0 auto;
-  max-width: 80rem;
+  /* Same max width as the navbar (theme page content width) */
+  max-width: var(--page-content-width, 80rem);
   min-height: 640px;
   height: min(88dvh, 900px);
   border: 1px solid rgba(255, 255, 255, 0.8);
