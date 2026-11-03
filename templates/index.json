@@ -465,7 +465,7 @@
         "content_position_x": "auto",
         "content_position_x_mobile": "auto",
         "height_type": "auto",
-        "min_height": 700,
+        "min_height": 750,
         "min_height_mobile": 400,
         "height_custom": 80,
         "height_unit": "vh",
