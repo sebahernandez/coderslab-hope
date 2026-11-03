@@ -170,6 +170,13 @@
   endif
 %}
 
+{%- if section.settings.enable_glass_header and transparent == blank -%}
+  {% comment %} Publishes the mobile glass gutter so page components (e.g. .hopecfg) can align with the navbar. {% endcomment %}
+  {% style %}
+    :root { --hope-navbar-gutter-mobile: {{ section.settings.glass_float_margin }}px; }
+  {% endstyle %}
+{%- endif -%}
+
 <script type="application/ld+json">
   {
     "@context": "http://schema.org",

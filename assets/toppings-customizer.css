@@ -18,7 +18,9 @@ body:has(.hopecfg) {
   box-sizing: border-box;
   color: var(--hopecfg-ink);
   font-family: Inter, ui-rounded, "Segoe UI", sans-serif;
-  padding-inline: 0.5rem;
+  /* Mobile gutter matches the floating glass navbar (published by sections/header.liquid);
+     falls back to the theme page margin when the glass navbar is off */
+  padding-inline: var(--hope-navbar-gutter-mobile, var(--page-margin, 16px));
   padding-block: 6rem;
 }
 .hopecfg *,
@@ -28,7 +30,10 @@ body:has(.hopecfg) {
 }
 
 @media (min-width: 640px) {
-  .hopecfg { padding-inline: 0.75rem; padding-block: 7rem; }
+  .hopecfg { padding-block: 7rem; }
+}
+@media (min-width: 750px) {
+  .hopecfg { padding-inline: 0.75rem; }
 }
 @media (min-width: 1024px) {
   .hopecfg { padding-inline: 1.25rem; padding-block: 9.5rem; }
