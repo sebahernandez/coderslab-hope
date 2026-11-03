@@ -479,7 +479,7 @@
         "background_position_mobile": "auto",
         "overlay_style": "none",
         "overlay_side": "auto",
-        "overlay_style_mobile": "gradient",
+        "overlay_style_mobile": "none",
         "overlay_side_mobile": "auto",
         "overlay_color": "#ffffff",
         "overlay_opacity": 60,
