@@ -123,6 +123,32 @@
         {%- endif -%}
 
         <div id="hope-options" class="hopecfg__groups">
+          {%- if ms_sizes != blank -%}
+            <fieldset id="size-options" class="hopecfg__group" data-group="size">
+              <legend class="hopecfg__legend">Elige tu tamaño</legend>
+              <div class="ms__sizes">
+                {%- for size in ms_sizes -%}
+                  <button
+                    class="hopecfg__choice ms__size"
+                    data-id="{{ size | escape }}"
+                    data-label="{{ size | escape }}"
+                    type="button"
+                    aria-pressed="false"
+                  >
+                    <span class="hopecfg__check"></span>
+                    <span class="ms__size-name">{{ size }}</span>
+                    <span class="ms__price" data-size-price>
+                      {%- assign first_combo_name = ms_combos[0].combo -%}
+                      {%- for v in p_milkshake.variants -%}
+                        {%- if v.option1 == first_combo_name and v.option2 == size -%}{{ v.price | money }}{%- endif -%}
+                      {%- endfor -%}
+                    </span>
+                  </button>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endif -%}
+
           <fieldset id="combo-options" class="hopecfg__group" data-group="combo">
             <legend class="hopecfg__legend">Elige tu combo</legend>
             <div class="ms__grid">
@@ -171,32 +197,6 @@
               {%- endif -%}
             </div>
           </fieldset>
-
-          {%- if ms_sizes != blank -%}
-            <fieldset id="size-options" class="hopecfg__group" data-group="size">
-              <legend class="hopecfg__legend">Elige tu tamaño</legend>
-              <div class="ms__sizes">
-                {%- for size in ms_sizes -%}
-                  <button
-                    class="hopecfg__choice ms__size"
-                    data-id="{{ size | escape }}"
-                    data-label="{{ size | escape }}"
-                    type="button"
-                    aria-pressed="false"
-                  >
-                    <span class="hopecfg__check"></span>
-                    <span class="ms__size-name">{{ size }}</span>
-                    <span class="ms__price" data-size-price>
-                      {%- assign first_combo_name = ms_combos[0].combo -%}
-                      {%- for v in p_milkshake.variants -%}
-                        {%- if v.option1 == first_combo_name and v.option2 == size -%}{{ v.price | money }}{%- endif -%}
-                      {%- endfor -%}
-                    </span>
-                  </button>
-                {%- endfor -%}
-              </div>
-            </fieldset>
-          {%- endif -%}
         </div>
       </div>
 
