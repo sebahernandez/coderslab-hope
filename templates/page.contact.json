@@ -144,6 +144,8 @@
       "settings": {
         "vertical_alignment": "center",
         "vertical_alignment_mobile": "center",
+        "content_position_x": "auto",
+        "content_position_x_mobile": "auto",
         "height_type": "auto",
         "min_height": 700,
         "min_height_mobile": 400,
@@ -151,12 +153,19 @@
         "height_unit": "vh",
         "height_custom_mobile": 60,
         "height_unit_mobile": "vh",
+        "height_type_mobile": "inherit",
         "background_color": "#ffb6d9",
-        "background_image": "shopify://shop_images/Vasitos_de_yogur_helado_con_fresas_y_pistacho.jpg",
-        "show_image": true,
+        "background_image": "shopify://shop_images/BarcoWeb.avif",
+        "background_position": "auto",
+        "background_position_mobile": "auto",
         "overlay_style": "gradient",
+        "overlay_side": "auto",
+        "overlay_style_mobile": "inherit",
+        "overlay_side_mobile": "auto",
         "overlay_color": "#ffd6e9",
-        "overlay_opacity": 90
+        "overlay_opacity": 90,
+        "text_shadow": false,
+        "show_image": true
       }
     },
     "custom_contact_fKYEWW": {
