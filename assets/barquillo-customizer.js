@@ -9,6 +9,9 @@
  *  - Precio 100% nativo por variante de la opción "Extras premium":
  *    option1 "0" ($1.50, estándar o sin elegir) / "1" ($2.50, premium).
  *  - Se agrega UNA sola línea al carrito con la property "Sirope".
+ *  - La imagen principal muestra el cono con el sirope elegido cuando la sección expone
+ *    su foto en [data-barq-syrup-previews]; sin sirope, sin foto o si la foto falla,
+ *    se muestra la imagen base del cono.
  *
  * Es idempotente y solo actúa sobre raíces [data-hopecfg-barq] (así el JS global
  * toppings-customizer.js, que inicializa sobre [data-hopecfg], no la captura).
@@ -35,6 +38,15 @@
       if (dataEl) PRODUCTS = JSON.parse(dataEl.textContent || "{}");
     } catch (e) {
       PRODUCTS = {};
+    }
+
+    // Mapa { idSirope: urlFotoDelCono } (solo siropes con foto asignada).
+    var SYRUP_PREVIEWS = {};
+    try {
+      var previewsEl = root.querySelector("[data-barq-syrup-previews]");
+      if (previewsEl) SYRUP_PREVIEWS = JSON.parse(previewsEl.textContent || "{}") || {};
+    } catch (e) {
+      SYRUP_PREVIEWS = {};
     }
 
     var MONEY_FORMAT = root.dataset.moneyFormat || "${{amount}}";
@@ -221,6 +233,42 @@
         "</span>";
     }
 
+    // ---- Imagen principal según el sirope ----
+    // Precarga la foto y recién al cargar la asigna, para no dejar la vista previa vacía.
+    // previewToken descarta cargas de selecciones anteriores (cambio rápido de sirope).
+    var previewToken = 0;
+    var previewLoader = null;
+
+    function showPreviewSrc(src) {
+      var cup = $("#product-preview");
+      if (!cup || !src) return;
+      if (cup.getAttribute("src") !== src) cup.src = src;
+    }
+
+    function setPreview(id) {
+      var token = ++previewToken;
+      if (previewLoader) {
+        previewLoader.onload = previewLoader.onerror = null;
+        previewLoader = null;
+      }
+      var url = id && Object.prototype.hasOwnProperty.call(SYRUP_PREVIEWS, id) ? SYRUP_PREVIEWS[id] : "";
+      if (!url) { showPreviewSrc(BASE_IMAGE); return; }
+
+      var loader = new Image();
+      previewLoader = loader;
+      loader.onload = function () {
+        if (token !== previewToken) return;
+        previewLoader = null;
+        showPreviewSrc(url);
+      };
+      loader.onerror = function () {
+        if (token !== previewToken) return;
+        previewLoader = null;
+        showPreviewSrc(BASE_IMAGE);
+      };
+      loader.src = url;
+    }
+
     // ---- Mini-stack bajo la vista previa ----
     function renderStack() {
       var stack = $("#hope-stack");
@@ -306,6 +354,7 @@
         b.classList.toggle("is-extra-cost", active && isPremium(b.dataset.id));
       });
       renderChipPrices();
+      setPreview(state.syrup);
       renderBubbles();
       renderStack();
       updatePrice();

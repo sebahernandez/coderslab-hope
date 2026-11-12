@@ -5,6 +5,9 @@
   variante "Extras premium" (0 = sirope estándar/sin elegir, 1 = sirope premium) y se agrega
   al carrito como UNA sola línea con la property "Sirope". Los siropes salen de la categoría
   "Sirope" del metafield custom.opciones_customizador del producto.
+  Cada item puede traer `imagen_barquillo` (URL de la foto del cono con ese sirope); la
+  sección expone el mapa { id: url } en [data-barq-syrup-previews] y el JS cambia la imagen
+  principal al elegir un sirope (sin campo, se mantiene la imagen base).
   Usa data-hopecfg-barq (nunca data-hopecfg ni data-hopecfg-v2) para que ni
   toppings-customizer.js ni hope-customizer-v2.js inicialicen esta raíz.
   @example
@@ -50,6 +53,19 @@
 }
 {%- endcapture -%}
 
+{%- capture syrup_previews_json -%}
+{
+  {%- assign first_preview = true -%}
+  {%- for item in cat_sirope.items -%}
+    {%- if item.imagen_barquillo != blank -%}
+      {%- unless first_preview -%},{%- endunless -%}
+      {{ item.id | json }}: {{ item.imagen_barquillo | json }}
+      {%- assign first_preview = false -%}
+    {%- endif -%}
+  {%- endfor -%}
+}
+{%- endcapture -%}
+
 <div
   class="hopecfg hopecfg--v2 hopecfg--barquillo"
   data-hopecfg-barq
@@ -62,6 +78,7 @@
   data-base-image="{{ base_image_val | escape }}"
 >
   <script type="application/json" data-hopecfg-products>{{ products_json }}</script>
+  <script type="application/json" data-barq-syrup-previews>{{ syrup_previews_json }}</script>
 
   <div class="hopecfg__frame">
     {%- comment -%} ===== Panel de vista previa ===== {%- endcomment -%}
