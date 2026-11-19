@@ -115,7 +115,6 @@
     var syrupIds = Object.keys(syrupAssetNames);
 
     var imageCache = new Set();
-    var previewRequest = 0;
 
     // ---- Helpers Cloudinary (idénticos al prototipo) ----
     function catalogUrl(asset, width) {
@@ -164,22 +163,20 @@
       });
     }
 
-    function setPreviewImage(asset, mode) {
+    // Todo cambio de imagen pasa por HopePreview (assets/hope-preview-loader.js):
+    // precarga, descarte de respuestas viejas (también de otro modo), tiempo límite
+    // y mensaje de error. Sin el helper se asigna src directo como antes.
+    var previewCtl = null;
+    function showPreview(url) {
+      if (previewCtl) { previewCtl.show(url); return; }
       var preview = $("#product-preview");
       if (!preview) return;
-      var url = catalogUrl(asset);
-      var request = ++previewRequest;
-      if (preview.getAttribute("src") === url) {
-        preview.classList.remove("is-loading");
-        return;
-      }
-      preview.classList.add("is-loading");
-      preloadImage(url).then(function () {
-        if (request !== previewRequest || state.preview !== mode) return;
-        preview.src = url;
-      }).catch(function () {}).then(function () {
-        if (request === previewRequest) preview.classList.remove("is-loading");
-      });
+      if (preview.getAttribute("src") !== url) preview.src = url;
+      preview.classList.add("is-loaded");
+    }
+
+    function setPreviewImage(asset) {
+      showPreview(catalogUrl(asset));
     }
 
     function preload2dCombinations() {
@@ -335,7 +332,7 @@
       $("#preview-panel").dataset.view = mode;
       $("#config-panel").dataset.view = mode === "yogurt" ? "mixo" : mode;
       if (preview) {
-        preview.src = catalogUrl(selected.asset);
+        showPreview(catalogUrl(selected.asset));
         preview.alt = selected.alt;
         preview.dataset.mode = mode;
       }
@@ -353,7 +350,7 @@
         if (state.preview === "2d") {
           var zoom = { small: 0.83, medium: 0.94, large: 1 };
           $("#product-preview").style.transform = "scale(" + zoom[state.size] + ")";
-          setPreviewImage(get2dAsset(), "2d");
+          setPreviewImage(get2dAsset());
         } else {
           $("#product-preview").style.transform = "none";
         }
@@ -395,7 +392,7 @@
       } else {
         var flavor = flavorData[state.flavor];
         $("#product-preview").style.transform = "none";
-        if (state.preview === "milkshake") setPreviewImage(flavor.asset, "milkshake");
+        if (state.preview === "milkshake") setPreviewImage(flavor.asset);
         $("#selected-stack-left").innerHTML = "";
         $("#extras-label-left").textContent = "Sin extras";
         $$(".hopecfg__milkshake-choice").forEach(function (b) {
@@ -638,6 +635,9 @@
     }
 
     // ---- Arranque ----
+    var stageEl = $(".hopecfg__stage");
+    var cupEl = $("#product-preview");
+    if (window.HopePreview && stageEl && cupEl) previewCtl = window.HopePreview.create(stageEl, cupEl);
     setPreview(INITIAL_PREVIEW);
     var warmInitial2dAssets = function () {
       var assets = toppingIds.map(function (id) { return get2dAsset(id, null); })

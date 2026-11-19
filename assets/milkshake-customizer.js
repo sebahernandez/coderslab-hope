@@ -306,26 +306,21 @@
     }
 
     // ---- Vista previa ----
+    // Carga, descarte de peticiones viejas, tiempo límite y mensaje de error:
+    // HopePreview (assets/hope-preview-loader.js). Sin el helper, src directo.
+    var previewCtl = null;
     function updatePreview() {
       var cup = $("#product-preview");
       if (!cup) return;
       var asset = state.combo ? readAsset(state.combo) : "";
       var nextSrc = catalogUrl(asset || BASE_ASSET);
-      if (cup.getAttribute("src") === nextSrc) return;
       var stage = cup.closest(".hopecfg__stage");
-      function revealCup() {
-        cup.classList.add("is-loaded");
-        if (stage) stage.classList.remove("is-loading");
-        cup.removeEventListener("load", revealCup);
-        cup.removeEventListener("error", revealCup);
+      if (!previewCtl && window.HopePreview && stage) {
+        previewCtl = window.HopePreview.create(stage, cup);
       }
-      cup.classList.remove("is-loaded");
-      if (stage) stage.classList.add("is-loading");
-      cup.addEventListener("load", revealCup);
-      cup.addEventListener("error", revealCup);
-      cup.src = nextSrc;
-      // Si ya estaba en caché y cargó antes de enganchar el evento.
-      if (cup.complete && cup.naturalWidth > 0) revealCup();
+      if (previewCtl) { previewCtl.show(nextSrc); return; }
+      if (cup.getAttribute("src") !== nextSrc) cup.src = nextSrc;
+      cup.classList.add("is-loaded");
     }
 
     // ---- Render general ----

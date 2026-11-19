@@ -190,7 +190,62 @@ body:has(.hopecfg) {
     transform 0.35s cubic-bezier(0.22, 0.75, 0.25, 1),
     opacity 0.18s ease;
 }
-.hopecfg__cup.is-loading { opacity: 0.82; }
+/* La imagen solo se ve tras la primera carga correcta (la marca is-loaded la
+   pone assets/hope-preview-loader.js). */
+.hopecfg__cup:not(.is-loaded) { opacity: 0; }
+
+/* Estados de la vista previa (hope-preview-loader.js). Único dueño del spinner
+   y del mensaje de error para los cuatro armadores. */
+/* El atenuado espera lo mismo que el spinner: una imagen en caché no parpadea. */
+.hopecfg__stage.is-loading .hopecfg__cup.is-loaded { opacity: 0.45; transition-delay: 0.15s; }
+.hopecfg__stage.is-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 32px;
+  margin: -16px 0 0 -16px;
+  border-radius: 999px;
+  border: 3px solid rgba(237, 93, 150, 0.22);
+  border-top-color: var(--hopecfg-hope);
+  /* Aparece con ~150 ms de retraso para que una imagen en caché no lo haga parpadear. */
+  opacity: 0;
+  animation:
+    hopecfg-spin 0.8s linear infinite,
+    hopecfg-spin-appear 0s linear 0.15s forwards;
+  z-index: 4;
+  pointer-events: none;
+}
+@keyframes hopecfg-spin { to { transform: rotate(360deg); } }
+@keyframes hopecfg-spin-appear { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .hopecfg__stage.is-loading::after {
+    animation: hopecfg-spin-appear 0s linear 0.15s forwards;
+  }
+}
+.hopecfg__stage.is-error .hopecfg__cup { visibility: hidden; }
+.hopecfg__stage-status {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 4;
+  width: max-content;
+  max-width: min(80%, 18rem);
+  margin: 0;
+  padding: 0.75rem 1rem;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(237, 93, 150, 0.35);
+  border-radius: 14px;
+  background: rgba(255, 248, 245, 0.94);
+  color: var(--hopecfg-ink);
+  font-size: 0.9rem;
+  line-height: 1.35;
+  text-align: center;
+  overflow-wrap: anywhere;
+  box-shadow: 0 8px 20px #392f3618;
+}
+.hopecfg__stage-status[hidden] { display: none; }
 .hopecfg__cup[data-mode="yogurt"] {
   height: 92%;
   max-width: 90%;

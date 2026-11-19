@@ -32,7 +32,7 @@
       {%- render 'theme-editor' -%}
     {% endif %}
 
-    {{ 'toppings-customizer.css' | asset_url | stylesheet_tag }} <script src="{{ 'toppings-customizer.js' | asset_url }}" defer></script>
+    {{ 'toppings-customizer.css' | asset_url | stylesheet_tag }} <script src="{{ 'hope-preview-loader.js' | asset_url }}" defer></script> <script src="{{ 'toppings-customizer.js' | asset_url }}" defer></script>
 
     {{ content_for_header }}
     {% if shop.permanent_domain == 'hopesweet.myshopify.com' %}

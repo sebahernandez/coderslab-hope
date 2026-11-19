@@ -238,25 +238,21 @@
     }
 
     // ---- Imagen principal según el sirope ----
-    // Precarga la foto y recién al cargar la asigna, para no dejar la vista previa vacía.
-    // previewToken descarta cargas de selecciones anteriores (cambio rápido de sirope).
-    var previewToken = 0;
-    var previewLoader = null;
+    // La precarga, el descarte de cargas viejas, el tiempo límite y el mensaje de
+    // error los resuelve HopePreview (assets/hope-preview-loader.js). Aquí solo se
+    // elige la URL. Si el helper no cargó, se asigna src directo como antes.
+    var previewCtl = null;
 
     function showPreviewSrc(src) {
+      if (previewCtl) { previewCtl.show(src); return; }
       var cup = $("#product-preview");
       if (!cup || !src) return;
       if (cup.getAttribute("src") !== src) cup.src = src;
+      cup.classList.add("is-loaded");
     }
 
     function setPreview(id) {
-      var token = ++previewToken;
-      if (previewLoader) {
-        previewLoader.onload = previewLoader.onerror = null;
-        previewLoader = null;
-      }
       var url = id && Object.prototype.hasOwnProperty.call(SYRUP_PREVIEWS, id) ? SYRUP_PREVIEWS[id] : "";
-      var fallback = BASE_IMAGE;
       // Sabor del mes: foto del sabor con ese sirope; sin ella, el cono del sabor solo.
       // Nunca se muestra una foto del cono clásico si el sabor tiene imagen propia.
       if (state.base === "mes") {
@@ -264,24 +260,12 @@
         if (typeof flavorUrl !== "string") flavorUrl = "";
         if (flavorUrl || FLAVOR_BASE_IMAGE) {
           url = flavorUrl || FLAVOR_BASE_IMAGE;
-          fallback = FLAVOR_BASE_IMAGE || BASE_IMAGE;
         }
       }
-      if (!url) { showPreviewSrc(BASE_IMAGE); return; }
-
-      var loader = new Image();
-      previewLoader = loader;
-      loader.onload = function () {
-        if (token !== previewToken) return;
-        previewLoader = null;
-        showPreviewSrc(url);
-      };
-      loader.onerror = function () {
-        if (token !== previewToken) return;
-        previewLoader = null;
-        showPreviewSrc(url === fallback ? BASE_IMAGE : fallback);
-      };
-      loader.src = url;
+      // Sirope sin foto: cono base (dato faltante, no es un error de carga).
+      if (!url) url = BASE_IMAGE;
+      if (!url) return;
+      showPreviewSrc(url);
     }
 
     // ---- Mini-stack bajo la vista previa ----
@@ -546,22 +530,12 @@
       });
     }
 
-    // ---- Arranque: imagen base del cono ----
+    // ---- Arranque: controlador de la vista previa ----
     var cupEl = $("#product-preview");
     if (cupEl) {
       var stageEl = cupEl.closest(".hopecfg__stage");
-      var revealCup = function () {
-        cupEl.classList.add("is-loaded");
-        if (stageEl) stageEl.classList.remove("is-loading");
-      };
-      cupEl.addEventListener("load", revealCup);
-      cupEl.addEventListener("error", revealCup);
-      if (!cupEl.getAttribute("src") && BASE_IMAGE) {
-        if (stageEl) stageEl.classList.add("is-loading");
-        cupEl.src = BASE_IMAGE;
-      }
-      // Si ya estaba en caché y cargó antes de enganchar el evento.
-      if (cupEl.complete && cupEl.naturalWidth > 0) revealCup();
+      previewCtl = window.HopePreview && stageEl ? window.HopePreview.create(stageEl, cupEl) : null;
+      if (!cupEl.getAttribute("src") && BASE_IMAGE) showPreviewSrc(BASE_IMAGE);
     }
     render();
     syncDeliveryAvailability();

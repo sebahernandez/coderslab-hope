@@ -452,6 +452,9 @@
       }
     }
 
+    // Controlador de la vista previa (HopePreview); null si el helper no cargó.
+    var previewCtl = null;
+
     // ---- Render general ----
     function render() {
       var zoom = { small: 0.86, medium: 0.94, large: 1 };
@@ -459,7 +462,11 @@
       if (cup) {
         cup.style.transform = "scale(" + (zoom[state.size] || 1) + ")";
         var src = cupSrc();
-        if (cup.getAttribute("src") && cup.getAttribute("src") !== src) cup.src = src;
+        if (previewCtl) {
+          previewCtl.show(src);
+        } else if (cup.getAttribute("src") && cup.getAttribute("src") !== src) {
+          cup.src = src;
+        }
       }
       root.classList.toggle("is-flavor-month", state.base === "mes");
       $$("[data-group='base'] .hopecfg__choice").forEach(function (b) {
@@ -771,18 +778,15 @@
     var cupEl = $("#product-preview");
     if (cupEl) {
       var stageEl = cupEl.closest(".hopecfg__stage");
-      function revealCup() {
-        cupEl.classList.add("is-loaded");
-        if (stageEl) stageEl.classList.remove("is-loading");
-      }
-      cupEl.addEventListener("load", revealCup);
-      cupEl.addEventListener("error", revealCup);
-      if (!cupEl.getAttribute("src")) {
-        if (stageEl) stageEl.classList.add("is-loading");
+      previewCtl = window.HopePreview && stageEl ? window.HopePreview.create(stageEl, cupEl) : null;
+      if (previewCtl) {
+        previewCtl.show(cupSrc());
+      } else if (!cupEl.getAttribute("src")) {
         cupEl.src = cupSrc();
+        cupEl.classList.add("is-loaded");
+      } else {
+        cupEl.classList.add("is-loaded");
       }
-      // Si ya estaba en caché y cargó antes de enganchar el evento.
-      if (cupEl.complete && cupEl.naturalWidth > 0) revealCup();
     }
     render();
     setupScrollIndicators();

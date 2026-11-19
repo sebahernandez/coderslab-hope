@@ -1,0 +1,15 @@
+{% doc %}
+  Renders the live-region element where the armador preview loader
+  (assets/hope-preview-loader.js) writes the "image unavailable" message.
+  Render it inside `.hopecfg__stage`. It stays hidden and empty until a load fails.
+
+  @param {string} [error_text] - Message shown when the preview image fails to load
+
+  @example
+  {% render 'hope-preview-status' %}
+  {% render 'hope-preview-status', error_text: 'Imagen no disponible en este momento' %}
+{% enddoc %}
+{%- liquid
+  assign status_text = error_text | default: 'Imagen no disponible en este momento'
+-%}
+<p class="hopecfg__stage-status" role="status" aria-live="polite" data-error-text="{{ status_text | escape }}" hidden></p>
