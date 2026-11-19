@@ -142,22 +142,50 @@ vigente, el armador de la Barquilla SHALL comportarse como antes de este cambio.
 
 ### Requirement: Vista previa de la Barquilla con el sabor del mes
 
-Con el sabor del mes seleccionado y una imagen del sabor cargada en la entrada, la imagen principal
-de la Barquilla SHALL ser la del sabor, sin importar el sirope elegido, porque las fotos por sirope
-muestran el cono clásico. Si la entrada no tiene imagen del sabor, la imagen principal SHALL seguir
-la regla de la base clásica. Si la imagen del sabor no carga, SHALL mostrarse la imagen base del cono.
+Con el sabor del mes seleccionado, la imagen principal de la Barquilla SHALL mostrar la foto del
+cono con ese sabor y el sirope elegido, o la foto del cono con el sabor solo si no hay sirope
+elegido o ese sirope no tiene foto. Con el sabor del mes seleccionado MUST NOT mostrarse una foto
+del cono clásico si la entrada tiene fotos propias. Si una foto no carga, SHALL mostrarse la del
+sabor solo y, en su defecto, la imagen base del cono.
 
-#### Scenario: Sabor del mes con imagen
+#### Scenario: Sabor del mes con sirope
 
 - **WHEN** el cliente selecciona "Alegría" y luego el sirope "Nutella"
-- **THEN** la imagen principal es la del cono con Alegría y no la foto del cono con Nutella
+- **THEN** la imagen principal es la foto del cono con Alegría y Nutella
 
-#### Scenario: Sabor del mes sin imagen
+#### Scenario: Sabor del mes sin sirope
 
-- **WHEN** la entrada vigente no tiene imagen del sabor y el cliente selecciona "Alegría" y "Nutella"
-- **THEN** la imagen principal es la foto del cono con Nutella
+- **WHEN** el cliente selecciona "Alegría" sin sirope elegido, o deselecciona el sirope
+- **THEN** la imagen principal es la foto del cono con Alegría solo
+
+#### Scenario: Sirope sin foto para el sabor
+
+- **WHEN** el cliente selecciona "Alegría" y un sirope que no tiene foto con ese sabor
+- **THEN** la imagen principal es la foto del cono con Alegría solo y no la del cono clásico
 
 #### Scenario: Volver a la base clásica en la Barquilla
 
 - **WHEN** el cliente tiene "Alegría" y "Nutella" seleccionados y vuelve a "Yogurt Griego Clásico"
-- **THEN** la imagen principal pasa a la foto del cono con Nutella
+- **THEN** la imagen principal pasa a la foto del cono clásico con Nutella
+
+#### Scenario: Entrada sin fotos de la Barquilla
+
+- **WHEN** la entrada vigente no tiene fotos del cono y el cliente selecciona "Alegría" y "Nutella"
+- **THEN** la imagen principal es la foto del cono clásico con Nutella
+
+### Requirement: Fotos de la Barquilla en la entrada del sabor del mes
+
+La entrada del sabor del mes SHALL poder incluir, en el campo opcional `imagenes_barquilla`, la
+foto del cono con el sabor solo y una foto por sirope, identificada por el id del sirope. Cambiar
+las fotos de un sabor SHALL requerir solo editar la entrada, sin modificar archivos del tema. Sin
+miniatura cargada, la opción del sabor SHALL usar como miniatura la foto del cono con el sabor solo.
+
+#### Scenario: Sabor nuevo con sus fotos
+
+- **WHEN** el comerciante crea la entrada de diciembre con sus fotos en `imagenes_barquilla`
+- **THEN** el armador de la Barquilla muestra esas fotos durante la vigencia, sin cambios en el tema
+
+#### Scenario: Miniatura del sabor
+
+- **WHEN** la entrada vigente de la Barquilla no tiene miniatura y sí la foto del cono con el sabor
+- **THEN** la opción del sabor muestra esa foto como miniatura
