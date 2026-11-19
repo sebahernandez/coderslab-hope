@@ -12,6 +12,10 @@
  *  - La imagen principal muestra el cono con el sirope elegido cuando la sección expone
  *    su foto en [data-barq-syrup-previews]; sin sirope, sin foto o si la foto falla,
  *    se muestra la imagen base del cono.
+ *  - Sabor del mes (opcional, solo si existe #base-step): la base se elige entre "clasico"
+ *    y "mes". Con "mes" y data-flavor-image, la imagen principal es la del sabor sin
+ *    importar el sirope (las fotos por sirope son del cono clásico). La base no cambia
+ *    precio ni variante; va en la property "Base" de la línea.
  *
  * Es idempotente y solo actúa sobre raíces [data-hopecfg-barq] (así el JS global
  * toppings-customizer.js, que inicializa sobre [data-hopecfg], no la captura).
@@ -49,6 +53,12 @@
 
     var MONEY_FORMAT = root.dataset.moneyFormat || "${{amount}}";
     var BASE_IMAGE = root.dataset.baseImage || "";
+
+    // ---- Sabor del mes (base del helado) ----
+    var HAS_FLAVOR = !!root.querySelector("#base-step");
+    var FLAVOR_NAME = root.dataset.flavorName || "";
+    var CLASSIC_NAME = root.dataset.classicName || "Yogurt Griego Clásico";
+    var FLAVOR_IMAGE = root.dataset.flavorImage || "";
 
     var deliveryAvailability = { status: "loading", request: null, dismissed: false };
     var addingToCart = false;
@@ -176,6 +186,7 @@
     // ---- Estado ----
     var state = {
       syrup: null, // id del sirope elegido o null
+      base: "clasico", // "clasico" | "mes" (solo con sabor del mes vigente)
       hasInteracted: false,
     };
 
@@ -230,6 +241,8 @@
         previewLoader = null;
       }
       var url = id && Object.prototype.hasOwnProperty.call(SYRUP_PREVIEWS, id) ? SYRUP_PREVIEWS[id] : "";
+      // El sabor del mes manda sobre la foto del sirope (esas fotos son del cono clásico).
+      if (state.base === "mes" && FLAVOR_IMAGE) url = FLAVOR_IMAGE;
       if (!url) { showPreviewSrc(BASE_IMAGE); return; }
 
       var loader = new Image();
@@ -325,6 +338,12 @@
 
     // ---- Render general ----
     function render() {
+      root.classList.toggle("is-flavor-month", state.base === "mes");
+      $$("[data-group='base'] .hopecfg__choice").forEach(function (b) {
+        var active = state.base === b.dataset.id;
+        b.classList.toggle("is-active", active);
+        b.setAttribute("aria-pressed", String(active));
+      });
       $$("[data-group='syrup'] .hopecfg__choice").forEach(function (b) {
         var active = state.syrup === b.dataset.id;
         b.classList.toggle("is-active", active);
@@ -343,6 +362,15 @@
       optionsRoot.addEventListener("click", function (e) {
         var b = e.target.closest("button[data-id]");
         if (!b || !optionsRoot.contains(b)) return;
+        var groupEl = b.closest("[data-group]");
+        var group = groupEl ? groupEl.dataset.group : "syrup";
+        if (group === "base") {
+          // Selección única: pulsar la base activa no la deselecciona.
+          state.base = b.dataset.id === "mes" ? "mes" : "clasico";
+          state.hasInteracted = true;
+          render();
+          return;
+        }
         state.syrup = state.syrup === b.dataset.id ? null : b.dataset.id;
         state.hasInteracted = true;
         render();
@@ -353,6 +381,7 @@
     if (resetBtn) {
       resetBtn.addEventListener("click", function () {
         state.syrup = null;
+        state.base = "clasico";
         state.hasInteracted = false;
         render();
       });
@@ -430,7 +459,11 @@
 
         // UNA sola línea nativa: el premium ya va bakeado en la variante ("Extras premium" = 1).
         var label = readLabel(state.syrup) + (isPremium(state.syrup) ? " ★" : "");
-        var items = [{ id: variant.id, quantity: 1, properties: { "Sirope": label } }];
+        var properties = { "Sirope": label };
+        if (HAS_FLAVOR) {
+          properties["Base"] = state.base === "mes" ? FLAVOR_NAME + " (Sabor del mes)" : CLASSIC_NAME;
+        }
+        var items = [{ id: variant.id, quantity: 1, properties: properties }];
 
         var routes = (window.Theme && window.Theme.routes) || {};
         var addUrl = routes.cart_add_url || "/cart/add.js";

@@ -5,6 +5,10 @@
   variante "Extras premium" (0 = sirope estándar/sin elegir, 1 = sirope premium) y se agrega
   al carrito como UNA sola línea con la property "Sirope". Los siropes salen de la categoría
   "Sirope" del metafield custom.opciones_customizador del producto.
+  Sabor del mes: si hay un sabor vigente (metaobjeto sabor_del_mes, mismas reglas que
+  custom-product-v2) se muestra el banner y un selector de base (clásica / sabor del mes) antes
+  de los siropes; la elección va en la property "Base" y no cambia precio ni variante. Sin sabor
+  vigente no se renderiza nada de esto.
   Cada item puede traer `imagen_barquillo` (URL de la foto del cono con ese sirope); la
   sección expone el mapa { id: url } en [data-barq-syrup-previews] y el JS cambia la imagen
   principal al elegir un sirope (sin campo, se mantiene la imagen base).
@@ -34,6 +38,66 @@
   assign base_image_val = section.settings.base_image_url
   if base_image_val == blank
     assign base_image_val = 'https://res.cloudinary.com/slealu5f/image/upload/v1793205910/Cono_de_vainilla_en_espiral_ah6axq.png'
+  endif
+
+  # Sabor del mes: el forzado gana; si no, la entrada vigente (inicio <= hoy <= fin) cuyo
+  # `producto` esté vacío o sea este producto. Vinculada al producto gana a sin vincular;
+  # empate -> inicio más reciente. Las vinculadas a otro producto se omiten.
+  assign flavor = nil
+  if section.settings.mostrar_sabor_del_mes
+    if section.settings.sabor_del_mes_forzado != blank
+      assign flavor = section.settings.sabor_del_mes_forzado
+    else
+      assign today = 'now' | date: '%Y-%m-%d'
+      assign flavor_key = ''
+      for entry in metaobjects.sabor_del_mes.values
+        assign entry_product = entry.producto.value
+        if entry_product == blank
+          assign entry_rank = '0'
+        elsif entry_product.id == p_barq.id
+          assign entry_rank = '1'
+        else
+          continue
+        endif
+        assign entry_start = entry.fecha_inicio.value | date: '%Y-%m-%d'
+        assign entry_end = entry.fecha_fin.value | date: '%Y-%m-%d'
+        assign entry_key = entry_rank | append: '|' | append: entry_start
+        if entry_start <= today and entry_end >= today and entry_key > flavor_key
+          assign flavor = entry
+          assign flavor_key = entry_key
+        endif
+      endfor
+    endif
+  endif
+
+  assign flavor_image_url = ''
+  assign classic_thumb_url = ''
+  if flavor
+    # Imagen del cono del sabor como URL completa (cloudinary_vaso gana a imagen_vaso).
+    # Espeja catalogUrl() de hope-customizer-v2.js.
+    assign flavor_cup_asset = flavor.cloudinary_vaso.value | strip
+    if flavor_cup_asset != blank
+      assign flavor_cloud = section.settings.cloudinary_account | default: 'slealu5f'
+      assign flavor_folder = section.settings.cloudinary_folder | default: 'hope/catalog'
+      assign flavor_transform = 'f_auto,q_auto,w_1000'
+      assign flavor_cup_prefix = flavor_cup_asset | slice: 0, 3
+      if flavor_cup_prefix == '2d-' or flavor_cup_asset == 'hope-mixo-fixed-default-v1'
+        assign flavor_transform = 'e_background_removal/' | append: flavor_transform
+      endif
+      assign flavor_image_url = 'https://res.cloudinary.com/' | append: flavor_cloud | append: '/image/upload/' | append: flavor_transform | append: '/' | append: flavor_folder | append: '/' | append: flavor_cup_asset
+    elsif flavor.imagen_vaso.value != blank
+      assign flavor_image_url = flavor.imagen_vaso.value | image_url: width: 1000
+    endif
+
+    assign flavor_thumb = flavor.miniatura.value | default: flavor.imagen_banner.value
+    assign flavor_option_sub = flavor.subtitulo_opcion.value | default: 'Sabor del Mes · Edición Limitada'
+    assign flavor_name = flavor.nombre.value
+    assign classic_name = section.settings.base_clasica_nombre | default: 'Yogurt Griego Clásico'
+    if section.settings.base_clasica_miniatura != blank
+      assign classic_thumb_url = section.settings.base_clasica_miniatura | image_url: width: 160
+    else
+      assign classic_thumb_url = base_image_val
+    endif
   endif
 -%}
 
@@ -76,6 +140,11 @@
   data-cloudinary-account="{{ section.settings.cloudinary_account | default: 'slealu5f' | escape }}"
   data-cloudinary-folder="{{ section.settings.cloudinary_folder | default: 'hope/catalog' | escape }}"
   data-base-image="{{ base_image_val | escape }}"
+  {%- if flavor %}
+    data-flavor-name="{{ flavor_name | escape }}"
+    data-flavor-image="{{ flavor_image_url | escape }}"
+    data-classic-name="{{ classic_name | escape }}"
+  {%- endif %}
 >
   <script type="application/json" data-hopecfg-products>{{ products_json }}</script>
   <script type="application/json" data-barq-syrup-previews>{{ syrup_previews_json }}</script>
@@ -106,6 +175,9 @@
           alt="{{ p_barq.title | default: shop.name | escape }}"
           decoding="async"
         >
+        {%- if flavor -%}
+          <span class="hope2__flavor-badge" data-flavor-badge aria-hidden="true">Sabor<br>del Mes</span>
+        {%- endif -%}
       </div>
     </section>
 
@@ -120,6 +192,36 @@
         {%- render 'hope-delivery-notice' -%}
 
         <div id="hope-options" class="hopecfg__groups">
+          {%- if flavor -%}
+            <div id="base-step" class="hopecfg__group hope2__base-step">
+              {%- render 'hope-flavor-banner', flavor: flavor -%}
+              <fieldset id="base-options" class="hope2__base-group" data-group="base">
+                <legend class="hopecfg__legend">
+                  <span class="hopecfg__legend-title">Elige la base del helado</span>
+                </legend>
+                <div class="hope2__base-grid">
+                  <button class="hopecfg__choice hope2__base-choice is-active" data-id="clasico" type="button" aria-pressed="true">
+                    <span class="hopecfg__check"></span>
+                    <img class="hope2__base-thumb" src="{{ classic_thumb_url | escape }}" alt="" width="48" height="48" loading="lazy">
+                    <span class="hope2__base-text">
+                      <span class="hope2__base-name">{{ classic_name | escape }}</span>
+                      <span class="hope2__base-sub">{{ section.settings.base_clasica_subtitulo | default: 'Nuestro sabor tradicional' | escape }}</span>
+                    </span>
+                  </button>
+                  <button class="hopecfg__choice hope2__base-choice" data-id="mes" type="button" aria-pressed="false">
+                    <span class="hopecfg__check"></span>
+                    {%- if flavor_thumb != blank -%}
+                      {{ flavor_thumb | image_url: width: 160 | image_tag: class: 'hope2__base-thumb', alt: '', width: 48, height: 48, loading: 'lazy' }}
+                    {%- endif -%}
+                    <span class="hope2__base-text">
+                      <span class="hope2__base-name">{{ flavor_name | escape }}</span>
+                      <span class="hope2__base-sub">{{ flavor_option_sub | escape }}</span>
+                    </span>
+                  </button>
+                </div>
+              </fieldset>
+            </div>
+          {%- endif -%}
           <fieldset id="syrup-options" class="hopecfg__group" data-group="syrup">
             <legend class="hopecfg__legend">
               <span class="hopecfg__legend-title">Elige tu sirope</span>
@@ -240,6 +342,11 @@
   /* Un solo grupo: el wizard móvil de v2 oculta los grupos sin data-step, aquí siempre visible. */
   .hopecfg--v2.hopecfg--barquillo .hopecfg__group {
     display: block;
+  }
+
+  /* Sabor del mes: separación entre el bloque de base y el fieldset de siropes. */
+  .hopecfg--barquillo .hope2__base-step {
+    margin-block-end: 1.5rem;
   }
 
   .hopecfg--barquillo .hopecfg__barq-note {
@@ -393,6 +500,45 @@
       "id": "hint_text",
       "label": "Texto del aviso del sirope",
       "default": "La foto cambia para mostrarte tu barquilla con el sirope que elijas"
+    },
+    {
+      "type": "header",
+      "content": "Sabor del mes"
+    },
+    {
+      "type": "checkbox",
+      "id": "mostrar_sabor_del_mes",
+      "label": "Mostrar sabor del mes",
+      "default": true,
+      "info": "Muestra el banner y el selector \"Elige la base del helado\" cuando hay un sabor vigente en Contenido › Metaobjetos › Sabor del mes."
+    },
+    {
+      "type": "metaobject",
+      "id": "sabor_del_mes_forzado",
+      "label": "Forzar sabor (opcional)",
+      "metaobject_type": "sabor_del_mes",
+      "info": "Si eliges uno, se muestra siempre, sin importar sus fechas. Déjalo vacío para usar el sabor vigente por fecha."
+    },
+    {
+      "type": "text",
+      "id": "base_clasica_nombre",
+      "label": "Nombre de la base clásica",
+      "default": "Yogurt Griego Clásico",
+      "visible_if": "{{ section.settings.mostrar_sabor_del_mes }}"
+    },
+    {
+      "type": "text",
+      "id": "base_clasica_subtitulo",
+      "label": "Subtítulo de la base clásica",
+      "default": "Nuestro sabor tradicional",
+      "visible_if": "{{ section.settings.mostrar_sabor_del_mes }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "base_clasica_miniatura",
+      "label": "Miniatura de la base clásica (opcional)",
+      "info": "Si se deja vacía, se usa la imagen base del cono.",
+      "visible_if": "{{ section.settings.mostrar_sabor_del_mes }}"
     },
     {
       "type": "header",
