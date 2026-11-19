@@ -202,7 +202,7 @@ La tarjeta de cada armador SHALL tener el mismo ancho que el panel del navbar en
 - **THEN** la tarjeta del armador usa el margen de página móvil del tema y la página no tiene desplazamiento horizontal
 
 ### Requirement: Vista previa de la Barquilla según el sirope elegido
-El armador de la Barquilla SHALL mostrar como imagen principal la foto del cono con el sirope seleccionado, cuando ese sirope tiene una foto asignada. Sin sirope seleccionado SHALL mostrar la imagen base del cono. La foto es la única señal del sirope elegido en la vista previa: el armador de la Barquilla MUST NOT superponer una burbuja ni una insignia `+1` sobre la imagen. Este comportamiento MUST aplicarse solo al armador de la Barquilla; los armadores de Helado Hope, Mixo Hope y Milkshake MUST NOT cambiar.
+El armador de la Barquilla SHALL mostrar como imagen principal la foto del cono con el sirope seleccionado, cuando ese sirope tiene una foto asignada. Sin sirope seleccionado SHALL mostrar la imagen base del cono. La vista previa MUST NOT superponer una burbuja ni una insignia `+1` sobre la imagen. Este comportamiento MUST aplicarse solo a la Barquilla; los armadores de Helado Hope, Mixo Hope y Milkshake MUST NOT cambiar.
 
 #### Scenario: Elegir un sirope con foto
 - **WHEN** el cliente selecciona "Nutella" en el armador de la Barquilla
@@ -278,7 +278,7 @@ Cada chip de sirope del armador de la Barquilla SHALL mostrar como miniatura la 
 - **THEN** el chip "Sirope de fresa" muestra el mismo ícono de ingrediente que antes del cambio
 
 ### Requirement: Siropes de la Barquilla agrupados y ordenados
-El armador de la Barquilla SHALL presentar los siropes en dos conjuntos con encabezado propio: "Clásicos", con la marca "Incluido", para los siropes estándar, y "Premium ★", con la marca "+$1.00", para los siropes premium. Los clásicos MUST conservar el orden definido en los datos del producto y los premium MUST mostrarse en orden alfabético por nombre. Todos los chips MUST tener el mismo ancho dentro de una grilla, con el nombre completo visible en varias líneas si no cabe en una. El costo MUST indicarse en el encabezado del conjunto y en el desglose del total: los chips MUST NOT repetir la estrella ★, la etiqueta "premium" ni el costo. Un conjunto sin siropes MUST NOT mostrarse. Los armadores de Helado Hope, Mixo Hope y Milkshake MUST NOT cambiar.
+El armador de la Barquilla SHALL presentar los siropes en dos conjuntos con encabezado propio: "Clásicos", marcado "Incluido", para los siropes estándar, y "Premium ★", marcado "+$1.00", para los premium. Los clásicos MUST conservar el orden definido en los datos del producto y los premium MUST mostrarse en orden alfabético por nombre. Un conjunto sin siropes MUST NOT mostrarse.
 
 #### Scenario: Dos conjuntos con su costo
 - **WHEN** el cliente abre el armador de la Barquilla
@@ -288,9 +288,12 @@ El armador de la Barquilla SHALL presentar los siropes en dos conjuntos con enca
 - **WHEN** el cliente recorre el conjunto "Premium ★"
 - **THEN** los siropes aparecen ordenados alfabéticamente, de "Buenissimo blanco" a "Variegato tiramisù italiano"
 
+### Requirement: Chips de sirope de la Barquilla en grilla uniforme
+Los chips de sirope del armador de la Barquilla SHALL tener el mismo ancho dentro de una grilla y mostrar el nombre completo, en varias líneas si no cabe en una. Los chips MUST NOT repetir la estrella ★, la etiqueta "premium" ni el costo, que se indican en el encabezado del conjunto y en el desglose del total. Los armadores de Helado Hope, Mixo Hope y Milkshake MUST NOT cambiar.
+
 #### Scenario: Grilla uniforme en móvil
 - **WHEN** el cliente abre el armador de la Barquilla a 390 px de ancho
-- **THEN** los chips se muestran en dos columnas del mismo ancho, sin desplazamiento horizontal y sin nombres cortados
+- **THEN** los chips se muestran en dos columnas del mismo ancho, sin desplazamiento horizontal, sin nombres cortados y con nombres de tres líneas como máximo
 
 #### Scenario: Chip premium seleccionado
 - **WHEN** el cliente selecciona "Crema Lotus"
