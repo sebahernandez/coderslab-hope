@@ -8,7 +8,9 @@
   Sabor del mes: si hay un sabor vigente (metaobjeto sabor_del_mes, mismas reglas que
   custom-product-v2) se muestra el banner y un selector de base (clásica / sabor del mes) antes
   de los siropes; la elección va en la property "Base" y no cambia precio ni variante. Sin sabor
-  vigente no se renderiza nada de esto.
+  vigente no se renderiza nada de esto. Si la entrada trae el campo JSON `imagenes_barquilla`
+  ({ "base": url, "siropes": { id: url } }), se expone en [data-barq-flavor-previews] para que
+  la imagen principal muestre el sabor con el sirope elegido.
   Cada item puede traer `imagen_barquillo` (URL de la foto del cono con ese sirope); la
   sección expone el mapa { id: url } en [data-barq-syrup-previews] y el JS cambia la imagen
   principal al elegir un sirope (sin campo, se mantiene la imagen base).
@@ -89,7 +91,11 @@
       assign flavor_image_url = flavor.imagen_vaso.value | image_url: width: 1000
     endif
 
-    assign flavor_thumb = flavor.miniatura.value | default: flavor.imagen_banner.value
+    # Fotos del cono con este sabor: { "base": url, "siropes": { idSirope: url } } (campo JSON
+    # opcional `imagenes_barquilla` de la entrada). El JS las usa en la vista previa.
+    assign flavor_previews = flavor.imagenes_barquilla.value
+    assign flavor_thumb = flavor.miniatura.value
+    assign flavor_thumb_url = flavor_previews.base
     assign flavor_option_sub = flavor.subtitulo_opcion.value | default: 'Sabor del Mes · Edición Limitada'
     assign flavor_name = flavor.nombre.value
     assign classic_name = section.settings.base_clasica_nombre | default: 'Yogurt Griego Clásico'
@@ -148,6 +154,9 @@
 >
   <script type="application/json" data-hopecfg-products>{{ products_json }}</script>
   <script type="application/json" data-barq-syrup-previews>{{ syrup_previews_json }}</script>
+  {%- if flavor and flavor_previews != blank %}
+    <script type="application/json" data-barq-flavor-previews>{{ flavor_previews | json }}</script>
+  {%- endif %}
 
   <div class="hopecfg__frame">
     {%- comment -%} ===== Panel de vista previa ===== {%- endcomment -%}
@@ -212,6 +221,10 @@
                     <span class="hopecfg__check"></span>
                     {%- if flavor_thumb != blank -%}
                       {{ flavor_thumb | image_url: width: 160 | image_tag: class: 'hope2__base-thumb', alt: '', width: 48, height: 48, loading: 'lazy' }}
+                    {%- elsif flavor_thumb_url != blank -%}
+                      <img class="hope2__base-thumb" src="{{ flavor_thumb_url | escape }}" alt="" width="48" height="48" loading="lazy">
+                    {%- elsif flavor.imagen_banner.value != blank -%}
+                      {{ flavor.imagen_banner.value | image_url: width: 160 | image_tag: class: 'hope2__base-thumb', alt: '', width: 48, height: 48, loading: 'lazy' }}
                     {%- endif -%}
                     <span class="hope2__base-text">
                       <span class="hope2__base-name">{{ flavor_name | escape }}</span>

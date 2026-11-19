@@ -13,9 +13,9 @@
  *    su foto en [data-barq-syrup-previews]; sin sirope, sin foto o si la foto falla,
  *    se muestra la imagen base del cono.
  *  - Sabor del mes (opcional, solo si existe #base-step): la base se elige entre "clasico"
- *    y "mes". Con "mes" y data-flavor-image, la imagen principal es la del sabor sin
- *    importar el sirope (las fotos por sirope son del cono clásico). La base no cambia
- *    precio ni variante; va en la property "Base" de la línea.
+ *    y "mes". Con "mes", la imagen principal sale de [data-barq-flavor-previews]: la foto
+ *    del sabor con el sirope elegido o, sin ella, el cono del sabor solo. La base no
+ *    cambia precio ni variante; va en la property "Base" de la línea.
  *
  * Es idempotente y solo actúa sobre raíces [data-hopecfg-barq] (así el JS global
  * toppings-customizer.js, que inicializa sobre [data-hopecfg], no la captura).
@@ -59,6 +59,21 @@
     var FLAVOR_NAME = root.dataset.flavorName || "";
     var CLASSIC_NAME = root.dataset.classicName || "Yogurt Griego Clásico";
     var FLAVOR_IMAGE = root.dataset.flavorImage || "";
+
+    // Fotos del cono con el sabor del mes: { base: url, siropes: { idSirope: url } }.
+    // `base` (cono con el sabor, sin sirope) gana a data-flavor-image.
+    var FLAVOR_PREVIEWS = {};
+    var FLAVOR_BASE_IMAGE = FLAVOR_IMAGE;
+    try {
+      var flavorPreviewsEl = root.querySelector("[data-barq-flavor-previews]");
+      var flavorData = flavorPreviewsEl ? JSON.parse(flavorPreviewsEl.textContent || "{}") : null;
+      if (flavorData && typeof flavorData === "object") {
+        if (flavorData.siropes && typeof flavorData.siropes === "object") FLAVOR_PREVIEWS = flavorData.siropes;
+        if (typeof flavorData.base === "string" && flavorData.base) FLAVOR_BASE_IMAGE = flavorData.base;
+      }
+    } catch (e) {
+      FLAVOR_PREVIEWS = {};
+    }
 
     var deliveryAvailability = { status: "loading", request: null, dismissed: false };
     var addingToCart = false;
@@ -241,8 +256,17 @@
         previewLoader = null;
       }
       var url = id && Object.prototype.hasOwnProperty.call(SYRUP_PREVIEWS, id) ? SYRUP_PREVIEWS[id] : "";
-      // El sabor del mes manda sobre la foto del sirope (esas fotos son del cono clásico).
-      if (state.base === "mes" && FLAVOR_IMAGE) url = FLAVOR_IMAGE;
+      var fallback = BASE_IMAGE;
+      // Sabor del mes: foto del sabor con ese sirope; sin ella, el cono del sabor solo.
+      // Nunca se muestra una foto del cono clásico si el sabor tiene imagen propia.
+      if (state.base === "mes") {
+        var flavorUrl = id && Object.prototype.hasOwnProperty.call(FLAVOR_PREVIEWS, id) ? FLAVOR_PREVIEWS[id] : "";
+        if (typeof flavorUrl !== "string") flavorUrl = "";
+        if (flavorUrl || FLAVOR_BASE_IMAGE) {
+          url = flavorUrl || FLAVOR_BASE_IMAGE;
+          fallback = FLAVOR_BASE_IMAGE || BASE_IMAGE;
+        }
+      }
       if (!url) { showPreviewSrc(BASE_IMAGE); return; }
 
       var loader = new Image();
@@ -255,7 +279,7 @@
       loader.onerror = function () {
         if (token !== previewToken) return;
         previewLoader = null;
-        showPreviewSrc(BASE_IMAGE);
+        showPreviewSrc(url === fallback ? BASE_IMAGE : fallback);
       };
       loader.src = url;
     }
