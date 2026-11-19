@@ -145,8 +145,9 @@ vigente, el armador de la Barquilla SHALL comportarse como antes de este cambio.
 Con el sabor del mes seleccionado, la imagen principal de la Barquilla SHALL mostrar la foto del
 cono con ese sabor y el sirope elegido, o la foto del cono con el sabor solo si no hay sirope
 elegido o ese sirope no tiene foto. Con el sabor del mes seleccionado MUST NOT mostrarse una foto
-del cono clásico si la entrada tiene fotos propias. Si una foto no carga, SHALL mostrarse la del
-sabor solo y, en su defecto, la imagen base del cono.
+del cono clásico si la entrada tiene fotos propias. Si una foto no carga, SHALL mostrarse el
+mensaje de imagen no disponible definido en la capacidad `configurador-helado`, en lugar de una
+imagen de respaldo.
 
 #### Scenario: Sabor del mes con sirope
 
@@ -172,6 +173,11 @@ sabor solo y, en su defecto, la imagen base del cono.
 
 - **WHEN** la entrada vigente no tiene fotos del cono y el cliente selecciona "Alegría" y "Nutella"
 - **THEN** la imagen principal es la foto del cono clásico con Nutella
+
+#### Scenario: Foto del sabor que no carga
+
+- **WHEN** el cliente selecciona "Alegría" y "Nutella" y la foto del cono con Alegría y Nutella responde con error
+- **THEN** la vista previa muestra "Imagen no disponible en este momento" y no la foto del cono con Alegría solo ni la del cono clásico
 
 ### Requirement: Fotos de la Barquilla en la entrada del sabor del mes
 
