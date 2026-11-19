@@ -3,8 +3,8 @@
 ## Purpose
 
 Permite al comerciante publicar cada mes un sabor de edición limitada, administrado desde el admin
-de Shopify sin tocar código, y ofrecerlo como base alternativa al yogurt griego clásico en el
-armador de Helado Hope y Mixo Hope.
+de Shopify sin tocar código, y ofrecerlo como base alternativa al yogurt griego clásico en los
+armadores de Helado Hope, Mixo Hope y Barquilla. El armador de Milkshake queda fuera.
 
 ## Requirements
 
@@ -110,3 +110,54 @@ ser los mismos que con la base clásica.
 
 - **WHEN** el cliente añade al carrito con "Yogurt Griego Clásico" mientras hay sabor vigente
 - **THEN** la línea del helado tiene `Base: Yogurt Griego Clásico`
+
+### Requirement: Sabor del mes en el armador de la Barquilla
+
+Cuando hay sabor vigente para la Barquilla, su armador SHALL mostrar el banner del sabor y, antes
+de los siropes, "Elige la base del helado" con las mismas dos opciones que Helado Hope y Mixo Hope.
+La Barquilla no tiene pasos: ambos bloques SHALL estar siempre visibles, sin numeración. Sin sabor
+vigente, el armador de la Barquilla SHALL comportarse como antes de este cambio.
+
+#### Scenario: Banner y base visibles en la Barquilla
+
+- **WHEN** el cliente abre /products/barquillo con una entrada vigente asociada a la Barquilla
+- **THEN** ve el banner completo y, debajo, "Elige la base del helado" con "Yogurt Griego Clásico"
+  seleccionada, seguido de "Elige tu sirope"
+
+#### Scenario: Entradas de otros productos
+
+- **WHEN** las únicas entradas vigentes están asociadas a Helado Hope y a Mixo Hope
+- **THEN** el armador de la Barquilla no muestra banner ni selección de base
+
+#### Scenario: Pedido de Barquilla con el sabor del mes
+
+- **WHEN** el cliente elige "Alegría" y el sirope "Nutella", y añade al carrito
+- **THEN** la línea tiene `Base: Alegría (Sabor del mes)` y `Sirope: Nutella ★`, con el mismo precio
+  y la misma variante que tendría con la base clásica
+
+#### Scenario: Reiniciar la Barquilla
+
+- **WHEN** el cliente pulsa "Reiniciar" con "Alegría" seleccionada
+- **THEN** la base vuelve a "Yogurt Griego Clásico" y desaparece la insignia "Sabor del mes"
+
+### Requirement: Vista previa de la Barquilla con el sabor del mes
+
+Con el sabor del mes seleccionado y una imagen del sabor cargada en la entrada, la imagen principal
+de la Barquilla SHALL ser la del sabor, sin importar el sirope elegido, porque las fotos por sirope
+muestran el cono clásico. Si la entrada no tiene imagen del sabor, la imagen principal SHALL seguir
+la regla de la base clásica. Si la imagen del sabor no carga, SHALL mostrarse la imagen base del cono.
+
+#### Scenario: Sabor del mes con imagen
+
+- **WHEN** el cliente selecciona "Alegría" y luego el sirope "Nutella"
+- **THEN** la imagen principal es la del cono con Alegría y no la foto del cono con Nutella
+
+#### Scenario: Sabor del mes sin imagen
+
+- **WHEN** la entrada vigente no tiene imagen del sabor y el cliente selecciona "Alegría" y "Nutella"
+- **THEN** la imagen principal es la foto del cono con Nutella
+
+#### Scenario: Volver a la base clásica en la Barquilla
+
+- **WHEN** el cliente tiene "Alegría" y "Nutella" seleccionados y vuelve a "Yogurt Griego Clásico"
+- **THEN** la imagen principal pasa a la foto del cono con Nutella

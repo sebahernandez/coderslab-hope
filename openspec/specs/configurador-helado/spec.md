@@ -202,7 +202,7 @@ La tarjeta de cada armador SHALL tener el mismo ancho que el panel del navbar en
 - **THEN** la tarjeta del armador usa el margen de página móvil del tema y la página no tiene desplazamiento horizontal
 
 ### Requirement: Vista previa de la Barquilla según el sirope elegido
-El armador de la Barquilla SHALL mostrar como imagen principal la foto del cono con el sirope seleccionado, cuando ese sirope tiene una foto asignada. Sin sirope seleccionado SHALL mostrar la imagen base del cono. La vista previa MUST NOT superponer una burbuja ni una insignia `+1` sobre la imagen. Este comportamiento MUST aplicarse solo a la Barquilla; los armadores de Helado Hope, Mixo Hope y Milkshake MUST NOT cambiar.
+El armador de la Barquilla SHALL mostrar como imagen principal la foto del cono con el sirope seleccionado, cuando ese sirope tiene una foto asignada. Sin sirope seleccionado SHALL mostrar la imagen base del cono. Con el sabor del mes seleccionado aplica la capacidad `sabor-del-mes`. La vista previa MUST NOT superponer una burbuja ni una insignia `+1` sobre la imagen. Este comportamiento MUST aplicarse solo a la Barquilla; los armadores de Helado Hope, Mixo Hope y Milkshake MUST NOT cambiar.
 
 #### Scenario: Elegir un sirope con foto
 - **WHEN** el cliente selecciona "Nutella" en el armador de la Barquilla
