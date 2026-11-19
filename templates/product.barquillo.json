@@ -6,7 +6,7 @@
         "eyebrow": "Barquillo de vainilla",
         "titulo": "",
         "texto_boton": "AÑADIR AL CARRITO",
-        "hint_text": "Tu sirope aparece sobre el barquillo con un +1",
+        "hint_text": "La foto cambia para mostrarte tu barquilla con el sirope que elijas",
         "cloudinary_account": "slealu5f",
         "cloudinary_folder": "hope/catalog",
         "base_image_url": ""

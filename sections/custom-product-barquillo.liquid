@@ -106,7 +106,6 @@
           alt="{{ p_barq.title | default: shop.name | escape }}"
           decoding="async"
         >
-        <div id="hope-bubbles" class="hope2__bubbles" aria-hidden="true"></div>
       </div>
     </section>
 
@@ -175,7 +174,7 @@
               <path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15l-1.9-4.1L5.5 9l4.6-1.4L12 3z"/>
               <path d="M19 14l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8.8-2z"/>
             </svg>
-            <span>{{ section.settings.hint_text | default: 'Tu sirope aparece sobre el barquillo con un +1' }}</span>
+            <span>{{ section.settings.hint_text | default: 'La foto cambia para mostrarte tu barquilla con el sirope que elijas' }}</span>
           </div>
         </div>
       </div>
@@ -377,7 +376,7 @@
       "type": "text",
       "id": "hint_text",
       "label": "Texto del aviso del sirope",
-      "default": "Tu sirope aparece sobre el barquillo con un +1"
+      "default": "La foto cambia para mostrarte tu barquilla con el sirope que elijas"
     },
     {
       "type": "header",

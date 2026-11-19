@@ -1,7 +1,7 @@
 /**
  * barquillo-customizer.js — Configurador del Barquillo ("Crea tu Barquillo")
  *
- * Clon mínimo de hope-customizer-v2.js (misma vista previa con burbuja, aviso de
+ * Clon mínimo de hope-customizer-v2.js (misma vista previa, sin burbuja "+1"; aviso de
  * disponibilidad y pipeline de carrito), sin tamaño ni toppings.
  *
  * Reglas de negocio:
@@ -20,8 +20,6 @@
 (function () {
   "use strict";
 
-  // Posición (en % del escenario) donde cae la burbuja del sirope sobre el cono.
-  var BUBBLE_ANCHOR = { top: 32, left: 50 };
   var PREMIUM_EXTRA_CENTS = 100; // diferencia visible del sirope premium (+$1.00)
 
   function initConfigurator(root) {
@@ -213,26 +211,6 @@
       });
     }
 
-    // ---- Burbuja flotante del sirope sobre el cono ----
-    function renderBubbles() {
-      var layer = $("#hope-bubbles");
-      if (!layer) return;
-      if (!state.syrup) { layer.innerHTML = ""; return; }
-      var label = escapeHtml(readLabel(state.syrup));
-      var emoji = readEmoji(state.syrup);
-      var img = readImage(state.syrup);
-      var inner = img
-        ? '<img class="hope2__bubble-img" src="' + escapeHtml(img) + '" alt="' + label + '" loading="lazy">'
-        : '<span class="hope2__bubble-emoji">' + escapeHtml(emoji) + "</span>";
-      layer.innerHTML =
-        '<span class="hope2__bubble is-last"' +
-        ' style="top:' + BUBBLE_ANCHOR.top + "%;left:" + BUBBLE_ANCHOR.left + '%"' +
-        ' title="' + label + '">' +
-        inner +
-        '<span class="hope2__bubble-badge">+1</span>' +
-        "</span>";
-    }
-
     // ---- Imagen principal según el sirope ----
     // Precarga la foto y recién al cargar la asigna, para no dejar la vista previa vacía.
     // previewToken descarta cargas de selecciones anteriores (cambio rápido de sirope).
@@ -355,7 +333,6 @@
       });
       renderChipPrices();
       setPreview(state.syrup);
-      renderBubbles();
       renderStack();
       updatePrice();
     }
