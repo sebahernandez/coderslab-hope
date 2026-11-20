@@ -355,6 +355,9 @@
   }
 
   .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu {
+    /* Each link row already carries its own block padding; drop the mega-menu bottom gutter */
+    --submenu-padding-block-end: 0px;
+
     width: max-content;
     max-width: min(90vw, 360px);
     left: 0;
