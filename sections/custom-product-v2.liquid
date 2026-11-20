@@ -326,7 +326,7 @@
               <span id="topping-title">{{ 2 | plus: step_offset }} · Elige tus toppings</span>
               <span class="hopecfg__legend-count" data-topping-count>0/{{ free_toppings }}</span>
             </legend>
-            {%- render 'hope-pricing-guide', included_count: free_toppings, kind: 'topping', extra_cents: extra_topping_cents, premium_cents: premium_cents -%}
+            <p class="hope2__set-note">{{ 'hope_customizer.sets.premium_note' | t }}</p>
             <div id="topping-warning" class="hope2__cost-warning" role="note" hidden>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" />
@@ -335,16 +335,48 @@
               </svg>
               <span>Los primeros {{ free_toppings }} toppings básicos están incluidos; cada básico adicional (topping o sirope) cuesta {{ extra_topping_cents | money }}. Los toppings y siropes premium (★) cuestan {{ premium_cents | money }} cada uno y no cuentan como incluidos.</span>
             </div>
-            <div class="hopecfg__chips topping-grid">
-              {%- if meta_topping_count > 0 -%}
-                {%- for c in cfg_cats -%}
-                  {%- unless c.nombre == 'Sirope' -%}
-                    {%- for item in c.items -%}
-                      {%- render 'hope-extra-chip', item: item, tipo: 'topping' -%}
-                    {%- endfor -%}
+            {%- liquid
+              assign extra_price = extra_topping_cents | money | strip_html
+              assign premium_price = premium_cents | money | strip_html
+              assign set_classics_title = 'hope_customizer.sets.classics' | t
+              assign set_premium_title = 'hope_customizer.sets.premium' | t
+              assign each_extra_text = 'hope_customizer.sets.extra_each' | t: price: extra_price
+              assign set_topping_standard_id = 'hope-set-topping-standard-' | append: section.id
+              assign set_topping_premium_id = 'hope-set-topping-premium-' | append: section.id
+              assign topping_included = false
+              if free_toppings > 0
+                assign topping_included = true
+              endif
+              assign premium_cost_text = 'hope_customizer.sets.each' | t: price: premium_price
+            -%}
+            {%- comment -%}
+              Dos conjuntos: clásicos (orden de los datos) y premium (alfabético).
+              Sin metafield, los chips de respaldo van en un único conjunto "Clásicos".
+            {%- endcomment -%}
+            {%- if meta_topping_count > 0 -%}
+              {%- assign topping_items = '' | split: ',' -%}
+              {%- for c in cfg_cats -%}
+                {%- if c.nombre != 'Sirope' and c.items.size > 0 -%}
+                  {%- assign topping_items = topping_items | concat: c.items -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- assign topping_items_sorted = topping_items | sort_natural: 'nombre' -%}
+              {%- capture topping_chips_standard -%}
+                {%- for item in topping_items -%}
+                  {%- unless item.premium -%}
+                    {%- render 'hope-extra-chip', item: item, tipo: 'topping' -%}
                   {%- endunless -%}
                 {%- endfor -%}
-              {%- else -%}
+              {%- endcapture -%}
+              {%- capture topping_chips_premium -%}
+                {%- for item in topping_items_sorted -%}
+                  {%- if item.premium -%}
+                    {%- render 'hope-extra-chip', item: item, tipo: 'topping' -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endcapture -%}
+            {%- else -%}
+              {%- capture topping_chips_standard -%}
                 {%- assign toppings = 'strawberry|🍓|Fresa,pineapple|🍍|Piña,banana|🍌|Cambur,mango|🥭|Mango,peanut|🥜|Maní,oreo|🍪|Oreo negra' | split: ',' -%}
                 {%- for t in toppings -%}
                   {%- assign parts = t | split: '|' -%}
@@ -353,19 +385,50 @@
                     <span class="topping-name">{{ parts[2] }}</span>
                   </button>
                 {%- endfor -%}
-              {%- endif -%}
-            </div>
+              {%- endcapture -%}
+              {%- assign topping_chips_premium = '' -%}
+            {%- endif -%}
+            {%- if free_toppings > 0 -%}
+              {%- assign topping_standard_cost = 'hope_customizer.sets.included_count' | t: count: free_toppings | append: ' · ' | append: each_extra_text -%}
+            {%- else -%}
+              {%- assign topping_standard_cost = 'hope_customizer.sets.each' | t: price: extra_price -%}
+            {%- endif -%}
+            {%- render 'hope-option-set', id: set_topping_standard_id, title: set_classics_title, cost: topping_standard_cost, included: topping_included, chips: topping_chips_standard -%}
+            {%- render 'hope-option-set', id: set_topping_premium_id, title: set_premium_title, premium: true, cost: premium_cost_text, chips: topping_chips_premium -%}
           </fieldset>
 
           <fieldset id="syrup-options" class="hopecfg__group" data-group="syrup">
             <legend class="hopecfg__legend"><span class="hopecfg__legend-title">{{ 3 | plus: step_offset }} · Elige tu sirope</span></legend>
-            {%- render 'hope-pricing-guide', included_count: free_syrups, kind: 'syrup', extra_cents: extra_topping_cents, premium_cents: premium_cents -%}
-            <div class="hopecfg__chips">
-              {%- if cat_sirope.items.size > 0 -%}
+            <p class="hope2__set-note">{{ 'hope_customizer.sets.premium_note' | t }}</p>
+            {%- liquid
+              assign set_syrup_standard_id = 'hope-set-syrup-standard-' | append: section.id
+              assign set_syrup_premium_id = 'hope-set-syrup-premium-' | append: section.id
+              assign syrup_included = false
+              if free_syrups > 0
+                assign syrup_included = true
+                assign syrup_standard_cost = 'hope_customizer.sets.included_count' | t: count: free_syrups | append: ' · ' | append: each_extra_text
+              else
+                assign syrup_standard_cost = 'hope_customizer.sets.each' | t: price: extra_price
+              endif
+            -%}
+            {%- if cat_sirope.items.size > 0 -%}
+              {%- assign syrups_sorted = cat_sirope.items | sort_natural: 'nombre' -%}
+              {%- capture syrup_chips_standard -%}
                 {%- for item in cat_sirope.items -%}
-                  {%- render 'hope-extra-chip', item: item, tipo: 'syrup' -%}
+                  {%- unless item.premium -%}
+                    {%- render 'hope-extra-chip', item: item, tipo: 'syrup' -%}
+                  {%- endunless -%}
                 {%- endfor -%}
-              {%- else -%}
+              {%- endcapture -%}
+              {%- capture syrup_chips_premium -%}
+                {%- for item in syrups_sorted -%}
+                  {%- if item.premium -%}
+                    {%- render 'hope-extra-chip', item: item, tipo: 'syrup' -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endcapture -%}
+            {%- else -%}
+              {%- capture syrup_chips_standard -%}
                 {%- assign syrups = 'chocolate|Chocolate|🍫,berries|Frutos rojos|🍓,passion|Maracuyá|🟡,salted-caramel|Caramelo salado|🍯,white-chocolate|Chocolate blanco|🤍' | split: ',' -%}
                 {%- for s in syrups -%}
                   {%- assign parts = s | split: '|' -%}
@@ -380,8 +443,11 @@
                     {{ parts[1] }}
                   </button>
                 {%- endfor -%}
-              {%- endif -%}
-            </div>
+              {%- endcapture -%}
+              {%- assign syrup_chips_premium = '' -%}
+            {%- endif -%}
+            {%- render 'hope-option-set', id: set_syrup_standard_id, title: set_classics_title, cost: syrup_standard_cost, included: syrup_included, chips: syrup_chips_standard -%}
+            {%- render 'hope-option-set', id: set_syrup_premium_id, title: set_premium_title, premium: true, cost: premium_cost_text, chips: syrup_chips_premium -%}
           </fieldset>
 
           <div class="hope2__hint">

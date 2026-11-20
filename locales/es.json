@@ -9,13 +9,13 @@
  */
 {
   "hope_customizer": {
-    "pricing": {
-      "included": "Incluidos",
-      "toppings": { "one": "{{ count }} topping básico", "other": "{{ count }} toppings básicos" },
-      "syrups": { "one": "{{ count }} sirope básico", "other": "{{ count }} siropes básicos" },
-      "basic_extra": "Básico adicional",
-      "premium": "Premium ★",
-      "per_item": "+{{ price }} cada uno",
+    "sets": {
+      "classics": "Clásicos",
+      "premium": "Premium",
+      "included": "Incluido",
+      "included_count": { "one": "{{ count }} incluido", "other": "{{ count }} incluidos" },
+      "extra_each": "+{{ price }} c/u adicional",
+      "each": "+{{ price }} c/u",
       "premium_note": "Los premium se cobran aparte y no cuentan como incluidos."
     }
   },

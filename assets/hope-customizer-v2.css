@@ -261,44 +261,117 @@
   color: #e0a020;
 }
 
-/* Desglose de extras bajo el precio total */
-.hopecfg--v2 .hope2__pricing-guide {
-  margin-block-end: 0.75rem;
-  padding: 0.65rem 0.8rem;
-  border: 1px solid #eadde3;
-  border-radius: 12px;
-  background: #fff8fb;
+/* ===== Conjunto de opciones (snippet hope-option-set): encabezado + grilla uniforme ===== */
+.hopecfg--v2 .hope2__set + .hope2__set {
+  margin-block-start: 1.25rem;
+  padding-block-start: 1rem;
+  border-block-start: 1px dashed #f1d5e0;
+}
+.hopecfg--v2 .hope2__set-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+  margin: 0 0 0.6rem;
+  font-size: 0.9375rem;
+  font-weight: 800;
   color: var(--hopecfg-ink, #392f36);
-  font-size: 0.875rem;
-  line-height: 1.5;
 }
-.hopecfg--v2 .hope2__pricing-rows {
-  display: grid;
-  gap: 0.4rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.hopecfg--v2 .hope2__pricing-rows li {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
-  gap: 0.65rem;
-}
-.hopecfg--v2 .hope2__pricing-rows strong {
-  color: #873552;
-  text-align: end;
-  font-weight: 700;
-}
-.hopecfg--v2 .hope2__pricing-rows .hope2__pricing-included {
-  color: #286247;
-}
-.hopecfg--v2 .hope2__pricing-note {
-  margin: 0.55rem 0 0;
-  padding-block-start: 0.55rem;
-  border-block-start: 1px solid #eadde3;
-  color: #765e69;
+.hopecfg--v2 .hope2__set-cost {
   font-size: 0.8125rem;
-  line-height: 1.5;
+  font-weight: 800;
+  color: var(--hopecfg-hope, #ed5d96);
+}
+.hopecfg--v2 .hope2__set-cost--included {
+  color: #2f9e6f;
+}
+.hopecfg--v2 .hope2__set-note {
+  margin: 0 0 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #b56487;
+}
+.hopecfg--v2 .hope2__set-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+  gap: 0.5rem;
+}
+
+/* Los grupos con conjuntos no recortan ni hacen scroll: gana a `overflow: hidden`
+   de toppings-customizer.css (móvil) y deja que la página sea la que se desplace. */
+.hopecfg--v2 .hopecfg__config[data-view] :is(#topping-options, #syrup-options) {
+  overflow: visible;
+}
+
+/* Especificidad alta a propósito: supera las reglas móviles globales de
+   `#syrup-options .hopecfg__choice` (toppings-customizer.css) sin tocarlas. */
+.hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  width: 100%;
+  min-width: 0;
+  min-height: 3.5rem;
+  padding-block: 0.4rem;
+  padding-inline: 0.4rem 0.7rem;
+  border-radius: 12px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+.hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice .topping-name {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+.hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice .topping-icon {
+  flex-shrink: 0;
+  line-height: 0;
+}
+.hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice .topping-img {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 9px;
+  object-fit: cover;
+}
+/* El costo del chip seleccionado queda al final de la fila y no se encoge. */
+.hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice .hopecfg__chip-price {
+  flex-shrink: 0;
+  margin-inline-start: auto;
+}
+
+/* El costo ya está en el encabezado del conjunto. */
+.hopecfg--v2 .hope2__set-grid .hopecfg__star,
+.hopecfg--v2 .hope2__set-grid .hopecfg__premium-tag {
+  display: none;
+}
+
+/* Móvil: dos columnas de ~156px. Tipografía y miniatura un punto más chicas para
+   que los nombres largos entren en 3 líneas como máximo. */
+@media (max-width: 749px) {
+  .hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice {
+    gap: 0.5rem;
+    padding-block: 0.4rem;
+    padding-inline: 0.4rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1.3;
+  }
+  .hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice .topping-img {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hopecfg--v2 .hope2__set-grid {
+    grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+    gap: 0.6rem;
+  }
 }
 
 .hopecfg--v2 .hopecfg__extras-breakdown {
@@ -745,114 +818,6 @@
   .hopecfg--v2 .hopecfg__chip-price {
     font-size: 0.8125rem;
     line-height: 1.5;
-  }
-
-  /* Opciones de al menos 48px, separadas 10px; la lista permite scroll. */
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] #topping-options,
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options {
-    position: relative;
-  }
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid,
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options > .hopecfg__chips {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    width: 100%;
-    gap: 0.625rem;
-    max-height: 15rem; /* ~4 opciones de 48px con separación */
-    overflow-x: visible;
-    overflow-y: auto;
-    scroll-snap-type: none;
-    touch-action: pan-y;
-    scrollbar-width: thin;
-    scrollbar-color: var(--hopecfg-hope) transparent;
-    padding-right: 0.2rem;
-  }
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid::-webkit-scrollbar,
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options > .hopecfg__chips::-webkit-scrollbar {
-    display: block;
-    width: 5px;
-  }
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid::-webkit-scrollbar-thumb,
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options > .hopecfg__chips::-webkit-scrollbar-thumb {
-    background: var(--hopecfg-hope);
-    border-radius: 999px;
-  }
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid .hopecfg__choice,
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options .hopecfg__choice {
-    width: 100%;
-    min-width: 0;
-    flex-shrink: 0;
-    justify-content: flex-start;
-    scroll-snap-align: none;
-    min-height: max(3rem, var(--minimum-touch-target, 44px));
-    gap: 0.65rem;
-    padding: 0.65rem 0.8rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-    line-height: 1.4;
-    text-align: start;
-    border-width: 1px;
-    border-color: #f1e2e8;
-    border-radius: 9px;
-  }
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid .hopecfg__choice .topping-img,
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options .hopecfg__choice .topping-img {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] .topping-grid .hopecfg__choice .topping-icon,
-  .hopecfg--v2 .hopecfg__config[data-view="2d"] #syrup-options .hopecfg__choice .topping-icon {
-    font-size: 1.25rem;
-  }
-
-  /* Indicador "desliza para ver más": degradado + chevron al fondo.
-     Se activa por JS (.hope2__scrollmore) y se oculta al llegar al final (.is-scroll-bottom). */
-  .hopecfg--v2 #topping-options::after,
-  .hopecfg--v2 #syrup-options::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0.2rem;
-    bottom: 0;
-    height: 2.4rem;
-    background: linear-gradient(to top, rgba(255, 243, 248, 0.98), rgba(255, 243, 248, 0));
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.18s ease;
-  }
-  .hopecfg--v2 #topping-options::before,
-  .hopecfg--v2 #syrup-options::before {
-    content: "Desliza para ver más ▾";
-    position: absolute;
-    left: 50%;
-    bottom: 0.35rem;
-    transform: translateX(-50%);
-    z-index: 2;
-    font-size: 0.6875rem;
-    font-weight: 800;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: #873552;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 0.12rem 0.5rem;
-    border-radius: 999px;
-    box-shadow: 0 2px 8px rgba(233, 84, 148, 0.25);
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.18s ease;
-  }
-  .hopecfg--v2 #topping-options.hope2__scrollmore::after,
-  .hopecfg--v2 #topping-options.hope2__scrollmore::before,
-  .hopecfg--v2 #syrup-options.hope2__scrollmore::after,
-  .hopecfg--v2 #syrup-options.hope2__scrollmore::before {
-    opacity: 1;
-  }
-  .hopecfg--v2 #topping-options.hope2__scrollmore.is-scroll-bottom::after,
-  .hopecfg--v2 #topping-options.hope2__scrollmore.is-scroll-bottom::before,
-  .hopecfg--v2 #syrup-options.hope2__scrollmore.is-scroll-bottom::after,
-  .hopecfg--v2 #syrup-options.hope2__scrollmore.is-scroll-bottom::before {
-    opacity: 0;
   }
 }
 

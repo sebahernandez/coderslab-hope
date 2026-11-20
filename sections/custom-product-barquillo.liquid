@@ -241,13 +241,18 @@
               <span class="hopecfg__legend-title">Elige tu sirope</span>
               <span class="hopecfg__legend-count" data-syrup-count>0/1</span>
             </legend>
-            <p class="hopecfg__barq-note">Tu barquilla lleva 1 sirope. Los premium suman $1.00.</p>
+            <p class="hope2__set-note">Tu barquilla lleva 1 sirope. Los premium suman $1.00.</p>
 
             {%- comment -%}
               Dos conjuntos: clásicos (orden del metafield) y premium (alfabético, para que
               las familias "Crema…", "Variegato…" queden juntas). El costo va en el
               encabezado del conjunto, no repetido en cada chip.
             {%- endcomment -%}
+            {%- assign set_standard_id = 'hope-set-syrup-standard-' | append: section.id -%}
+            {%- assign set_premium_id = 'hope-set-syrup-premium-' | append: section.id -%}
+            {%- assign set_classics_title = 'hope_customizer.sets.classics' | t -%}
+            {%- assign set_premium_title = 'hope_customizer.sets.premium' | t -%}
+            {%- assign set_included_text = 'hope_customizer.sets.included' | t -%}
             {%- assign syrups_sorted = cat_sirope.items | sort_natural: 'nombre' -%}
             {%- capture syrup_chips_standard -%}
               {%- for item in cat_sirope.items -%}
@@ -264,25 +269,8 @@
               {%- endfor -%}
             {%- endcapture -%}
 
-            {%- if syrup_chips_standard != blank -%}
-              <div class="hopecfg__barq-set" role="group" aria-labelledby="barq-set-standard-{{ section.id }}">
-                <p class="hopecfg__barq-subhead" id="barq-set-standard-{{ section.id }}">
-                  <span>Clásicos</span>
-                  <span class="hopecfg__barq-cost hopecfg__barq-cost--included">Incluido</span>
-                </p>
-                <div class="hopecfg__barq-grid">{{ syrup_chips_standard }}</div>
-              </div>
-            {%- endif -%}
-
-            {%- if syrup_chips_premium != blank -%}
-              <div class="hopecfg__barq-set" role="group" aria-labelledby="barq-set-premium-{{ section.id }}">
-                <p class="hopecfg__barq-subhead" id="barq-set-premium-{{ section.id }}">
-                  <span>Premium <span class="hopecfg__star" aria-hidden="true">★</span></span>
-                  <span class="hopecfg__barq-cost">+$1.00</span>
-                </p>
-                <div class="hopecfg__barq-grid">{{ syrup_chips_premium }}</div>
-              </div>
-            {%- endif -%}
+            {%- render 'hope-option-set', id: set_standard_id, title: set_classics_title, cost: set_included_text, included: true, chips: syrup_chips_standard -%}
+            {%- render 'hope-option-set', id: set_premium_id, title: set_premium_title, premium: true, cost: '+$1.00', chips: syrup_chips_premium -%}
           </fieldset>
 
           <div class="hope2__hint">
@@ -363,112 +351,10 @@
     margin-block-end: 1.5rem;
   }
 
-  .hopecfg--barquillo .hopecfg__barq-note {
-    margin: 0 0 0.75rem;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    color: #b56487;
-  }
-
-  /* ---- Siropes: dos conjuntos (clásicos / premium) en grilla uniforme ---- */
-  .hopecfg--barquillo .hopecfg__barq-set + .hopecfg__barq-set {
-    margin-block-start: 1.25rem;
-    padding-block-start: 1rem;
-    border-block-start: 1px dashed #f1d5e0;
-  }
-
-  .hopecfg--barquillo .hopecfg__barq-subhead {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 0.75rem;
-    margin: 0 0 0.6rem;
-    font-size: 0.9375rem;
-    font-weight: 800;
-    color: var(--hopecfg-ink, #392f36);
-  }
-
-  .hopecfg--barquillo .hopecfg__barq-cost {
-    font-size: 0.8125rem;
-    font-weight: 800;
-    color: var(--hopecfg-hope, #ed5d96);
-  }
-
-  .hopecfg--barquillo .hopecfg__barq-cost--included {
-    color: #2f9e6f;
-  }
-
-  .hopecfg--barquillo .hopecfg__barq-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
-    gap: 0.5rem;
-  }
-
-  /* Especificidad alta a propósito: supera las reglas móviles de v2 para
-     `#syrup-options .hopecfg__choice` (lista vertical) sin tocar el CSS compartido. */
-  .hopecfg--v2.hopecfg--barquillo .hopecfg__config #syrup-options .hopecfg__barq-grid .hopecfg__choice {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.6rem;
-    width: 100%;
-    min-width: 0;
-    min-height: 3.5rem;
-    padding: 0.4rem 0.7rem 0.4rem 0.4rem;
-    border-radius: 12px;
-    font-size: 0.8125rem;
-    font-weight: 700;
-    line-height: 1.25;
-    text-align: start;
-    white-space: normal;
-    overflow-wrap: break-word;
-  }
-
-  .hopecfg--v2.hopecfg--barquillo .hopecfg__config #syrup-options .hopecfg__barq-grid .hopecfg__choice .topping-icon {
-    flex-shrink: 0;
-    line-height: 0;
-  }
-
-  .hopecfg--v2.hopecfg--barquillo .hopecfg__config #syrup-options .hopecfg__barq-grid .hopecfg__choice .topping-img {
-    width: 2.6rem;
-    height: 2.6rem;
-    border-radius: 9px;
-    object-fit: cover;
-  }
-
-  /* El costo ya está en el encabezado del conjunto. */
-  .hopecfg--barquillo .hopecfg__barq-grid .hopecfg__star,
-  .hopecfg--barquillo .hopecfg__barq-grid .hopecfg__premium-tag {
-    display: none;
-  }
-
   /* El JS agrega "Incluido" / "+$1.00" al chip elegido; en la grilla angosta le
      quita ancho al nombre y repite el encabezado y el desglose del total. */
-  .hopecfg--barquillo .hopecfg__barq-grid .hopecfg__chip-price {
+  .hopecfg--barquillo .hope2__set-grid .hopecfg__chip-price {
     display: none;
-  }
-
-  /* Móvil: dos columnas de ~156px. Tipografía y miniatura un punto más chicas para
-     que los nombres largos entren en 3 líneas como máximo. */
-  @media (max-width: 749px) {
-    .hopecfg--v2.hopecfg--barquillo .hopecfg__config #syrup-options .hopecfg__barq-grid .hopecfg__choice {
-      gap: 0.5rem;
-      padding: 0.4rem 0.5rem 0.4rem 0.4rem;
-      font-size: 0.75rem;
-      line-height: 1.3;
-    }
-
-    .hopecfg--v2.hopecfg--barquillo .hopecfg__config #syrup-options .hopecfg__barq-grid .hopecfg__choice .topping-img {
-      width: 2.25rem;
-      height: 2.25rem;
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .hopecfg--barquillo .hopecfg__barq-grid {
-      grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
-      gap: 0.6rem;
-    }
   }
 {% endstylesheet %}
 

@@ -1,0 +1,27 @@
+{% doc %}
+  Renders one titled set of option chips (heading with cost text + uniform grid)
+  for the Hope configurators. Renders nothing when `chips` is blank.
+  @param {string} id - Unique id for the heading (include the section id).
+  @param {string} title - Set title, e.g. "Clásicos".
+  @param {boolean} [premium] - Adds the decorative star after the title.
+  @param {string} [cost] - Cost text shown at the end of the heading.
+  @param {boolean} [included] - Uses the green "included" style for the cost.
+  @param {string} chips - Captured HTML of the chips (hope-extra-chip output).
+  @example
+  {% render 'hope-option-set', id: 'hope-set-topping-standard-abc', title: 'Clásicos', cost: '2 incluidos', included: true, chips: chips_html %}
+{% enddoc %}
+
+{%- if chips != blank -%}
+  <div class="hope2__set" role="group" aria-labelledby="{{ id }}">
+    <p class="hope2__set-head" id="{{ id }}">
+      <span>
+        {{- title | escape -}}
+        {%- if premium %} <span class="hopecfg__star" aria-hidden="true">★</span>{% endif -%}
+      </span>
+      {%- if cost != blank -%}
+        <span class="hope2__set-cost{% if included %} hope2__set-cost--included{% endif %}">{{ cost | escape }}</span>
+      {%- endif -%}
+    </p>
+    <div class="hope2__set-grid">{{ chips }}</div>
+  </div>
+{%- endif -%}

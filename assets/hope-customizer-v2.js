@@ -753,27 +753,6 @@
       });
     }
 
-    // ---- Indicador de scroll (móvil): mostrar ~4 opciones y avisar "desliza para ver más" ----
-    function setupScrollIndicators() {
-      var groups = [
-        { box: $("#topping-options"), scroller: root.querySelector("#topping-options .topping-grid") },
-        { box: $("#syrup-options"), scroller: root.querySelector("#syrup-options > .hopecfg__chips") }
-      ];
-      groups.forEach(function (g) {
-        if (!g.box || !g.scroller) return;
-        function update() {
-          var sc = g.scroller;
-          var scrollable = sc.scrollHeight - sc.clientHeight > 4;
-          g.box.classList.toggle("hope2__scrollmore", scrollable);
-          var atBottom = sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 4;
-          g.box.classList.toggle("is-scroll-bottom", atBottom);
-        }
-        g.scroller.addEventListener("scroll", update, { passive: true });
-        window.addEventListener("resize", update);
-        update();
-      });
-    }
-
     // ---- Arranque ----
     var cupEl = $("#product-preview");
     if (cupEl) {
@@ -789,7 +768,6 @@
       }
     }
     render();
-    setupScrollIndicators();
     setStep(0);
     syncDeliveryAvailability();
 
