@@ -195,7 +195,14 @@
                     assign combo_src = combo_asset
                     if combo_asset != blank
                       assign combo_asset_scheme = combo_asset | slice: 0, 8 | downcase
-                      unless combo_asset_scheme == 'https://'
+                      if combo_asset_scheme == 'https://'
+                        # Shopify CDN resizes on demand; the thumb renders at 54-62px, so 160px covers 2-3x screens.
+                        if combo_asset contains 'cdn.shopify.com' and combo_asset contains '?'
+                          assign combo_src = combo_asset | append: '&width=160'
+                        elsif combo_asset contains 'cdn.shopify.com'
+                          assign combo_src = combo_asset | append: '?width=160'
+                        endif
+                      else
                         assign combo_transform = 'f_auto,q_auto,w_200'
                         assign combo_asset_prefix = combo_asset | slice: 0, 3
                         if combo_asset_prefix == '2d-' or combo_asset == 'hope-mixo-fixed-default-v1' or combo_asset == 'hope-milkshake-vanilla-cutout-v1' or combo_asset == 'hope-milkshake-chocolate-cutout-v1' or combo_asset == 'hope-milkshake-chocolate-cutout-v2'
@@ -204,7 +211,7 @@
                         assign cloud_account = section.settings.cloudinary_account | default: 'slealu5f'
                         assign cloud_folder = section.settings.cloudinary_folder | default: 'hope/catalog'
                         assign combo_src = 'https://res.cloudinary.com/' | append: cloud_account | append: '/image/upload/' | append: combo_transform | append: '/' | append: cloud_folder | append: '/' | append: combo_asset
-                      endunless
+                      endif
                     endif
                   -%}
                   <button
