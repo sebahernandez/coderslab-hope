@@ -588,6 +588,38 @@
     white-space: nowrap;
   }
 
+  /* === Ajuste Hope: hover/focus de las filas del desplegable === */
+  /* The row bleeds to the panel edges so the highlight spans the full width; dividers stay inset */
+  .menu-list__list-item:where(:not([slot='overflow'])) > .menu-list__submenu .mega-menu__link:has(.mega-menu__link-image) {
+    margin-inline: calc(var(--padding-md) * -1);
+    padding-inline: var(--padding-md);
+    transition: color var(--animation-speed) var(--animation-easing),
+      background-color var(--animation-speed) var(--animation-easing);
+
+    .mega-menu__link-image {
+      transition: transform var(--animation-speed-slow) var(--ease-out-cubic);
+    }
+
+    &:hover,
+    &:focus-visible {
+      background-color: rgb(var(--color-foreground-rgb) / var(--opacity-5));
+
+      .mega-menu__link-image {
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-list__submenu .mega-menu__link-image {
+      transition: none;
+    }
+
+    .menu-list__submenu .mega-menu__link:is(:hover, :focus-visible) .mega-menu__link-image {
+      transform: none;
+    }
+  }
+
   .mega-menu__grid {
     display: grid;
     grid-template-columns: repeat(var(--menu-columns-tablet), minmax(0, 1fr));
