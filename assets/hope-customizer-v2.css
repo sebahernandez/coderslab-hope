@@ -273,7 +273,7 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 0.25rem 0.75rem;
-  margin: 0 0 0.6rem;
+  margin: 0 0 0.75rem;
   font-size: 0.9375rem;
   font-weight: 800;
   color: var(--hopecfg-ink, #392f36);
@@ -295,7 +295,8 @@
 .hopecfg--v2 .hope2__set-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
-  gap: 0.5rem;
+  /* Filas más separadas que columnas: la pill de costo sobresale media altura. */
+  gap: 0.75rem 0.5rem;
 }
 
 /* Los grupos con conjuntos no recortan ni hacen scroll: gana a `overflow: hidden`
@@ -339,10 +340,40 @@
   border-radius: 9px;
   object-fit: cover;
 }
-/* El costo del chip seleccionado queda al final de la fila y no se encoge. */
+/* El costo del chip seleccionado va en una pill montada sobre el borde superior de
+   la caja: fuera del flujo, no le quita ancho al nombre ni cambia el alto del chip. */
 .hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice .hopecfg__chip-price {
-  flex-shrink: 0;
-  margin-inline-start: auto;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0.6rem;
+  /* Sube algo más de la mitad: no llega al nombre cuando ocupa tres líneas. */
+  transform: translateY(-60%);
+  margin: 0;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  opacity: 1;
+  pointer-events: none;
+}
+/* El JS deja el span vacío al deseleccionar: sin texto no hay pill. */
+.hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice .hopecfg__chip-price:empty {
+  display: none;
+}
+/* Fondo opaco para tapar el borde del chip; texto oscuro por contraste (>= 4.5:1). */
+.hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice .hopecfg__chip-price.is-included {
+  border-color: #a9dcc4;
+  background: #e6f6ee;
+  color: #1a6a48;
+}
+.hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice .hopecfg__chip-price.is-extra-cost {
+  border-color: #f7a9c9;
+  background: #ffeaf3;
+  color: #a03c68;
 }
 
 /* El costo ya está en el encabezado del conjunto. */
@@ -370,7 +401,7 @@
 @media (min-width: 1024px) {
   .hopecfg--v2 .hope2__set-grid {
     grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
-    gap: 0.6rem;
+    gap: 0.75rem 0.6rem;
   }
 }
 
