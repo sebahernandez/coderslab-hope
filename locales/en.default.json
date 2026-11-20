@@ -17,6 +17,11 @@
       "extra_each": "+{{ price }} each extra",
       "each": "+{{ price }} each",
       "premium_note": "Premium items are charged separately and do not count as included items."
+    },
+    "bubbles": {
+      "group_label": "Selected extras",
+      "remove": "Remove {{ name }}",
+      "removed": "Removed {{ name }}"
     }
   },
   "accessibility": {

@@ -17,6 +17,11 @@
       "extra_each": "+{{ price }} c/u adicional",
       "each": "+{{ price }} c/u",
       "premium_note": "Los premium se cobran aparte y no cuentan como incluidos."
+    },
+    "bubbles": {
+      "group_label": "Extras seleccionados",
+      "remove": "Quitar {{ name }}",
+      "removed": "Quitaste {{ name }}"
     }
   },
   "blocks": {

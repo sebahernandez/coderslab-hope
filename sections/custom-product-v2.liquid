@@ -7,7 +7,7 @@
   de Extras + line item properties para el carrito nativo), pero cambia la vista
   previa: el vaso base es fijo y cada extra elegido (topping / premium / sirope)
   aparece como una BURBUJA circular flotando sobre el helado, con una insignia
-  "+1" (ver mock de referencia).
+  "+1" (ver mock de referencia). Activar una burbuja quita ese extra.
 
   Assets propios de V2 (no globales): hope-customizer-v2.css / .js.
   Mantiene la línea gráfica global (.hopecfg / hopecfg__*) para chips y botones.
@@ -171,6 +171,8 @@
   data-max-extra-toppings="{{ max_extra_toppings }}"
   data-premium-cents="{{ premium_cents }}"
   data-extras-variant-id="{{ extras_variant_id }}"
+  data-bubble-remove-label="{{ 'hope_customizer.bubbles.remove' | t: name: '__NAME__' | escape }}"
+  data-bubble-removed-label="{{ 'hope_customizer.bubbles.removed' | t: name: '__NAME__' | escape }}"
   {%- if flavor %}
     data-flavor-name="{{ flavor.nombre.value | escape }}"
     data-flavor-cup-url="{{ flavor_cup_url }}"
@@ -207,8 +209,17 @@
           alt="{{ shop.name | escape }}"
           decoding="async"
         >
-        {%- comment -%} Capa de burbujas "+1" que el JS rellena según los extras {%- endcomment -%}
-        <div id="hope-bubbles" class="hope2__bubbles" aria-hidden="true"></div>
+        {%- comment -%}
+          Capa de burbujas "+1" que el JS rellena según los extras. Cada burbuja es un
+          botón que quita su extra; tabindex="-1" recibe el foco cuando no queda ninguna.
+        {%- endcomment -%}
+        <div
+          id="hope-bubbles"
+          class="hope2__bubbles"
+          role="group"
+          tabindex="-1"
+          aria-label="{{ 'hope_customizer.bubbles.group_label' | t | escape }}"
+        ></div>
         {%- if flavor -%}
           <span class="hope2__flavor-badge" data-flavor-badge aria-hidden="true">Sabor<br>del Mes</span>
         {%- endif -%}

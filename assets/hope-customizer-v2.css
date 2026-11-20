@@ -108,6 +108,28 @@
   box-shadow: 0 10px 22px rgba(113, 57, 79, 0.28);
   overflow: visible;
   animation: hope2-pop 0.35s cubic-bezier(0.22, 0.75, 0.25, 1);
+  /* Es un <button> que quita el extra: reset de botón + recibe el puntero aunque la
+     capa no lo haga. */
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  appearance: none;
+  pointer-events: auto;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.hope2__bubble:focus-visible {
+  outline: 3px solid #a03c68;
+  outline-offset: 3px;
+}
+/* Con anillo rosa (última añadida) el contorno de foco va por fuera del anillo. */
+.hope2__bubble.is-last:focus-visible {
+  outline-offset: 7px;
+}
+/* La capa solo recibe foco por código, cuando se quitó la última burbuja. */
+.hope2__bubbles:focus {
+  outline: none;
 }
 @media (min-width: 1024px) {
   .hope2__bubble { width: 84px; height: 84px; }
@@ -153,6 +175,15 @@
 }
 @media (min-width: 1024px) {
   .hope2__bubble-badge { min-width: 30px; height: 25px; font-size: 13px; top: -9px; right: -9px; }
+}
+
+/* La insignia pasa de "+1" a "×" al enfocar o pasar el cursor: señala que quita el extra. */
+.hope2__bubble-badge-remove { display: none; }
+.hope2__bubble:focus-visible .hope2__bubble-badge-add { display: none; }
+.hope2__bubble:focus-visible .hope2__bubble-badge-remove { display: inline; }
+@media (hover: hover) {
+  .hope2__bubble:hover .hope2__bubble-badge-add { display: none; }
+  .hope2__bubble:hover .hope2__bubble-badge-remove { display: inline; }
 }
 
 @keyframes hope2-pop {
@@ -691,6 +722,13 @@
   .hopecfg--v2[data-step-key]:not([data-step-last]) #buy { display: none; }
 
   .hope2__bubble { width: 38px; height: 38px; border-width: 2px; }
+  /* Área táctil de 44px alrededor del círculo de 38px. */
+  .hope2__bubble::before {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border-radius: 999px;
+  }
   .hope2__bubble-emoji { font-size: 1.05rem; }
   .hope2__bubble-badge { min-width: 17px; height: 15px; font-size: 8px; top: -5px; right: -5px; }
 

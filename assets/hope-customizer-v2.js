@@ -16,6 +16,9 @@
  *    helado con la property `_hope_ext` (cleanup/badge por toppings-customizer.js).
  *  - El desglose legible va como line item properties en la línea del helado.
  *
+ * Vista previa: cada extra elegido es una burbuja "+1" sobre el helado. La burbuja es
+ * un botón que quita ese extra (mismo resultado que deseleccionar su chip).
+ *
  * Es idempotente y solo actúa sobre raíces [data-hopecfg-v2].
  */
 
@@ -302,7 +305,23 @@
       return out;
     }
 
+    // ---- Textos de las burbujas (traducidos por Liquid; __NAME__ = nombre del extra) ----
+    var BUBBLE_REMOVE_LABEL = root.dataset.bubbleRemoveLabel || "Quitar __NAME__";
+    var BUBBLE_REMOVED_LABEL = root.dataset.bubbleRemovedLabel || "Quitaste __NAME__";
+    function bubbleText(template, name) { return template.split("__NAME__").join(name); }
+
+    // Los nombres de los ingredientes vienen de datos de la tienda: se escapan antes
+    // de concatenarlos en atributos HTML.
+    function escapeAttr(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
     // ---- Render de burbujas flotantes sobre el helado ----
+    // Cada burbuja es un botón que quita su extra (ver listener de #hope-bubbles).
     function renderBubbles() {
       var layer = $("#hope-bubbles");
       if (!layer) return;
@@ -314,15 +333,20 @@
         var img = readImage(ex.group, ex.id);
         var isLast = ex.key === state.lastKey;
         var inner = img
-          ? '<img class="hope2__bubble-img" src="' + img + '" alt="' + label + '" loading="lazy">'
-          : '<span class="hope2__bubble-emoji">' + emoji + "</span>";
+          ? '<img class="hope2__bubble-img" src="' + escapeAttr(img) + '" alt="" loading="lazy">'
+          : '<span class="hope2__bubble-emoji" aria-hidden="true">' + emoji + "</span>";
         return (
-          '<span class="hope2__bubble' + (isLast ? " is-last" : "") + '"' +
+          '<button type="button" class="hope2__bubble' + (isLast ? " is-last" : "") + '"' +
           ' style="top:' + anchor.top + "%;left:" + anchor.left + '%"' +
-          ' title="' + label + '">' +
+          ' data-group="' + escapeAttr(ex.group) + '"' +
+          ' data-id="' + escapeAttr(ex.id) + '"' +
+          ' aria-label="' + escapeAttr(bubbleText(BUBBLE_REMOVE_LABEL, label)) + '">' +
           inner +
-          '<span class="hope2__bubble-badge">+1</span>' +
-          "</span>"
+          '<span class="hope2__bubble-badge" aria-hidden="true">' +
+          '<span class="hope2__bubble-badge-add">+1</span>' +
+          '<span class="hope2__bubble-badge-remove">×</span>' +
+          "</span>" +
+          "</button>"
         );
       }).join("");
     }
@@ -521,15 +545,58 @@
           state.base = id === "mes" ? "mes" : "clasico";
         } else if (group === "size") {
           state.size = id;
-        } else if (group === "topping") {
-          var added = toggleInArray(state.toppings, id);
-          state.lastKey = added ? "topping:" + id : (state.lastKey === "topping:" + id ? null : state.lastKey);
-        } else if (group === "syrup") {
-          var addedS = toggleInArray(state.syrups, id);
-          state.lastKey = addedS ? "syrup:" + id : (state.lastKey === "syrup:" + id ? null : state.lastKey);
+        } else if (group === "topping" || group === "syrup") {
+          toggleExtra(group, id);
+          return;
         }
         state.hasInteracted = true;
         render();
+      });
+    }
+
+    // ---- Alternar un extra (topping o sirope): única ruta para chips y burbujas ----
+    function extraList(group) {
+      if (group === "topping") return state.toppings;
+      if (group === "syrup") return state.syrups;
+      return null;
+    }
+    function toggleExtra(group, id) {
+      var list = extraList(group);
+      if (!list) return;
+      var key = group + ":" + id;
+      var added = toggleInArray(list, id);
+      state.lastKey = added ? key : (state.lastKey === key ? null : state.lastKey);
+      state.hasInteracted = true;
+      render();
+    }
+    // Quita un extra seleccionado; devuelve false (sin efecto) si no lo estaba.
+    function removeExtra(group, id) {
+      var list = extraList(group);
+      if (!list || list.indexOf(id) === -1) return false;
+      toggleExtra(group, id);
+      return true;
+    }
+
+    // ---- Quitar un extra desde su burbuja ----
+    // Listener delegado: renderBubbles() reemplaza las burbujas en cada render.
+    var bubblesLayer = $("#hope-bubbles");
+    if (bubblesLayer) {
+      bubblesLayer.addEventListener("click", function (e) {
+        var bubble = e.target.closest(".hope2__bubble");
+        if (!bubble || !bubblesLayer.contains(bubble)) return;
+        var group = bubble.dataset.group;
+        var id = bubble.dataset.id;
+        var index = Array.prototype.indexOf.call(bubblesLayer.querySelectorAll(".hope2__bubble"), bubble);
+        var hadFocus = bubblesLayer.contains(document.activeElement);
+        var name = readLabel(group, id);
+        if (!removeExtra(group, id)) return;
+        // El render destruyó la burbuja enfocada: el foco pasa a la que ocupa su lugar,
+        // a la anterior, o a la capa si no queda ninguna.
+        if (hadFocus) {
+          var rest = bubblesLayer.querySelectorAll(".hope2__bubble");
+          (rest[index] || rest[rest.length - 1] || bubblesLayer).focus();
+        }
+        showToast(bubbleText(BUBBLE_REMOVED_LABEL, name));
       });
     }
 
