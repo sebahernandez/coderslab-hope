@@ -499,11 +499,12 @@
         img.removeEventListener("load", finishLoading);
         img.removeEventListener("error", finishLoading);
       }
+      // El src ya viene renderizado desde Liquid; aquí solo se cubre el caso sin src.
+      if (!img.getAttribute("src")) img.src = catalogUrl(asset, 200);
+      if (img.complete) return;
       if (thumb) thumb.classList.add("is-loading");
       img.addEventListener("load", finishLoading);
       img.addEventListener("error", finishLoading);
-      img.src = catalogUrl(asset, 200);
-      if (img.complete) finishLoading();
     });
 
     // ---- Arranque ----

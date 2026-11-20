@@ -189,6 +189,23 @@
                       when 'fresa'
                         assign combo_asset = 'https://cdn.shopify.com/s/files/1/0755/1775/5644/files/milkshake-fresa.avif?v=1790967750'
                     endcase
+
+                    # Resolve the thumbnail URL server-side so the <img> never renders without a src.
+                    # Mirrors catalogUrl() in assets/milkshake-customizer.js.
+                    assign combo_src = combo_asset
+                    if combo_asset != blank
+                      assign combo_asset_scheme = combo_asset | slice: 0, 8 | downcase
+                      unless combo_asset_scheme == 'https://'
+                        assign combo_transform = 'f_auto,q_auto,w_200'
+                        assign combo_asset_prefix = combo_asset | slice: 0, 3
+                        if combo_asset_prefix == '2d-' or combo_asset == 'hope-mixo-fixed-default-v1' or combo_asset == 'hope-milkshake-vanilla-cutout-v1' or combo_asset == 'hope-milkshake-chocolate-cutout-v1' or combo_asset == 'hope-milkshake-chocolate-cutout-v2'
+                          assign combo_transform = 'e_background_removal/f_auto,q_auto,w_200'
+                        endif
+                        assign cloud_account = section.settings.cloudinary_account | default: 'slealu5f'
+                        assign cloud_folder = section.settings.cloudinary_folder | default: 'hope/catalog'
+                        assign combo_src = 'https://res.cloudinary.com/' | append: cloud_account | append: '/image/upload/' | append: combo_transform | append: '/' | append: cloud_folder | append: '/' | append: combo_asset
+                      endunless
+                    endif
                   -%}
                   <button
                     class="hopecfg__choice ms__choice{% if forloop.first %} is-active{% endif %}"
@@ -201,7 +218,7 @@
                     <span class="hopecfg__check"></span>
                     <span class="ms__thumb">
                       {%- if combo_asset != blank -%}
-                        <img class="ms__img" data-combo-img alt="{{ combo.combo | escape }}" loading="lazy" width="54" height="54">
+                        <img class="ms__img" data-combo-img src="{{ combo_src | escape }}" alt="{{ combo.combo | escape }}" loading="eager" decoding="async" width="54" height="54">
                       {%- else -%}
                         <span class="ms__emoji">{{ combo.emoji }}</span>
                       {%- endif -%}
