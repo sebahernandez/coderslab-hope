@@ -656,11 +656,14 @@ body:has(.hopecfg) {
   display: flex;
   align-items: center;
   gap: 0.625rem;
+  /* Shared height so the reset circle and the buy button always line up. */
+  --hopecfg-action-size: 2.5rem;
 }
+@media (min-width: 1024px) { .hopecfg__actions { --hopecfg-action-size: 3rem; } }
 .hopecfg__reset {
   display: grid;
-  height: 2.5rem;
-  width: 2.5rem;
+  height: var(--hopecfg-action-size);
+  width: var(--hopecfg-action-size);
   flex-shrink: 0;
   place-items: center;
   cursor: pointer;
@@ -675,7 +678,6 @@ body:has(.hopecfg) {
 .hopecfg__reset:active { transform: scale(0.95); }
 .hopecfg__reset svg { height: 1rem; width: 1rem; }
 @media (min-width: 1024px) {
-  .hopecfg__reset { height: 3rem; width: 3rem; }
   .hopecfg__reset svg { height: 1.25rem; width: 1.25rem; }
 }
 .hopecfg__buy {
@@ -684,6 +686,7 @@ body:has(.hopecfg) {
   border-radius: 999px;
   background: var(--hopecfg-hope);
   color: #fff;
+  min-height: var(--hopecfg-action-size);
   padding: 0.625rem 1.5rem;
   font-size: 12px;
   font-weight: 900;
