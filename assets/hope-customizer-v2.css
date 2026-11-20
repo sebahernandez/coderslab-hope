@@ -331,7 +331,8 @@
 }
 
 /* Los grupos con conjuntos no recortan ni hacen scroll: gana a `overflow: hidden`
-   de toppings-customizer.css (móvil) y deja que la página sea la que se desplace. */
+   de toppings-customizer.css (móvil) y deja que el scroll lo haga el contenedor
+   padre (.hopecfg__config-scroll, o la página si el viewport mide menos de 540px). */
 .hopecfg--v2 .hopecfg__config[data-view] :is(#topping-options, #syrup-options) {
   overflow: visible;
 }
@@ -420,7 +421,7 @@
     gap: 0.5rem;
     padding-block: 0.4rem;
     padding-inline: 0.4rem 0.5rem;
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     line-height: 1.3;
   }
   .hopecfg--v2 .hopecfg__config :is(#topping-options, #syrup-options) .hope2__set-grid .hopecfg__choice .topping-img {
@@ -624,7 +625,7 @@
   .hopecfg--v2 .hope2__stepbar {
     display: block;
     margin: 0.35rem 0 0.15rem;
-    font-size: 11px;
+    font-size: 0.75rem;
     font-weight: 800;
     letter-spacing: 0.02em;
     color: var(--hopecfg-hope, #ed5d96);
@@ -735,18 +736,18 @@
   /* Ocultar la barra de extras (texto "Tu helado" + mini-stack) en móvil. */
   .hopecfg--v2 .hopecfg__extras { display: none; }
 
-  /* En móvil el configurador toma la ALTURA DE SU CONTENIDO (no la app-height
-     de escritorio), así no queda espacio vacío bajo el último elemento. La vista
-     previa recibe una altura propia (basada en viewport) porque ya no hay un frame
-     de alto fijo del cual sacar un 30%. */
-  .hopecfg--v2 .hopecfg__frame { height: auto; min-height: 0; }
-  .hopecfg--v2 .hopecfg__preview {
-    height: 32vh;
-    min-height: 160px;
-    max-height: 230px;
-    flex: none;
+  /* Viewport bajo (<540px): la tarjeta toma la ALTURA DE SU CONTENIDO y la página
+     se desplaza. Con 540px o más aplica la tarjeta acotada (ver bloque más abajo). */
+  @media (max-height: 539px) {
+    .hopecfg--v2 .hopecfg__frame { height: auto; min-height: 0; }
+    .hopecfg--v2 .hopecfg__preview {
+      height: 32vh;
+      min-height: 160px;
+      max-height: 230px;
+      flex: none;
+    }
+    .hopecfg--v2 .hopecfg__config { height: auto; flex: none; }
   }
-  .hopecfg--v2 .hopecfg__config { height: auto; flex: none; }
 
   /* Imagen de vista previa un poco más pequeña en móvil. */
   .hopecfg--v2 .hopecfg__cup {
@@ -801,7 +802,7 @@
     /* Borde transparente para igualar exactamente la caja de "Atrás" (que sí tiene borde). */
     border: 1px solid transparent;
     border-radius: 14px;
-    font-size: 11px;
+    font-size: 0.8125rem;
     letter-spacing: 0;
     line-height: 1.4;
     text-align: center;
@@ -894,6 +895,40 @@
   }
 }
 
+/* Móvil con 540px de alto o más: la tarjeta toma el alto acotado del contenedor
+   compartido (toppings-customizer.css); la vista previa es elástica y solo se
+   desplaza .hopecfg__config-scroll, con el pie fijo. */
+@media (min-height: 540px) and (max-width: 1023px) {
+  .hopecfg--v2 .hopecfg__preview {
+    height: auto;
+    flex: 0 0 clamp(120px, 20svh, 230px);
+    min-height: 0;
+    max-height: none;
+  }
+  .hopecfg--v2 .hopecfg__config { height: auto; flex: 1 1 0; min-height: 0; }
+  .hopecfg--v2 .hopecfg__footer { gap: 0.5rem; padding-block: 0.6rem; }
+  .hopecfg--v2 .hopecfg__total {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 0.5rem;
+  }
+  /* Fuera del primer paso del wizard se ocultan título y aviso para dar alto a las opciones.
+     Barquilla no tiene data-step-key, por eso siempre los muestra. */
+  .hopecfg--v2[data-step-key]:not([data-step-first]) :is(.hopecfg__heading, .hope2__delivery-notice) {
+    display: none;
+  }
+}
+
+/* Último paso: "Atrás" cede ancho al botón de compra. */
+@media (max-width: 1023px) {
+  .hopecfg--v2[data-step-last] .hope2__nav--prev { flex: 0 0 auto; padding-inline: 1.5rem 0.6rem; }
+}
+/* Teléfonos angostos: sin el ícono decorativo para que el texto del botón no desborde. */
+@media (max-width: 379px) {
+  .hopecfg--v2[data-step-last] .hopecfg__buy-arrow { display: none; }
+}
+
 /* ===== Sabor del mes: paso "Elige la base del helado" =====
    El contenedor #base-step agrupa banner + fieldset para que el wizard móvil
    los muestre juntos como un único paso. */
@@ -961,6 +996,9 @@
   line-height: 1.3;
   color: #8c5c71;
   overflow-wrap: anywhere;
+}
+@media (max-width: 1023px) {
+  .hopecfg--v2 .hope2__base-sub { font-size: 0.75rem; }
 }
 .hopecfg--v2 .hope2__base-choice:focus-visible {
   outline: 2px solid var(--hopecfg-hope, #ed5d96);

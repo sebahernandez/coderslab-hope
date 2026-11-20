@@ -140,7 +140,7 @@
   min-width: 0;
 }
 .hopecfg--milkshake .ms__name { font-size: 0.95rem; font-weight: 900; line-height: 1.1; }
-.hopecfg--milkshake .ms__ingredientes { font-size: 11px; line-height: 1.25; color: #8c7881; }
+.hopecfg--milkshake .ms__ingredientes { font-size: 12px; line-height: 1.25; color: #8c7881; }
 .hopecfg--milkshake .ms__meta {
   flex-shrink: 0;
   display: flex;
@@ -257,6 +257,7 @@
 }
 
 @media (max-width: 1023px) {
+  .hopecfg--milkshake .ms__gramos { font-size: 0.6875rem; }
   .hopecfg--milkshake .hope2__availability-modal { width: min(92vw, 30rem); }
   .hopecfg--milkshake .hope2__availability-card { padding: 1.25rem 1rem; }
 }
