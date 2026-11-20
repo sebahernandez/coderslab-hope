@@ -208,6 +208,9 @@
     var STEP_KEYS = (HAS_FLAVOR ? ["base"] : []).concat(["size", "topping", "syrup"]);
     var STEP_NAMES = { base: "Elige la base", size: "Elige tu tamaño", topping: "Elige tus toppings", syrup: "Elige tu sirope" };
     var STEP_LABELS = STEP_KEYS.map(function (k) { return STEP_NAMES[k]; });
+    // Texto del botón de avanzar: nombra lo que se elige en el paso al que lleva.
+    // Corto a propósito: comparte el ancho con "Atrás" y no puede partir de línea.
+    var STEP_NEXT_NAMES = { size: "Elegir tamaño", topping: "Elegir toppings", syrup: "Elegir sirope" };
 
     // ---- Sabor del mes (base del helado) ----
     var FLAVOR_NAME = root.dataset.flavorName || "";
@@ -640,12 +643,12 @@
       }
       var scroller = $(".hopecfg__config-scroll");
       if (scroller) scroller.scrollTop = 0;
-      // Etiqueta del botón de avanzar: indica el paso humano (1-based) al que lleva,
+      // Etiqueta del botón de avanzar: nombra lo que se elige en el paso siguiente,
       // en vez de un "Siguiente" genérico. No aplica en el último paso (el botón
       // queda oculto por CSS y no hay paso siguiente al que continuar).
       var nextLabel = stepNextBtn && stepNextBtn.querySelector(".hope2__nav-label");
       if (nextLabel && step < STEP_LABELS.length - 1) {
-        nextLabel.textContent = "Continuar paso " + (step + 2);
+        nextLabel.textContent = STEP_NEXT_NAMES[STEP_KEYS[step + 1]];
       }
       updatePrice();
     }
