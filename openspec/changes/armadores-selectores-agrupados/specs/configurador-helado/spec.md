@@ -41,15 +41,11 @@ Cada encabezado de conjunto del armador de Helado Hope y Mixo Hope SHALL mostrar
 - **THEN** el encabezado "Clásicos" de toppings muestra solo el precio por unidad, sin la mención de incluidos
 
 ### Requirement: Chips de Helado Hope y Mixo Hope en grilla uniforme
-Los chips de topping y de sirope del armador de Helado Hope y Mixo Hope SHALL tener el mismo ancho dentro de una grilla y mostrar el nombre completo, en varias líneas si no cabe en una. Los chips MUST NOT repetir la estrella ★ ni la etiqueta "premium". El chip seleccionado MUST seguir mostrando su costo. Las opciones MUST recorrerse con el scroll de la página, sin lista con scroll interno ni desplazamiento horizontal.
+Los chips de topping y de sirope del armador de Helado Hope y Mixo Hope SHALL tener el mismo ancho dentro de una grilla y mostrar el nombre completo, en varias líneas si no cabe en una. Los chips MUST NOT repetir la estrella ★ ni la etiqueta "premium". El chip seleccionado MUST seguir mostrando su costo. Las opciones MUST NOT tener desplazamiento horizontal.
 
 #### Scenario: Grilla uniforme en móvil
 - **WHEN** el cliente abre el paso de toppings a 390 px de ancho
 - **THEN** los chips se muestran en dos columnas del mismo ancho, sin nombres cortados, sin desplazamiento horizontal y sin el aviso "Desliza para ver más"
-
-#### Scenario: Todas las opciones alcanzables con el scroll de la página
-- **WHEN** el cliente recorre el paso de siropes en móvil
-- **THEN** llega hasta la última opción y a los botones de avanzar o añadir al carrito desplazando la página, sin un área de scroll propia dentro del paso
 
 #### Scenario: Chip premium seleccionado
 - **WHEN** el cliente selecciona un topping premium
