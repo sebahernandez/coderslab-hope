@@ -36,24 +36,11 @@
 
     {{ content_for_header }}
     {% if shop.permanent_domain == 'hopesweet.myshopify.com' %}
-    <script>
-      (() => {
-        const path = '/api/v1/shopify/cart-handoff/cart-handoff-script';
-        const legacyUrl = 'https://back.hopeheladeria.com' + path + '?';
-        const loadCheckout = () => {
-          const script = document.createElement('script');
-          script.src = 'https://back.hopeicecream.shop' + path + '?shop=hopesweet.myshopify.com';
-          document.head.appendChild(script);
-        };
-        // Shopify injects existing ScriptTags on window load.
-        window.addEventListener('load', () => {
-          const legacy = Array.from(document.scripts).find((script) => script.src.startsWith(legacyUrl));
-          if (legacy) legacy.addEventListener('error', loadCheckout, { once: true });
-          else loadCheckout();
-        }, { once: true });
-      })();
-    </script>
-  {% endif %}
+  <script
+    src="https://back.hopeicecream.shop/api/v1/shopify/cart-handoff/cart-handoff-script"
+    defer
+  ></script>
+{% endif %}
   </head>
 
   <body class="page-width-{{ settings.page_width }} card-hover-effect-{{ settings.card_hover_effect }}">
