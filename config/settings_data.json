@@ -78,6 +78,13 @@
     "variant_button_radius": 14,
     "variant_button_width": "equal-width-buttons",
     "content_for_index": [],
+    "blocks": {
+      "6174324309569838175": {
+        "type": "shopify://apps/smile-io/blocks/smile-shopify-app/2fae4e25-1841-4ea2-bc02-bd548478c4f6",
+        "disabled": false,
+        "settings": {}
+      }
+    },
     "color_schemes": {
       "scheme-1": {
         "settings": {
@@ -120,7 +127,7 @@
       },
       "scheme-2": {
         "settings": {
-          "background": "#FFB9D138",
+          "background": "#ffb9d138",
           "foreground_heading": "#000000",
           "foreground": "#630022",
           "primary": "#000000cf",
