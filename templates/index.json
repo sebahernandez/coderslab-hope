@@ -16,12 +16,13 @@
           "type": "image",
           "settings": {
             "image_desktop": "shopify://shop_images/2-barquillas.avif",
+            "image_mobile": "shopify://shop_images/2-barquillas-movil.avif",
             "alt": "helado barquilla hope",
             "link": "shopify://products/barquillo",
             "width": "centered",
             "height_unit": "px",
             "height_desktop": 680,
-            "height_mobile": 300,
+            "height_mobile": 450,
             "fit": "cover",
             "position": "center"
           }
