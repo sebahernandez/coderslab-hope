@@ -173,6 +173,10 @@
     echo glass_style
     echo '--glass-float-margin: ' | append: section.settings.glass_float_margin | append: 'px;'
 
+    if section.settings['margin-block-end'] > 0
+      echo '--header-margin-block-end: ' | append: section.settings['margin-block-end'] | append: 'px;'
+    endif
+
     if section.settings.header_band_enable and transparent == blank
       echo '--header-band-color: ' | append: section.settings.header_band_color | append: ';'
     endif
@@ -185,7 +189,6 @@
       echo '--header-custom-padding-block-start: ' | append: section.settings['padding-block-start'] | append: 'px;'
       echo '--header-custom-padding-block-end: ' | append: section.settings['padding-block-end'] | append: 'px;'
       echo '--header-custom-padding-inline: ' | append: section.settings['padding-inline'] | append: 'px;'
-      echo '--header-custom-margin-block-end: ' | append: section.settings['margin-block-end'] | append: 'px;'
       echo '--header-custom-margin-inline: ' | append: section.settings['margin-inline'] | append: 'px;'
     endif
   endcapture
@@ -765,6 +768,12 @@
     margin-block-start: var(--glass-float-margin, 0px);
   }
 
+  /* Separación inferior (todas las resoluciones) */
+  .header:not([transparent]) .header__row--top:last-of-type,
+  .header:not([transparent]) .header__row--bottom {
+    margin-block-end: var(--header-margin-block-end, 0px);
+  }
+
   /* Contiene los márgenes de las filas para que la altura medida
    * (--header-height) los incluya y la reserva de espacio sea exacta. */
   .header--band {
@@ -796,7 +805,6 @@
         --padding-block-end: var(--header-custom-padding-block-end);
 
         padding-inline: var(--header-custom-padding-inline);
-        margin-block-end: var(--header-custom-margin-block-end);
         margin-inline: var(--header-custom-margin-inline);
       }
 
@@ -1242,6 +1250,17 @@
     },
     {
       "type": "range",
+      "id": "margin-block-end",
+      "label": "Margen inferior",
+      "info": "Separación bajo la barra. Se nota sobre todo con el fondo a ancho completo activo.",
+      "min": 0,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
       "id": "glass_gap",
       "label": "Espacio entre cápsulas",
       "min": 0,
@@ -1318,17 +1337,6 @@
       "step": 2,
       "unit": "px",
       "default": 20,
-      "visible_if": "{{ section.settings.custom_spacing }}"
-    },
-    {
-      "type": "range",
-      "id": "margin-block-end",
-      "label": "Margen inferior",
-      "min": 0,
-      "max": 48,
-      "step": 2,
-      "unit": "px",
-      "default": 0,
       "visible_if": "{{ section.settings.custom_spacing }}"
     },
     {

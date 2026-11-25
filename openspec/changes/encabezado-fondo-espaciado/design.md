@@ -52,7 +52,7 @@
    | `custom_spacing` | checkbox | false | — |
    | `padding-block-start` / `-end` | range | 0–40, paso 2, 12 | custom_spacing |
    | `padding-inline` | range | 0–64, paso 2, 20 | custom_spacing |
-   | `margin-block-end` | range | 0–48, paso 2, 0 | custom_spacing |
+   | `margin-block-end` | range | 0–48, paso 1, 0 | — (junto a Margen superior, todas las resoluciones) |
    | `margin-inline` | range | 0–80, paso 2, 0 | custom_spacing |
 
    Todos con ≥ 3 y ≤ 101 pasos. Etiquetas en español literal, como el grupo Glassmorphism existente.

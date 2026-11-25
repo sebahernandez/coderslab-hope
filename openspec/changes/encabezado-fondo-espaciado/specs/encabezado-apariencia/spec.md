@@ -66,7 +66,7 @@ fijar la altura mínima con el contenido centrado verticalmente.
 
 La sección SHALL ofrecer una casilla de espaciado personalizado, desactivada por defecto. Desactivada, el
 padding y los márgenes SHALL ser los actuales. Activada, SHALL mostrar controles de padding superior,
-inferior y lateral de la barra y de margen inferior y lateral, aplicados a escritorio.
+inferior y lateral de la barra y de margen lateral, aplicados a escritorio.
 
 #### Scenario: Espaciado por defecto intacto
 
@@ -98,6 +98,17 @@ SHALL estar visible y aplicarse tanto con glassmorphism activo como inactivo.
 
 - **WHEN** el comerciante desactiva el glassmorphism
 - **THEN** el control de margen superior sigue visible en el editor y su valor se aplica a la barra
+
+### Requirement: Margen inferior configurable
+
+La sección SHALL ofrecer un control de margen inferior, siempre visible junto al margen superior, que
+separe la barra del borde inferior del encabezado en todas las resoluciones. El valor por defecto `0`
+SHALL conservar el aspecto actual.
+
+#### Scenario: Margen inferior con franja activa
+
+- **WHEN** la franja está activa y el comerciante fija un margen inferior de 20 px
+- **THEN** la franja muestra 20 px bajo la cápsula y la primera sección empieza debajo de ese margen
 
 ### Requirement: Compatibilidad con ajustes existentes
 
