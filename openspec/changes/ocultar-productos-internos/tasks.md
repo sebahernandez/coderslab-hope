@@ -2,7 +2,7 @@
 
 ## 1. Datos de la tienda
 
-- [ ] 1.1 Con confirmación del usuario, aplicar `metafieldsSet` (`seo.hidden` = `1`, `number_integer`) al producto 15398337839356 y verificar con una query que el metafield quedó guardado y el producto sigue publicado en Tienda online
+- [x] 1.1 Con confirmación del usuario, aplicar `metafieldsSet` (`seo.hidden` = `1`, `number_integer`) al producto 15398337839356 y verificar con una query que el metafield quedó guardado y el producto sigue publicado en Tienda online
 
 ## 2. Buscador
 
