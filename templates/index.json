@@ -9,6 +9,68 @@
  */
 {
   "sections": {
+    "slide_hope_LFi3Ae": {
+      "type": "slide-hope",
+      "blocks": {
+        "image_4XPMMc": {
+          "type": "image",
+          "settings": {
+            "image_desktop": "shopify://shop_images/2-barquillas.avif",
+            "alt": "",
+            "link": "",
+            "width": "centered",
+            "height_unit": "auto",
+            "height_desktop": 450,
+            "height_mobile": 300,
+            "fit": "cover",
+            "position": "auto"
+          }
+        },
+        "image_7MCty9": {
+          "type": "image",
+          "settings": {
+            "alt": "",
+            "link": "",
+            "width": "centered",
+            "height_unit": "auto",
+            "height_desktop": 450,
+            "height_mobile": 300,
+            "fit": "cover",
+            "position": "auto"
+          }
+        },
+        "image_QyPCcP": {
+          "type": "image",
+          "settings": {
+            "alt": "",
+            "link": "",
+            "width": "centered",
+            "height_unit": "auto",
+            "height_desktop": 450,
+            "height_mobile": 300,
+            "fit": "cover",
+            "position": "auto"
+          }
+        }
+      },
+      "block_order": [
+        "image_4XPMMc",
+        "image_7MCty9",
+        "image_QyPCcP"
+      ],
+      "name": "Slide Hope",
+      "settings": {
+        "mode": "fixed",
+        "radius": 24,
+        "color_scheme": "",
+        "autoplay": false,
+        "autoplay_speed": 5,
+        "icons_style": "arrows_large",
+        "slideshow_controls_style": "dots",
+        "padding-block-start": 100,
+        "padding-block-end": 16
+      }
+    },
     "hero_text_KKQXTN": {
       "type": "hero-text",
       "blocks": {
@@ -125,6 +187,7 @@
         "text_description",
         "hero_button"
       ],
+      "disabled": true,
       "name": "Hero Banner Helados",
       "settings": {
         "vertical_alignment": "center",
@@ -743,6 +806,7 @@
     }
   },
   "order": [
+    "slide_hope_LFi3Ae",
     "hero_text_KKQXTN",
     "hope_features_DjnWDG",
     "hero_text_QextmY",
