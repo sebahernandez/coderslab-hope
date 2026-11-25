@@ -1,0 +1,524 @@
+{% comment %}
+  Section contract.
+  Renders promotional image banners as a single fixed image or as a slideshow.
+  Each "image" block owns independent desktop/mobile images, width mode
+  (centered to the page width or full viewport width), height (auto, px, vh, vw),
+  object-fit and position. Images always render with rounded corners.
+  The slideshow mode reuses the theme slideshow snippets and slideshow.js.
+  @example
+  <!-- Add "Slide Hope" from the theme editor, pick "Slide" or "Fija" and add image blocks -->
+{% endcomment %}
+
+{% liquid
+  assign mode = section.settings.mode
+  assign eager_first = false
+  if section.index == 1
+    assign eager_first = true
+  endif
+
+  assign renderable_count = 0
+  for block in section.blocks
+    if block.settings.image_desktop != blank or block.settings.image_mobile != blank or request.design_mode
+      assign renderable_count = renderable_count | plus: 1
+    endif
+  endfor
+
+  if mode == 'fixed' and renderable_count > 1
+    assign renderable_count = 1
+  endif
+%}
+
+{% capture slides %}
+  {%- assign slide_index = 0 -%}
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign image_desktop = block.settings.image_desktop | default: block.settings.image_mobile
+      assign image_mobile = block.settings.image_mobile | default: block.settings.image_desktop
+
+      if image_desktop == blank and request.design_mode == false
+        continue
+      endif
+      if mode == 'fixed' and slide_index > 0
+        break
+      endif
+
+      # Height: 'auto' follows the active image aspect ratio; other units use the numeric value.
+      assign unit = block.settings.height_unit
+      if unit == 'auto'
+        assign height_desktop = 'auto'
+        assign height_mobile = 'auto'
+        assign ratio_desktop = image_desktop.aspect_ratio | default: 2.5
+        assign ratio_mobile = image_mobile.aspect_ratio | default: ratio_desktop
+      else
+        assign value_desktop = block.settings.height_desktop
+        assign value_mobile = block.settings.height_mobile
+        if unit != 'px'
+          assign value_desktop = value_desktop | at_most: 100
+          assign value_mobile = value_mobile | at_most: 100
+        endif
+        assign height_desktop = value_desktop | append: unit
+        assign height_mobile = value_mobile | append: unit
+        assign ratio_desktop = 'auto'
+        assign ratio_mobile = 'auto'
+      endif
+
+      assign position = block.settings.position
+      if position == 'auto'
+        assign position = image_desktop.presentation.focal_point | default: 'center'
+      endif
+      assign position_mobile = block.settings.position
+      if position_mobile == 'auto'
+        assign position_mobile = image_mobile.presentation.focal_point | default: 'center'
+      endif
+
+      # In 'contain' the image is laid out at its own ratio, so position maps to flex alignment.
+      assign justify = 'center'
+      assign align = 'center'
+      case block.settings.position
+        when 'top'
+          assign align = 'flex-start'
+        when 'bottom'
+          assign align = 'flex-end'
+        when 'left'
+          assign justify = 'flex-start'
+        when 'right'
+          assign justify = 'flex-end'
+      endcase
+
+      # Contain width: never wider than the frame nor than the height allows at the image ratio.
+      assign img_ratio_desktop = image_desktop.aspect_ratio | default: 2.5
+      assign img_ratio_mobile = image_mobile.aspect_ratio | default: img_ratio_desktop
+      if unit == 'auto'
+        assign contain_w_desktop = '100%'
+        assign contain_w_mobile = '100%'
+      else
+        assign contain_w_desktop = 'min(100%, calc(' | append: height_desktop | append: ' * ' | append: img_ratio_desktop | append: '))'
+        assign contain_w_mobile = 'min(100%, calc(' | append: height_mobile | append: ' * ' | append: img_ratio_mobile | append: '))'
+      endif
+
+      assign alt = block.settings.alt | default: image_desktop.alt | escape
+
+      if block.settings.width == 'fullscreen'
+        assign sizes = '100vw'
+      else
+        assign sizes = '(min-width: 1600px) 1600px, 100vw'
+      endif
+
+      assign loading = 'lazy'
+      assign fetchpriority = 'auto'
+      if eager_first and slide_index == 0
+        assign loading = 'eager'
+        assign fetchpriority = 'high'
+      endif
+    -%}
+
+    {%- capture frame -%}
+      <div
+        class="slide-hope__frame slide-hope__frame--{{ block.settings.width }}"
+        style="--sh-height-desktop: {{ height_desktop }}; --sh-height-mobile: {{ height_mobile }}; --sh-ratio-desktop: {{ ratio_desktop }}; --sh-ratio-mobile: {{ ratio_mobile }}; --sh-fit: {{ block.settings.fit }}; --sh-position: {{ position }}; --sh-position-mobile: {{ position_mobile }}; --sh-justify: {{ justify }}; --sh-align: {{ align }}; --sh-contain-w-desktop: {{ contain_w_desktop }}; --sh-contain-w-mobile: {{ contain_w_mobile }}; --sh-img-ratio-desktop: {{ img_ratio_desktop }}; --sh-img-ratio-mobile: {{ img_ratio_mobile }};"
+        {{ block.shopify_attributes }}
+      >
+        {%- if block.settings.link != blank -%}
+          <a class="slide-hope__media slide-hope__media--{{ block.settings.fit }}" href="{{ block.settings.link }}">
+        {%- else -%}
+          <div class="slide-hope__media slide-hope__media--{{ block.settings.fit }}">
+        {%- endif -%}
+
+        {%- if image_desktop != blank -%}
+          <picture class="slide-hope__picture">
+            {%- if block.settings.image_mobile != blank -%}
+              <source
+                media="(max-width: 749px)"
+                srcset="{{ image_mobile | image_url: width: 375 }} 375w, {{ image_mobile | image_url: width: 750 }} 750w, {{ image_mobile | image_url: width: 1125 }} 1125w, {{ image_mobile | image_url: width: 1500 }} 1500w"
+                sizes="100vw"
+                width="{{ image_mobile.width }}"
+                height="{{ image_mobile.height }}"
+              >
+            {%- endif -%}
+            {{
+              image_desktop
+              | image_url: width: 3840
+              | image_tag:
+                widths: '750, 1100, 1500, 1920, 2560, 3840',
+                sizes: sizes,
+                alt: alt,
+                loading: loading,
+                fetchpriority: fetchpriority,
+                class: 'slide-hope__image'
+            }}
+          </picture>
+        {%- else -%}
+          {{ 'hero-apparel-1' | placeholder_svg_tag: 'slide-hope__image slide-hope__placeholder' }}
+        {%- endif -%}
+
+        {%- if block.settings.link != blank -%}
+          </a>
+        {%- else -%}
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endcapture -%}
+
+    {%- if mode == 'slide' -%}
+      {% render 'slideshow-slide', index: slide_index, children: frame, slide_id: block.id, class: 'slide-hope__slide' %}
+    {%- else -%}
+      {{ frame }}
+    {%- endif -%}
+
+    {%- assign slide_index = slide_index | plus: 1 -%}
+  {%- endfor -%}
+{% endcapture %}
+
+{% if renderable_count > 0 %}
+  <div
+    class="slide-hope spacing-style section section--full-width color-{{ section.settings.color_scheme }}"
+    style="{% render 'spacing-padding', settings: section.settings %} --sh-radius: {{ section.settings.radius }}px;"
+  >
+    {%- if mode == 'slide' and renderable_count > 1 -%}
+      {%- liquid
+        assign show_arrows = true
+        if section.settings.icons_style == 'none'
+          assign show_arrows = false
+        endif
+      -%}
+      {% capture controls %}
+        {%- render 'slideshow-controls',
+          style: section.settings.slideshow_controls_style,
+          autoplay: section.settings.autoplay,
+          item_count: renderable_count,
+          show_arrows: false,
+          arrows_on_media: true,
+          controls_on_media: true,
+          pagination_position: 'center',
+          icon_style: section.settings.icons_style
+        -%}
+      {% endcapture %}
+      {% render 'slideshow',
+        class: 'slide-hope__slideshow',
+        controls: controls,
+        show_arrows: show_arrows,
+        icon_style: section.settings.icons_style,
+        autoplay: section.settings.autoplay,
+        autoplay_speed: section.settings.autoplay_speed,
+        slides: slides,
+        slide_count: renderable_count
+      %}
+    {%- elsif mode == 'slide' -%}
+      {% render 'slideshow',
+        class: 'slide-hope__slideshow slideshow--single-media',
+        show_arrows: false,
+        slides: slides,
+        slide_count: 1
+      %}
+    {%- else -%}
+      {{ slides }}
+    {%- endif -%}
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .slide-hope__frame {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    margin-inline: auto;
+  }
+
+  .slide-hope__frame--centered {
+    max-width: var(--page-width);
+    padding-inline: var(--page-margin);
+  }
+
+  .slide-hope__media {
+    display: block;
+    overflow: hidden;
+    height: var(--sh-height-desktop);
+    aspect-ratio: var(--sh-ratio-desktop);
+    border-radius: var(--sh-radius, 24px);
+  }
+
+  .slide-hope__media:focus-visible {
+    outline: var(--focus-outline-width, 2px) solid currentColor;
+    outline-offset: var(--focus-outline-offset, 2px);
+  }
+
+  .slide-hope__picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .slide-hope__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    object-fit: var(--sh-fit, cover);
+    object-position: var(--sh-position, center);
+  }
+
+  /* Contain: the image keeps its own ratio and carries the radius, so visible corners stay rounded. */
+  .slide-hope__media--contain {
+    border-radius: 0;
+  }
+
+  .slide-hope__media--contain .slide-hope__picture {
+    display: grid;
+    justify-items: var(--sh-justify, center);
+    align-items: var(--sh-align, center);
+  }
+
+  .slide-hope__media--contain .slide-hope__image {
+    width: var(--sh-contain-w-desktop, 100%);
+    height: auto;
+    aspect-ratio: var(--sh-img-ratio-desktop);
+    border-radius: var(--sh-radius, 24px);
+  }
+
+  .slide-hope__placeholder {
+    min-height: 240px;
+    background-color: rgb(var(--color-foreground-rgb) / var(--opacity-5, 0.05));
+  }
+
+  .slide-hope__slideshow slideshow-slides {
+    min-height: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .slide-hope__media {
+      height: var(--sh-height-mobile);
+      aspect-ratio: var(--sh-ratio-mobile);
+    }
+
+    .slide-hope__image {
+      object-position: var(--sh-position-mobile, center);
+    }
+
+    .slide-hope__media--contain .slide-hope__image {
+      width: var(--sh-contain-w-mobile, 100%);
+      aspect-ratio: var(--sh-img-ratio-mobile);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Slide Hope",
+  "tag": "section",
+  "class": "slide-hope-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "select",
+      "id": "mode",
+      "label": "Modo",
+      "options": [
+        { "value": "slide", "label": "Slide" },
+        { "value": "fixed", "label": "Fija" }
+      ],
+      "default": "slide",
+      "info": "En modo Fija solo se muestra la primera imagen."
+    },
+    {
+      "type": "range",
+      "id": "radius",
+      "label": "Radio de las esquinas",
+      "min": 4,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Esquema de color",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Carrusel",
+      "visible_if": "{{ section.settings.mode == 'slide' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Avance automático",
+      "default": false,
+      "visible_if": "{{ section.settings.mode == 'slide' }}"
+    },
+    {
+      "type": "range",
+      "id": "autoplay_speed",
+      "label": "Velocidad",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "default": 5,
+      "visible_if": "{{ section.settings.mode == 'slide' and section.settings.autoplay }}"
+    },
+    {
+      "type": "select",
+      "id": "icons_style",
+      "label": "Flechas",
+      "options": [
+        { "value": "arrow", "label": "Flechas" },
+        { "value": "chevron", "label": "Chevrones" },
+        { "value": "arrows_large", "label": "Flechas grandes" },
+        { "value": "chevron_large", "label": "Chevrones grandes" },
+        { "value": "none", "label": "Ninguna" }
+      ],
+      "default": "arrows_large",
+      "visible_if": "{{ section.settings.mode == 'slide' }}"
+    },
+    {
+      "type": "select",
+      "id": "slideshow_controls_style",
+      "label": "Paginación",
+      "options": [
+        { "value": "dots", "label": "Puntos" },
+        { "value": "counter", "label": "Contador" }
+      ],
+      "default": "dots",
+      "visible_if": "{{ section.settings.mode == 'slide' }}"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Superior",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Inferior",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "Imagen",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image_desktop",
+          "label": "Imagen escritorio"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "Imagen móvil",
+          "info": "Opcional. Se muestra en pantallas de 749 px o menos; si está vacía se usa la de escritorio."
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Texto alternativo",
+          "info": "Si está vacío se usa el texto alternativo de la imagen."
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace"
+        },
+        {
+          "type": "header",
+          "content": "Ajuste"
+        },
+        {
+          "type": "select",
+          "id": "width",
+          "label": "Ancho",
+          "options": [
+            { "value": "centered", "label": "Centrado (ancho de página)" },
+            { "value": "fullscreen", "label": "Fullscreen (ancho completo)" }
+          ],
+          "default": "centered"
+        },
+        {
+          "type": "select",
+          "id": "height_unit",
+          "label": "Altura",
+          "options": [
+            { "value": "auto", "label": "Según la imagen" },
+            { "value": "px", "label": "Píxeles (px)" },
+            { "value": "vh", "label": "Alto del viewport (vh)" },
+            { "value": "vw", "label": "Ancho del viewport (vw)" }
+          ],
+          "default": "auto"
+        },
+        {
+          "type": "range",
+          "id": "height_desktop",
+          "label": "Altura escritorio",
+          "min": 10,
+          "max": 1000,
+          "step": 10,
+          "default": 450,
+          "info": "En vh/vw los valores mayores a 100 se limitan a 100.",
+          "visible_if": "{{ block.settings.height_unit != 'auto' }}"
+        },
+        {
+          "type": "range",
+          "id": "height_mobile",
+          "label": "Altura móvil",
+          "min": 10,
+          "max": 1000,
+          "step": 10,
+          "default": 300,
+          "visible_if": "{{ block.settings.height_unit != 'auto' }}"
+        },
+        {
+          "type": "select",
+          "id": "fit",
+          "label": "Encaje (object-fit)",
+          "options": [
+            { "value": "cover", "label": "Cubrir (cover)" },
+            { "value": "contain", "label": "Contener (contain)" }
+          ],
+          "default": "cover"
+        },
+        {
+          "type": "select",
+          "id": "position",
+          "label": "Posición",
+          "options": [
+            { "value": "auto", "label": "Automática (punto focal)" },
+            { "value": "center", "label": "Centro" },
+            { "value": "top", "label": "Arriba" },
+            { "value": "bottom", "label": "Abajo" },
+            { "value": "left", "label": "Izquierda" },
+            { "value": "right", "label": "Derecha" }
+          ],
+          "default": "auto"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Slide Hope",
+      "blocks": [
+        { "type": "image" },
+        { "type": "image" }
+      ]
+    }
+  ]
+}
+{% endschema %}
