@@ -110,6 +110,26 @@ SHALL conservar el aspecto actual.
 - **WHEN** la franja está activa y el comerciante fija un margen inferior de 20 px
 - **THEN** la franja muestra 20 px bajo la cápsula y la primera sección empieza debajo de ese margen
 
+### Requirement: Borde del glassmorphism configurable
+
+Con glassmorphism activo, la sección SHALL ofrecer controles de grosor (0–6 px), color y opacidad del
+borde de la cápsula. Los valores por defecto SHALL reproducir el borde actual: 2 px blanco al 90 %.
+
+#### Scenario: Borde por defecto intacto
+
+- **WHEN** el comerciante no toca los controles del borde
+- **THEN** la cápsula conserva su borde blanco de 2 px al 90 % de opacidad
+
+#### Scenario: Borde personalizado
+
+- **WHEN** el comerciante fija 4 px, color #630022 y opacidad 50 %
+- **THEN** la cápsula muestra un borde de 4 px en rgba(99, 0, 34, 0.5)
+
+#### Scenario: Sin borde
+
+- **WHEN** el grosor del borde es 0
+- **THEN** la cápsula no muestra borde y los controles de color y opacidad se ocultan
+
 ### Requirement: Compatibilidad con ajustes existentes
 
 El cambio SHALL conservar los identificadores, tipos y opciones de todos los ajustes existentes del

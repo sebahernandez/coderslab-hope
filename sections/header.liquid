@@ -165,6 +165,10 @@
       echo '--glass-opacity: ' | append: section.settings.glass_opacity | append: ';'
       echo '--glass-radius: ' | append: section.settings.glass_radius | append: 'px;'
       echo '--glass-gap: ' | append: section.settings.glass_gap | append: 'px;'
+      assign glass_border_color = section.settings.glass_border_color
+      echo '--glass-border-width: ' | append: section.settings.glass_border_width | append: 'px;'
+      echo '--glass-border-rgb: ' | append: glass_border_color.red | append: ' ' | append: glass_border_color.green | append: ' ' | append: glass_border_color.blue | append: ';'
+      echo '--glass-border-opacity: ' | append: section.settings.glass_border_opacity | append: ';'
     endcapture
   endif
 
@@ -718,7 +722,8 @@
       backdrop-filter: blur(var(--glass-blur, 12px)) saturate(140%);
       border-radius: var(--glass-radius, 30px);
       /* Borde blanco delgado pero marcado que rodea todo el panel de vidrio */
-      border: 2px solid rgb(255 255 255 / 0.9);
+      border: var(--glass-border-width, 2px) solid
+        rgb(var(--glass-border-rgb, 255 255 255) / calc(var(--glass-border-opacity, 90) / 100));
       box-shadow: 0 6px 24px rgb(var(--color-foreground-rgb) / 0.1);
     }
 
@@ -1269,6 +1274,35 @@
       "unit": "px",
       "default": 16,
       "visible_if": "{{ section.settings.enable_glass_header }}"
+    },
+    {
+      "type": "range",
+      "id": "glass_border_width",
+      "label": "Grosor del borde",
+      "min": 0,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "default": 2,
+      "visible_if": "{{ section.settings.enable_glass_header }}"
+    },
+    {
+      "type": "color",
+      "id": "glass_border_color",
+      "label": "Color del borde",
+      "default": "#FFFFFF",
+      "visible_if": "{{ section.settings.enable_glass_header and section.settings.glass_border_width > 0 }}"
+    },
+    {
+      "type": "range",
+      "id": "glass_border_opacity",
+      "label": "Opacidad del borde",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 90,
+      "visible_if": "{{ section.settings.enable_glass_header and section.settings.glass_border_width > 0 }}"
     },
     {
       "type": "header",
