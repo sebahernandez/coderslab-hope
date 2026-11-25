@@ -1,0 +1,478 @@
+{% comment %}
+  Section contract.
+  Renders a heading and a responsive grid of product tiles. Each tile is a `product-tile`
+  theme block that owns its image, copy, button and spacing, and can inherit them from a
+  selected product. The section owns the heading, the column count per breakpoint
+  (desktop, tablet up to 989px, mobile up to 749px), gaps, color scheme and padding.
+  Without blocks only the heading renders.
+  @example
+  <!-- Add "Tarjetas de productos" from the theme editor and add "Tarjeta de producto" blocks -->
+{% endcomment %}
+
+{%- liquid
+  assign s = section.settings
+  assign heading_tag = s.heading_tag | default: 'h2'
+-%}
+<div
+  class="product-tiles color-{{ s.color_scheme }}"
+  style="
+    --pts-pad-top: {{ s.padding_top }}px;
+    --pts-pad-bottom: {{ s.padding_bottom }}px;
+    --pts-pad-top-m: {{ s.padding_top_mobile }}px;
+    --pts-pad-bottom-m: {{ s.padding_bottom_mobile }}px;
+    --pts-max: {{ s.content_max_width }}px;
+    --pts-heading-align: {{ s.heading_align }};
+    --pts-heading-size: {{ s.heading_size }}px;
+    --pts-heading-size-m: {{ s.heading_size_mobile }}px;
+    --pts-heading-space: {{ s.heading_spacing }}px;
+    --pts-heading-space-m: {{ s.heading_spacing_mobile }}px;
+    --pts-cols: {{ s.columns_desktop }};
+    --pts-cols-t: {{ s.columns_tablet }};
+    --pts-cols-m: {{ s.columns_mobile }};
+    --pts-gap: {{ s.gap }}px;
+    --pts-gap-m: {{ s.gap_mobile }}px;
+    --pts-row-gap: {{ s.row_gap }}px;
+    --pts-row-gap-m: {{ s.row_gap_mobile }}px;
+    {%- if s.background != blank %} --pts-bg: {{ s.background }};{% endif -%}
+    {%- if s.heading_color != blank %} --pts-heading-color: {{ s.heading_color }};{% endif -%}
+  "
+>
+  <div class="product-tiles__inner product-tiles__inner--{{ s.layout_width }}">
+    {%- if s.heading != blank -%}
+      <{{ heading_tag }} class="product-tiles__heading">{{ s.heading | escape }}</{{ heading_tag }}>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <div class="product-tiles__grid">
+        {% content_for 'blocks' %}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-tiles {
+    padding-block: var(--pts-pad-top) var(--pts-pad-bottom);
+    background-color: var(--pts-bg, var(--color-background));
+    color: var(--color-foreground);
+  }
+
+  .product-tiles__inner {
+    box-sizing: border-box;
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .product-tiles__inner--page {
+    max-width: min(var(--pts-max), var(--page-width, 100%));
+    padding-inline: var(--page-margin);
+  }
+
+  .product-tiles__inner--full {
+    padding-inline: var(--page-margin);
+  }
+
+  .product-tiles__heading {
+    margin: 0 0 var(--pts-heading-space);
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: 700;
+    font-size: var(--pts-heading-size);
+    line-height: 1.15;
+    text-align: var(--pts-heading-align);
+    overflow-wrap: break-word;
+    color: var(--pts-heading-color, var(--color-foreground-heading, var(--color-foreground)));
+  }
+
+  .product-tiles__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--pts-cols), minmax(0, 1fr));
+    gap: var(--pts-row-gap) var(--pts-gap);
+    min-width: 0;
+  }
+
+  @media screen and (max-width: 989px) {
+    .product-tiles__grid {
+      grid-template-columns: repeat(var(--pts-cols-t), minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-tiles {
+      padding-block: var(--pts-pad-top-m) var(--pts-pad-bottom-m);
+    }
+
+    .product-tiles__heading {
+      margin-block-end: var(--pts-heading-space-m);
+      font-size: var(--pts-heading-size-m);
+    }
+
+    .product-tiles__grid {
+      grid-template-columns: repeat(var(--pts-cols-m), minmax(0, 1fr));
+      gap: var(--pts-row-gap-m) var(--pts-gap-m);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Tarjetas de productos",
+  "tag": "section",
+  "class": "product-tiles-section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Título"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "Productos"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta HTML",
+      "options": [
+        {
+          "value": "h1",
+          "label": "h1"
+        },
+        {
+          "value": "h2",
+          "label": "h2"
+        },
+        {
+          "value": "h3",
+          "label": "h3"
+        },
+        {
+          "value": "p",
+          "label": "p"
+        }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Alineación",
+      "options": [
+        {
+          "value": "start",
+          "label": "Inicio"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "end",
+          "label": "Final"
+        }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Tamaño",
+      "min": 20,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Tamaño en móvil",
+      "min": 18,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color del título",
+      "info": "Vacío usa el esquema de color."
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing_mobile",
+      "label": "Espacio inferior en móvil",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "layout_width",
+      "label": "Ancho",
+      "options": [
+        {
+          "value": "page",
+          "label": "Ancho de página"
+        },
+        {
+          "value": "full",
+          "label": "Ancho completo"
+        }
+      ],
+      "default": "page"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 800,
+      "max": 2000,
+      "step": 100,
+      "unit": "px",
+      "default": 1400,
+      "visible_if": "{{ section.settings.layout_width == 'page' }}"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columnas en escritorio",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Columnas en tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columnas en móvil",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Separación entre columnas",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "Separación entre columnas en móvil",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "row_gap",
+      "label": "Separación entre filas",
+      "min": 0,
+      "max": 80,
+      "step": 1,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "row_gap_mobile",
+      "label": "Separación entre filas en móvil",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Esquema de color",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Fondo de la sección",
+      "info": "Vacío usa el esquema de color."
+    },
+    {
+      "type": "header",
+      "content": "Espaciado de la sección"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding superior en móvil",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding inferior en móvil",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product-tile"
+    }
+  ],
+  "presets": [
+    {
+          "name": "Tarjetas de productos",
+          "category": "Custom",
+          "settings": {
+              "heading": "Productos",
+              "heading_align": "start",
+              "heading_color": "#6b0f3a"
+          },
+          "blocks": [
+              {
+                  "type": "product-tile",
+                  "settings": {
+                      "title": "Helado Hope",
+                      "text": "<p>Helados artesanales, sabores únicos y toppings irresistibles.</p>",
+                      "button_label": "Arma tu helado Hope",
+                      "button_style": "outline",
+                      "button_bg": "#ffffff",
+                      "button_text_color": "#6b0f3a",
+                      "button_border_color": "#e8e0e4",
+                      "button_arrow": true,
+                      "title_color": "#6b0f3a",
+                      "text_color": "#5a5a5a",
+                      "image_radius": 12
+                  }
+              },
+              {
+                  "type": "product-tile",
+                  "settings": {
+                      "title": "Mixo Hope",
+                      "text": "<p>Sabores irresistibles en Tucacas. Retiro en tienda o delivery.</p>",
+                      "button_label": "Arma tu mixo",
+                      "button_style": "outline",
+                      "button_bg": "#ffffff",
+                      "button_text_color": "#6b0f3a",
+                      "button_border_color": "#e8e0e4",
+                      "button_arrow": true,
+                      "title_color": "#6b0f3a",
+                      "text_color": "#5a5a5a",
+                      "image_radius": 12
+                  }
+              },
+              {
+                  "type": "product-tile",
+                  "settings": {
+                      "title": "Milkshakes",
+                      "text": "<p>Haz una pausa. Elige tu favorito y disfruta el momento.</p>",
+                      "button_label": "Arma tu milkshake",
+                      "button_style": "outline",
+                      "button_bg": "#ffffff",
+                      "button_text_color": "#6b0f3a",
+                      "button_border_color": "#e8e0e4",
+                      "button_arrow": true,
+                      "title_color": "#6b0f3a",
+                      "text_color": "#5a5a5a",
+                      "image_radius": 12
+                  }
+              },
+              {
+                  "type": "product-tile",
+                  "settings": {
+                      "title": "Barquilla",
+                      "text": "<p>Helado artesanal en una crujiente barquilla bañada por el sirope que más te guste.</p>",
+                      "button_label": "Arma tu barquilla",
+                      "button_style": "outline",
+                      "button_bg": "#ffffff",
+                      "button_text_color": "#6b0f3a",
+                      "button_border_color": "#e8e0e4",
+                      "button_arrow": true,
+                      "title_color": "#6b0f3a",
+                      "text_color": "#5a5a5a",
+                      "image_radius": 12
+                  }
+              }
+          ]
+      }
+  ]
+}
+{% endschema %}
