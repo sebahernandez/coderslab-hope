@@ -1,0 +1,786 @@
+{% comment %}
+  Section contract.
+  Renders a heading followed by a responsive grid of feature cards. Each card is a block
+  with its own icon (uploaded image or pasted SVG code), title, text and optional link.
+  The section owns the layout (columns per breakpoint, gaps, width, spacing), the heading
+  and the shared card styling; blocks can override icon and title colors per card.
+  @example
+  <!-- Add "Box items" from the theme editor and edit each "Item" block -->
+{% endcomment %}
+
+{% liquid
+  assign s = section.settings
+  assign heading_tag = s.heading_tag | default: 'h2'
+  assign icon_px = s.icon_size | times: 2
+%}
+
+<div
+  class="box-items{% if s.card_align == 'center' %} box-items--card-center{% endif %}{% if s.color_scheme != blank %} color-{{ s.color_scheme }}{% endif %}"
+  style="
+    --bi-pad-top: {{ s.padding_top }}px;
+    --bi-pad-bottom: {{ s.padding_bottom }}px;
+    --bi-pad-top-mobile: {{ s.padding_top_mobile }}px;
+    --bi-pad-bottom-mobile: {{ s.padding_bottom_mobile }}px;
+    --bi-cols: {{ s.columns_desktop }};
+    --bi-cols-tablet: {{ s.columns_tablet }};
+    --bi-cols-mobile: {{ s.columns_mobile }};
+    --bi-gap: {{ s.gap }}px;
+    --bi-gap-mobile: {{ s.gap_mobile }}px;
+    --bi-max: {{ s.content_max_width }}px;
+    --bi-heading-size: {{ s.heading_size }}px;
+    --bi-heading-size-mobile: {{ s.heading_size_mobile }}px;
+    --bi-heading-space: {{ s.heading_spacing }}px;
+    --bi-heading-align: {{ s.heading_align }};
+    --bi-card-align: {{ s.card_align }};
+    --bi-card-pad: {{ s.card_padding }}px;
+    --bi-card-pad-mobile: {{ s.card_padding_mobile }}px;
+    --bi-card-radius: {{ s.card_radius }}px;
+    --bi-icon-box: {{ s.icon_box_size }}px;
+    --bi-icon: {{ s.icon_size }}px;
+    --bi-icon-radius: {{ s.icon_box_radius }}%;
+    --bi-title-size: {{ s.title_size }}px;
+    --bi-text-size: {{ s.text_size }}px;
+    {% if s.background != blank %}--bi-bg: {{ s.background }};{% endif %}
+    {% if s.heading_color != blank %}--bi-heading-color: {{ s.heading_color }};{% endif %}
+    {% if s.card_background != blank %}--bi-card-bg: {{ s.card_background }};{% endif %}
+    {% if s.card_border != blank %}--bi-card-border: {{ s.card_border }};{% endif %}
+    {% if s.icon_background != blank %}--bi-icon-bg: {{ s.icon_background }};{% endif %}
+    {% if s.icon_color != blank %}--bi-icon-color: {{ s.icon_color }};{% endif %}
+    {% if s.title_color != blank %}--bi-title-color: {{ s.title_color }};{% endif %}
+    {% if s.text_color != blank %}--bi-text-color: {{ s.text_color }};{% endif %}
+  "
+>
+  <div class="box-items__inner box-items__inner--{{ s.layout_width }}">
+    {%- if s.heading != blank -%}
+      <{{ heading_tag }} class="box-items__heading">{{ s.heading }}</{{ heading_tag }}>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="box-items__grid" role="list">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign b = block.settings
+            assign has_link = false
+            if b.link != blank
+              assign has_link = true
+            endif
+          -%}
+          <li
+            class="box-items__card{% if s.card_shadow %} box-items__card--shadow{% endif %}{% if has_link %} box-items__card--link{% endif %}"
+            style="{% if b.icon_background != blank %}--bi-icon-bg: {{ b.icon_background }};{% endif %}{% if b.icon_color != blank %} --bi-icon-color: {{ b.icon_color }};{% endif %}{% if b.title_color != blank %} --bi-title-color: {{ b.title_color }};{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            {%- if b.icon_svg != blank or b.icon_image != blank -%}
+              <span class="box-items__icon{% if s.icon_box_style == 'none' %} box-items__icon--plain{% endif %}">
+                {%- if b.icon_svg != blank -%}
+                  <span class="box-items__svg" aria-hidden="true">{{ b.icon_svg }}</span>
+                {%- else -%}
+                  {{
+                    b.icon_image
+                    | image_url: width: icon_px
+                    | image_tag:
+                      widths: '48, 96, 144',
+                      sizes: s.icon_size | append: 'px',
+                      alt: b.icon_alt,
+                      loading: 'lazy',
+                      class: 'box-items__img'
+                  }}
+                {%- endif -%}
+              </span>
+            {%- endif -%}
+
+            {%- if b.title != blank -%}
+              <h3 class="box-items__title">
+                {%- if has_link -%}
+                  <a
+                    class="box-items__link"
+                    href="{{ b.link }}"
+                    {% if b.new_tab %}
+                      target="_blank" rel="noopener"
+                    {% endif %}
+                  >
+                    {{- b.title | escape -}}
+                  </a>
+                {%- else -%}
+                  {{- b.title | escape -}}
+                {%- endif -%}
+              </h3>
+            {%- endif -%}
+
+            {%- if b.text != blank -%}
+              <div class="box-items__text">{{ b.text }}</div>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .box-items {
+    padding-block: var(--bi-pad-top) var(--bi-pad-bottom);
+    background-color: var(--bi-bg, var(--color-background));
+    color: var(--color-foreground);
+  }
+
+  .box-items__inner {
+    box-sizing: border-box;
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--page-margin, 16px);
+  }
+
+  .box-items__inner--page {
+    max-width: min(var(--bi-max), var(--page-width, 1200px));
+  }
+
+  .box-items__heading {
+    margin: 0 0 var(--bi-heading-space);
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight, 700);
+    font-size: var(--bi-heading-size);
+    line-height: 1.15;
+    text-align: var(--bi-heading-align, center);
+    color: var(--bi-heading-color, var(--color-foreground-heading, var(--color-foreground)));
+    text-wrap: balance;
+    overflow-wrap: break-word;
+  }
+
+  .box-items__grid {
+    display: grid;
+    grid-template-columns: repeat(var(--bi-cols), minmax(0, 1fr));
+    gap: var(--bi-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .box-items__card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: var(--bi-card-align, flex-start);
+    gap: 12px;
+    min-width: 0;
+    padding: var(--bi-card-pad);
+    border: 1px solid var(--bi-card-border, transparent);
+    border-radius: var(--bi-card-radius);
+    background-color: var(--bi-card-bg, #fff);
+    text-align: start;
+    overflow-wrap: break-word;
+    transition:
+      transform var(--animation-speed, 0.2s) var(--animation-easing, ease),
+      box-shadow var(--animation-speed, 0.2s) var(--animation-easing, ease);
+  }
+
+  .box-items--card-center .box-items__card {
+    text-align: center;
+  }
+
+  .box-items__card--shadow {
+    box-shadow: 0 6px 20px rgb(0 0 0 / 0.06);
+  }
+
+  .box-items__card--link:hover {
+    transform: translateY(-3px);
+  }
+
+  .box-items__icon {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--bi-icon-box);
+    height: var(--bi-icon-box);
+    border-radius: var(--bi-icon-radius);
+    background-color: var(--bi-icon-bg, rgb(var(--color-foreground-rgb) / 0.08));
+    color: var(--bi-icon-color, var(--color-foreground));
+  }
+
+  .box-items__icon--plain {
+    width: auto;
+    height: auto;
+    background: none;
+  }
+
+  .box-items__svg,
+  .box-items__img {
+    display: block;
+    width: var(--bi-icon);
+    height: var(--bi-icon);
+  }
+
+  .box-items__img {
+    object-fit: contain;
+  }
+
+  .box-items__svg svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .box-items__title {
+    margin: 0;
+    font-family: var(--font-body--family);
+    font-weight: 700;
+    font-size: var(--bi-title-size);
+    line-height: 1.3;
+    color: var(--bi-title-color, var(--color-foreground-heading, var(--color-foreground)));
+  }
+
+  .box-items__link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Whole card becomes clickable while keeping a single, named link. */
+  .box-items__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .box-items__link:focus-visible {
+    outline: none;
+  }
+
+  .box-items__card:has(.box-items__link:focus-visible) {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  .box-items__text {
+    font-family: var(--font-body--family);
+    font-size: var(--bi-text-size);
+    line-height: 1.6;
+    color: var(--bi-text-color, rgb(var(--color-foreground-rgb) / 0.8));
+  }
+
+  .box-items__text > * {
+    margin: 0;
+  }
+
+  .box-items__text > * + * {
+    margin-block-start: 0.6em;
+  }
+
+  @media screen and (max-width: 989px) {
+    .box-items__grid {
+      grid-template-columns: repeat(var(--bi-cols-tablet), minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .box-items {
+      padding-block: var(--bi-pad-top-mobile) var(--bi-pad-bottom-mobile);
+    }
+
+    .box-items__heading {
+      font-size: var(--bi-heading-size-mobile);
+    }
+
+    .box-items__grid {
+      grid-template-columns: repeat(var(--bi-cols-mobile), minmax(0, 1fr));
+      gap: var(--bi-gap-mobile);
+    }
+
+    .box-items__card {
+      padding: var(--bi-card-pad-mobile);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .box-items__card {
+      transition: none;
+    }
+
+    .box-items__card--link:hover {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Box items",
+  "tag": "section",
+  "class": "box-items-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Título"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "¿Por qué todos aman Hope?"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta HTML",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Alineación del título",
+      "options": [
+        { "value": "start", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "end", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Tamaño escritorio",
+      "min": 18,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Tamaño móvil",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Espacio bajo el título",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "layout_width",
+      "label": "Ancho",
+      "options": [
+        { "value": "page", "label": "Contenido centrado" },
+        { "value": "full", "label": "Ancho completo" }
+      ],
+      "default": "page"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1100,
+      "visible_if": "{{ section.settings.layout_width == 'page' }}"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columnas escritorio",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Columnas tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "label": "Columnas móvil",
+      "min": 1,
+      "max": 2,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Separación escritorio",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "Separación móvil",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Tarjetas"
+    },
+    {
+      "type": "select",
+      "id": "card_align",
+      "label": "Alineación del contenido",
+      "options": [
+        { "value": "flex-start", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Relleno escritorio",
+      "min": 8,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding_mobile",
+      "label": "Relleno móvil",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Radio de esquinas",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "card_shadow",
+      "label": "Sombra suave",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño del título",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Tamaño del texto",
+      "min": 11,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Iconos"
+    },
+    {
+      "type": "select",
+      "id": "icon_box_style",
+      "label": "Fondo del icono",
+      "options": [
+        { "value": "box", "label": "Con fondo" },
+        { "value": "none", "label": "Sin fondo" }
+      ],
+      "default": "box"
+    },
+    {
+      "type": "range",
+      "id": "icon_box_size",
+      "label": "Tamaño del fondo",
+      "min": 24,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "default": 28,
+      "visible_if": "{{ section.settings.icon_box_style == 'box' }}"
+    },
+    {
+      "type": "range",
+      "id": "icon_box_radius",
+      "label": "Radio del fondo",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "default": 50,
+      "visible_if": "{{ section.settings.icon_box_style == 'box' }}"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Tamaño del icono",
+      "min": 12,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Esquema de color",
+      "default": "scheme-1"
+    },
+    {
+      "type": "paragraph",
+      "content": "Los colores vacíos usan el esquema de color."
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Fondo de la sección",
+      "default": "#fdeef3"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Título",
+      "default": "#6b0f3a"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Fondo de tarjeta",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border",
+      "label": "Borde de tarjeta"
+    },
+    {
+      "type": "color",
+      "id": "icon_background",
+      "label": "Fondo del icono",
+      "default": "#fce1ea"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icono (solo SVG)",
+      "default": "#6b0f3a"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Título de tarjeta",
+      "default": "#6b0f3a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texto de tarjeta",
+      "default": "#4a4a4a"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Superior escritorio",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Inferior escritorio",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Superior móvil",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Inferior móvil",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Item",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Icono"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Imagen del icono",
+          "info": "PNG, JPG o SVG subido a Archivos."
+        },
+        {
+          "type": "html",
+          "id": "icon_svg",
+          "label": "Código SVG",
+          "info": "Opcional. Pega el código <svg>. Tiene prioridad sobre la imagen y toma el color del icono si usa currentColor."
+        },
+        {
+          "type": "text",
+          "id": "icon_alt",
+          "label": "Texto alternativo de la imagen",
+          "info": "Déjalo vacío si el icono es decorativo."
+        },
+        {
+          "type": "header",
+          "content": "Contenido"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Sin conservantes"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Texto",
+          "default": "<p>Nuestros helados están hechos con ingredientes frescos, sin químicos ni aditivos artificiales.</p>"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Enlace",
+          "info": "Opcional. Hace clicable toda la tarjeta."
+        },
+        {
+          "type": "checkbox",
+          "id": "new_tab",
+          "label": "Abrir en nueva pestaña",
+          "default": false,
+          "visible_if": "{{ block.settings.link != blank }}"
+        },
+        {
+          "type": "header",
+          "content": "Colores (opcional)"
+        },
+        {
+          "type": "paragraph",
+          "content": "Si están vacíos se usan los colores de la sección."
+        },
+        {
+          "type": "color",
+          "id": "icon_background",
+          "label": "Fondo del icono"
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icono (solo SVG)"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Título"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Box items",
+      "blocks": [
+        {
+          "type": "item",
+          "settings": {
+            "title": "Sin conservantes",
+            "text": "<p>Nuestros helados están hechos con ingredientes frescos, sin químicos ni aditivos artificiales. Solo lo bueno, como si los hicieras en casa.</p>",
+            "icon_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M9 3h6\"/><path d=\"M10 3v6L4.5 18.5A1.7 1.7 0 0 0 6 21h12a1.7 1.7 0 0 0 1.5-2.5L14 9V3\"/><path d=\"M7 15h10\"/></svg>"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Ingredientes naturales",
+            "text": "<p>Usamos frutas reales, bases artesanales y sabores auténticos que le dan a cada mezcla un gusto inigualable. Lo natural sabe mejor.</p>",
+            "icon_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 7c-3-2.5-8-1.5-8 3.5C4 15 8 21 12 21s8-6 8-10.5C20 5.5 15 4.5 12 7z\"/><path d=\"M12 7V4\"/><path d=\"M12 4c1-1.3 2.5-1.8 4-1.5\"/><path d=\"M10 12h.01M14 12h.01M12 15h.01\"/></svg>"
+          }
+        },
+        {
+          "type": "item",
+          "settings": {
+            "title": "Opciones veganas",
+            "text": "<p>Creemos que todos merecen un postre delicioso. Por eso ofrecemos opciones sin lácteos, igual de cremosas, dulces y felices.</p>",
+            "icon_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 21v-9\"/><path d=\"M12 12C12 7 8.5 4 4 4c0 5 3 8 8 8z\"/><path d=\"M12 14c0-4 3-7 8-7 0 4.5-3 7-8 7z\"/></svg>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
