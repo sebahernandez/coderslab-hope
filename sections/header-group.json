@@ -82,7 +82,7 @@
         "border_width": 0,
         "enable_glass_header": true,
         "glass_blur": 12,
-        "glass_opacity": 60,
+        "glass_opacity": 70,
         "glass_radius": 30,
         "glass_float_margin": 12,
         "margin-block-end": 12,
