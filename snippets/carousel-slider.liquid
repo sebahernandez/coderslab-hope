@@ -36,7 +36,12 @@
 
     <div class="carousel-track-container">
       <div class="carousel-track">
-        {% for product in collection.products limit: product_limit %}
+        {% assign rendered_count = 0 %}
+        {% for product in collection.products %}
+          {% comment %} Internal products (tag `addon`) are never listed. {% endcomment %}
+          {% if product.tags contains 'addon' %}{% continue %}{% endif %}
+          {% if rendered_count >= product_limit %}{% break %}{% endif %}
+          {% assign rendered_count = rendered_count | plus: 1 %}
           <div class="carousel-slide">
             <div class="product-card">
               <div class="product-image-container">

@@ -32,8 +32,17 @@
     flex-wrap: wrap;
     justify-content: center;
 
+    /* Desktop: spread the policies across the full content width. */
     @media screen and (min-width: 750px) {
-      justify-content: flex-start;
+      flex: 1 1 100%;
+      justify-content: space-between;
+    }
+  }
+
+  /* Let the utilities group that holds the policies take the full row width. */
+  @media screen and (min-width: 750px) {
+    .footer-utilities__group:has(> .policy_list) {
+      flex: 1 1 100%;
     }
   }
 {% endstylesheet %}

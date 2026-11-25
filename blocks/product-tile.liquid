@@ -1,0 +1,737 @@
+{%- doc -%}
+  Tarjeta de producto: imagen, título, texto corto y botón opcional. Cada valor se puede
+  escribir a mano o heredar del producto elegido (imagen destacada, título, descripción
+  resumida y URL). Todos los valores por instancia viajan como variables CSS inline
+  (`--pt-*` en escritorio, `--pt-*-m` en móvil); el CSS estático vive en `{% stylesheet %}`.
+
+  @example
+  {% content_for 'blocks' %}
+{%- enddoc -%}
+{%- liquid
+  assign s = block.settings
+  assign product = s.product
+
+  # Content resolution: manual value first, then product fallback.
+  assign image = s.image | default: product.featured_image
+  assign image_mobile = s.image_mobile | default: image
+  assign title = s.title | default: product.title
+  assign link = s.button_link | default: product.url
+
+  assign text_plain = ''
+  if s.text == blank and product != blank
+    assign text_plain = product.description | strip_html | truncatewords: s.description_words
+  endif
+
+  assign alt = s.image_alt | default: image.alt | default: product.title
+
+  assign ratio = s.image_ratio
+  if ratio == 'auto'
+    assign ratio = image.aspect_ratio | default: 1.25
+  endif
+
+  assign ratio_mobile = ratio
+  if s.image_ratio == 'auto' and image_mobile != blank
+    assign ratio_mobile = image_mobile.aspect_ratio | default: ratio
+  endif
+
+  assign title_tag = s.title_tag | default: 'h3'
+-%}
+<div
+  class="product-tile{% if s.align == 'center' %} product-tile--center{% endif %}"
+  style="
+    --pt-ratio: {{ ratio }};
+    --pt-ratio-m: {{ ratio_mobile }};
+    --pt-fit: {{ s.image_fit }};
+    --pt-img-radius: {{ s.image_radius }}px;
+    --pt-title-size: {{ s.title_size }}px;
+    --pt-title-size-m: {{ s.title_size_mobile }}px;
+    --pt-title-weight: {{ s.title_weight }};
+    --pt-title-space: {{ s.title_spacing }}px;
+    --pt-title-space-m: {{ s.title_spacing_mobile }}px;
+    --pt-text-size: {{ s.text_size }}px;
+    --pt-text-size-m: {{ s.text_size_mobile }}px;
+    --pt-text-space: {{ s.text_spacing }}px;
+    --pt-text-space-m: {{ s.text_spacing_mobile }}px;
+    --pt-btn-radius: {{ s.button_radius }}px;
+    --pt-radius: {{ s.card_radius }}px;
+    --pt-pad: {{ s.padding }}px;
+    --pt-pad-m: {{ s.padding_mobile }}px;
+    --pt-mt: {{ s.margin_top }}px;
+    --pt-mt-m: {{ s.margin_top_mobile }}px;
+    --pt-mb: {{ s.margin_bottom }}px;
+    --pt-mb-m: {{ s.margin_bottom_mobile }}px;
+    --pt-content-pad: {{ s.content_padding }}px;
+    --pt-content-pad-m: {{ s.content_padding_mobile }}px;
+    {%- if s.card_bg != blank %} --pt-bg: {{ s.card_bg }};{% endif -%}
+    {%- if s.image_bg != blank %} --pt-img-bg: {{ s.image_bg }};{% endif -%}
+    {%- if s.title_color != blank %} --pt-title-color: {{ s.title_color }};{% endif -%}
+    {%- if s.text_color != blank %} --pt-text-color: {{ s.text_color }};{% endif -%}
+    {%- if s.button_bg != blank %} --pt-btn-bg: {{ s.button_bg }};{% endif -%}
+    {%- if s.button_text_color != blank %} --pt-btn-fg: {{ s.button_text_color }};{% endif -%}
+    {%- if s.button_border_color != blank %} --pt-btn-border: {{ s.button_border_color }};{% endif -%}
+    {%- if s.button_bg_hover != blank %} --pt-btn-bg-hover: {{ s.button_bg_hover }};{% endif -%}
+    {%- if s.button_text_hover != blank %} --pt-btn-fg-hover: {{ s.button_text_hover }};{% endif -%}
+  "
+  {{ block.shopify_attributes }}
+>
+  <div class="product-tile__media">
+    {%- if image != blank -%}
+      <picture class="product-tile__picture">
+        {%- if s.image_mobile != blank -%}
+          <source
+            media="(max-width: 749px)"
+            srcset="{{ image_mobile | image_url: width: 375 }} 375w, {{ image_mobile | image_url: width: 750 }} 750w, {{ image_mobile | image_url: width: 1125 }} 1125w"
+            sizes="100vw"
+            width="{{ image_mobile.width }}"
+            height="{{ image_mobile.height }}"
+          >
+        {%- endif -%}
+        {{
+          image
+          | image_url: width: 1200
+          | image_tag:
+            widths: '300, 450, 600, 800, 1000, 1200',
+            sizes: '(min-width: 990px) 25vw, (min-width: 750px) 50vw, 100vw',
+            alt: alt,
+            loading: 'lazy',
+            width: image.width,
+            height: image.height,
+            class: 'product-tile__image'
+        }}
+      </picture>
+    {%- else -%}
+      {{ 'product-apparel-1' | placeholder_svg_tag: 'product-tile__image product-tile__placeholder' }}
+    {%- endif -%}
+  </div>
+
+  <div class="product-tile__body">
+    {%- if title != blank -%}
+      <{{ title_tag }} class="product-tile__title">{{ title | escape }}</{{ title_tag }}>
+    {%- endif -%}
+
+    {%- if s.text != blank -%}
+      <div class="product-tile__text rte">{{ s.text }}</div>
+    {%- elsif text_plain != blank -%}
+      <div class="product-tile__text"><p>{{ text_plain | escape }}</p></div>
+    {%- endif -%}
+
+    {%- if s.button_label != blank -%}
+      <div class="product-tile__actions">
+        <a
+          class="product-tile__button product-tile__button--{{ s.button_style }} product-tile__button--{{ s.button_size }}{% if s.button_full_mobile %} product-tile__button--full-mobile{% endif %}"
+          {% if link != blank %}
+            href="{{ link }}"
+          {% else %}
+            role="link"
+            aria-disabled="true"
+          {% endif %}
+          {% if s.button_new_tab and link != blank %}
+            target="_blank" rel="noopener"
+          {% endif %}
+        >
+          <span>{{ s.button_label | escape }}</span>
+          {%- if s.button_arrow -%}
+            <span class="product-tile__button-icon" aria-hidden="true">
+              {{- 'icon-arrow.svg' | inline_asset_content -}}
+            </span>
+          {%- endif -%}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .product-tile {
+    --pt-card-bg: var(--pt-bg, transparent);
+
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-width: 0;
+    margin-block: var(--pt-mt) var(--pt-mb);
+    padding: var(--pt-pad);
+    border-radius: var(--pt-radius);
+    background-color: var(--pt-card-bg);
+    color: var(--color-foreground);
+    overflow-wrap: break-word;
+  }
+
+  .product-tile--center {
+    text-align: center;
+  }
+
+  .product-tile__media {
+    display: block;
+    overflow: hidden;
+    aspect-ratio: var(--pt-ratio);
+    border-radius: var(--pt-img-radius);
+    background-color: var(--pt-img-bg, transparent);
+  }
+
+  .product-tile__picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-tile__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    object-fit: var(--pt-fit, cover);
+  }
+
+  .product-tile__body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-width: 0;
+    padding-block-start: var(--pt-content-pad);
+  }
+
+  .product-tile--center .product-tile__body {
+    align-items: center;
+  }
+
+  .product-tile__title {
+    margin: 0 0 var(--pt-title-space);
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-size: var(--pt-title-size);
+    font-weight: var(--pt-title-weight);
+    line-height: 1.25;
+    color: var(--pt-title-color, var(--color-foreground-heading, var(--color-foreground)));
+  }
+
+  .product-tile__text {
+    margin: 0 0 var(--pt-text-space);
+    font-family: var(--font-body--family);
+    font-size: var(--pt-text-size);
+    line-height: 1.6;
+    color: var(--pt-text-color, var(--color-foreground));
+  }
+
+  .product-tile__text > * {
+    margin: 0;
+  }
+
+  .product-tile__text > * + * {
+    margin-block-start: 0.75em;
+  }
+
+  .product-tile__actions {
+    display: flex;
+    max-width: 100%;
+    margin-block-start: auto;
+  }
+
+  .product-tile--center .product-tile__actions {
+    justify-content: center;
+  }
+
+  .product-tile__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6em;
+    box-sizing: border-box;
+    min-height: 44px;
+    max-width: 100%;
+    border: 1px solid transparent;
+    border-radius: var(--pt-btn-radius, 999px);
+    font-family: var(--font-body--family);
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color var(--animation-speed, 0.2s) var(--animation-easing, ease),
+      color var(--animation-speed, 0.2s) var(--animation-easing, ease),
+      border-color var(--animation-speed, 0.2s) var(--animation-easing, ease);
+  }
+
+  .product-tile__button--small {
+    padding: 0.5em 1.1em;
+    font-size: 0.8125rem;
+  }
+
+  .product-tile__button--medium {
+    padding: 0.7em 1.4em;
+    font-size: 0.9375rem;
+  }
+
+  .product-tile__button--large {
+    padding: 0.9em 1.8em;
+    font-size: 1.0625rem;
+  }
+
+  .product-tile__button--solid {
+    border-color: var(--pt-btn-border, var(--pt-btn-bg, var(--color-foreground)));
+    background-color: var(--pt-btn-bg, var(--color-foreground));
+    color: var(--pt-btn-fg, var(--color-background));
+  }
+
+  .product-tile__button--solid:hover {
+    background-color: var(--pt-btn-bg-hover, var(--pt-btn-bg, var(--color-foreground)));
+    color: var(--pt-btn-fg-hover, var(--pt-btn-fg, var(--color-background)));
+    opacity: 0.9;
+  }
+
+  .product-tile__button--outline {
+    border-color: var(--pt-btn-border, var(--color-foreground));
+    background-color: var(--pt-btn-bg, transparent);
+    color: var(--pt-btn-fg, var(--color-foreground));
+  }
+
+  .product-tile__button--outline:hover {
+    background-color: var(--pt-btn-bg-hover, var(--color-foreground));
+    border-color: var(--pt-btn-bg-hover, var(--pt-btn-border, var(--color-foreground)));
+    color: var(--pt-btn-fg-hover, var(--color-background));
+  }
+
+  .product-tile__button:focus-visible {
+    outline: var(--focus-outline-width, 2px) solid currentColor;
+    outline-offset: var(--focus-outline-offset, 3px);
+  }
+
+  .product-tile__button-icon {
+    display: inline-flex;
+    flex: none;
+    width: 1em;
+    height: 1em;
+    transition: transform var(--animation-speed, 0.2s) var(--animation-easing, ease);
+  }
+
+  .product-tile__button-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .product-tile__button:hover .product-tile__button-icon {
+    transform: translateX(3px);
+  }
+
+  [dir='rtl'] .product-tile__button-icon svg {
+    transform: scaleX(-1);
+  }
+
+  [dir='rtl'] .product-tile__button:hover .product-tile__button-icon {
+    transform: translateX(-3px);
+  }
+
+  @media screen and (max-width: 749px) {
+    .product-tile {
+      margin-block: var(--pt-mt-m) var(--pt-mb-m);
+      padding: var(--pt-pad-m);
+    }
+
+    .product-tile__media {
+      aspect-ratio: var(--pt-ratio-m);
+    }
+
+    .product-tile__body {
+      padding-block-start: var(--pt-content-pad-m);
+    }
+
+    .product-tile__title {
+      margin-block-end: var(--pt-title-space-m);
+      font-size: var(--pt-title-size-m);
+    }
+
+    .product-tile__text {
+      margin-block-end: var(--pt-text-space-m);
+      font-size: var(--pt-text-size-m);
+    }
+
+    .product-tile__button--full-mobile {
+      width: 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .product-tile__button,
+    .product-tile__button-icon {
+      transition: none;
+    }
+
+    .product-tile__button:hover .product-tile__button-icon {
+      transform: none;
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Tarjeta de producto",
+  "tag": null,
+  "settings": [
+    { "type": "header", "content": "Producto" },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Producto",
+      "info": "Opcional. Aporta imagen, título, texto y enlace cuando los campos de abajo están vacíos."
+    },
+    {
+      "type": "range",
+      "id": "description_words",
+      "label": "Palabras de la descripción",
+      "info": "Se usa solo cuando el texto está vacío y hay un producto.",
+      "min": 5,
+      "max": 50,
+      "step": 1,
+      "default": 15
+    },
+
+    { "type": "header", "content": "Imagen" },
+    { "type": "image_picker", "id": "image", "label": "Imagen", "info": "Vacía usa la imagen destacada del producto." },
+    { "type": "image_picker", "id": "image_mobile", "label": "Imagen móvil (opcional)" },
+    { "type": "text", "id": "image_alt", "label": "Texto alternativo" },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Proporción",
+      "options": [
+        { "value": "auto", "label": "Proporción de la imagen" },
+        { "value": "1", "label": "Cuadrada (1:1)" },
+        { "value": "1.25", "label": "Horizontal (5:4)" },
+        { "value": "1.5", "label": "Horizontal (3:2)" },
+        { "value": "1.7778", "label": "Panorámica (16:9)" },
+        { "value": "0.8", "label": "Vertical (4:5)" }
+      ],
+      "default": "1.25"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Ajuste de la imagen",
+      "options": [
+        { "value": "cover", "label": "Cubrir" },
+        { "value": "contain", "label": "Contener" }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Radio de esquinas de la imagen",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    { "type": "color", "id": "image_bg", "label": "Fondo tras la imagen", "info": "Visible con el ajuste Contener." },
+
+    { "type": "header", "content": "Título" },
+    { "type": "text", "id": "title", "label": "Título", "info": "Vacío usa el título del producto." },
+    {
+      "type": "select",
+      "id": "title_tag",
+      "label": "Etiqueta HTML",
+      "options": [
+        { "value": "h2", "label": "h2" },
+        { "value": "h3", "label": "h3" },
+        { "value": "p", "label": "p" }
+      ],
+      "default": "h3"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Tamaño",
+      "min": 14,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Tamaño en móvil",
+      "min": 14,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Grosor",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medio" },
+        { "value": "600", "label": "Seminegrita" },
+        { "value": "700", "label": "Negrita" }
+      ],
+      "default": "600"
+    },
+    { "type": "color", "id": "title_color", "label": "Color", "info": "Vacío usa el esquema de color." },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "title_spacing_mobile",
+      "label": "Espacio inferior en móvil",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 6
+    },
+
+    { "type": "header", "content": "Texto" },
+    { "type": "richtext", "id": "text", "label": "Texto", "info": "Vacío usa la descripción del producto." },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Tamaño",
+      "min": 11,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Tamaño en móvil",
+      "min": 11,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    { "type": "color", "id": "text_color", "label": "Color", "info": "Vacío usa el esquema de color." },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "label": "Espacio inferior",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "text_spacing_mobile",
+      "label": "Espacio inferior en móvil",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+
+    { "type": "header", "content": "Botón" },
+    { "type": "text", "id": "button_label", "label": "Texto del botón", "info": "Vacío oculta el botón." },
+    { "type": "url", "id": "button_link", "label": "Enlace", "info": "Vacío usa la página del producto." },
+    {
+      "type": "checkbox",
+      "id": "button_new_tab",
+      "label": "Abrir en una pestaña nueva",
+      "default": false,
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "Estilo",
+      "options": [
+        { "value": "solid", "label": "Relleno" },
+        { "value": "outline", "label": "Contorno" }
+      ],
+      "default": "outline",
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "select",
+      "id": "button_size",
+      "label": "Tamaño",
+      "options": [
+        { "value": "small", "label": "Pequeño" },
+        { "value": "medium", "label": "Mediano" },
+        { "value": "large", "label": "Grande" }
+      ],
+      "default": "small",
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Fondo",
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Color del texto",
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Color del borde",
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_hover",
+      "label": "Fondo al pasar el cursor",
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "color",
+      "id": "button_text_hover",
+      "label": "Texto al pasar el cursor",
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Radio de esquinas",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 50,
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_arrow",
+      "label": "Mostrar flecha",
+      "default": true,
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_full_mobile",
+      "label": "Ancho completo en móvil",
+      "default": false,
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+
+    { "type": "header", "content": "Tarjeta" },
+    {
+      "type": "select",
+      "id": "align",
+      "label": "Alineación del contenido",
+      "options": [
+        { "value": "start", "label": "Inicio" },
+        { "value": "center", "label": "Centro" }
+      ],
+      "default": "start"
+    },
+    { "type": "color", "id": "card_bg", "label": "Fondo de la tarjeta", "info": "Vacío deja la tarjeta transparente." },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "label": "Radio de esquinas de la tarjeta",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "label": "Padding en móvil",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "label": "Margen superior",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_top_mobile",
+      "label": "Margen superior en móvil",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "label": "Margen inferior",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom_mobile",
+      "label": "Margen inferior en móvil",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "label": "Espacio entre imagen y texto",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "content_padding_mobile",
+      "label": "Espacio entre imagen y texto en móvil",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tarjeta de producto"
+    }
+  ]
+}
+{% endschema %}

@@ -53,6 +53,23 @@
   </div>
 
   {% capture list_items %}
+    {% if section_products.size > 0 %}
+      {% assign rendered_count = 0 %}
+      {% for product in section_products %}
+        {% comment %} Internal products (tag `addon`) are never listed. {% endcomment %}
+        {% if product.tags contains 'addon' %}{% continue %}{% endif %}
+        {% if rendered_count >= section.settings.max_products %}{% break %}{% endif %}
+        {% if rendered_count > 0 %}
+          <!--@list/split-->
+        {% endif %}
+        {% assign rendered_count = rendered_count | plus: 1 %}
+        <div
+          class="resource-list__item"
+        >
+          {% content_for 'block', type: '_product-card', id: 'static-product-card', closest.product: product %}
+        </div>
+      {% endfor %}
+    {% else %}
     {% for i in (1..max_items) %}
       {% if section_products.size > 0 %}
         {% assign index = forloop.index0 %}
@@ -71,6 +88,7 @@
       {% endunless %}
 
     {% endfor %}
+    {% endif %}
   {% endcapture %}
 
   {% liquid

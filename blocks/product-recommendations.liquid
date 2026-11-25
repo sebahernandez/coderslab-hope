@@ -83,7 +83,17 @@
         endif
       %}
       {% capture list_items %}
-        {% for product in products limit: block.settings.max_products %}
+        {% assign rendered_count = 0 %}
+        {% for product in products %}
+          {% comment %} Internal products (tag `addon`) are never recommended. {% endcomment %}
+          {% if product.tags contains 'addon' %}{% continue %}{% endif %}
+          {% if rendered_count >= block.settings.max_products %}{% break %}{% endif %}
+          {% if rendered_count > 0 %}
+            {% if block.settings.layout_type == 'carousel' or block.settings.carousel_on_mobile %}
+              <!--@list/split-->
+            {% endif %}
+          {% endif %}
+          {% assign rendered_count = rendered_count | plus: 1 %}
           <div class="resource-list__item">
             {% content_for 'block',
               type: '_product-card',
@@ -91,11 +101,6 @@
               closest.product: product
             %}
           </div>
-          {% if block.settings.layout_type == 'carousel' or block.settings.carousel_on_mobile %}
-            {% unless forloop.last %}
-              <!--@list/split-->
-            {% endunless %}
-          {% endif %}
         {% endfor %}
       {% endcapture %}
 

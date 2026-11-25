@@ -1,0 +1,1472 @@
+{% comment %}
+  Section contract.
+  Renders a two-column block: a static image with a centered play button next to a stack of
+  merchant-ordered blocks (heading, text, feature cards). Pressing play opens a modal dialog
+  (custom element `video-modal`, extends the theme DialogComponent) that mounts an uploaded video
+  or a YouTube/Vimeo iframe from a <template> only on open, and unmounts it on close.
+  Consecutive `feature` blocks are grouped into one grid. Columns stack below 750px.
+  @example
+  <!-- Add "Video Hope modal" from the theme editor, pick an image and a video, edit its blocks -->
+{% endcomment %}
+
+{% liquid
+  assign s = section.settings
+  assign image_desktop = s.image | default: s.image_mobile
+  assign image_mobile = s.image_mobile | default: s.image
+
+  assign ratio = s.image_ratio
+  if ratio == 'auto'
+    assign ratio = image_desktop.aspect_ratio | default: 1.5
+  endif
+
+  assign alt = s.image_alt | default: image_desktop.alt
+
+  assign loading = 'lazy'
+  assign fetchpriority = 'auto'
+  if section.index == 1
+    assign loading = 'eager'
+    assign fetchpriority = 'high'
+  endif
+
+  if s.layout_width == 'full'
+    assign sizes = '(min-width: 750px) ' | append: s.media_width | append: 'vw, 100vw'
+  else
+    assign sizes_px = 1600 | times: s.media_width | divided_by: 100
+    assign sizes = '(min-width: 1600px) ' | append: sizes_px | append: 'px, (min-width: 750px) ' | append: s.media_width | append: 'vw, 100vw'
+  endif
+
+  case s.content_align
+    when 'center'
+      assign items = 'center'
+    when 'end'
+      assign items = 'flex-end'
+    else
+      assign items = 'flex-start'
+  endcase
+
+  assign has_video = false
+  assign video_url = s.video_url
+  if s.video_source == 'uploaded' and s.video != blank
+    assign has_video = true
+  elsif s.video_source == 'url' and video_url != blank
+    assign has_video = true
+  endif
+
+  assign play_label = 'accessibility.play_video' | t
+  assign video_title = play_label
+  for block in section.blocks
+    if block.type == 'heading' and block.settings.heading != blank
+      assign video_title = block.settings.heading | strip_html
+      break
+    endif
+  endfor
+
+  assign in_grid = false
+%}
+
+<div
+  class="video-hope-modal color-{{ s.color_scheme }} video-hope-modal--media-{{ s.media_side }} video-hope-modal--mobile-media-{{ s.mobile_media_order }}"
+  style="
+    --vhm-pad-top: {{ s.padding_top }}px;
+    --vhm-pad-bottom: {{ s.padding_bottom }}px;
+    --vhm-pad-top-mobile: {{ s.padding_top_mobile }}px;
+    --vhm-pad-bottom-mobile: {{ s.padding_bottom_mobile }}px;
+    --vhm-gap: {{ s.gap }}px;
+    --vhm-gap-mobile: {{ s.gap_mobile }}px;
+    --vhm-media-width: {{ s.media_width }}%;
+    --vhm-align-v: {{ s.vertical_align }};
+    --vhm-text-align: {{ s.content_align }};
+    --vhm-items: {{ items }};
+    --vhm-ratio: {{ ratio }};
+    --vhm-radius: {{ s.image_radius }}px;
+    --vhm-play-size: {{ s.play_size }}px;
+    --vhm-play-size-mobile: {{ s.play_size_mobile }}px;
+    --vhm-play-border-width: {{ s.play_border_width }}px;
+    --vhm-cols: {{ s.feature_columns }};
+    --vhm-cols-mobile: {{ s.feature_columns_mobile }};
+    --vhm-feature-gap: {{ s.feature_gap }}px;
+    --vhm-feature-gap-mobile: {{ s.feature_gap_mobile }}px;
+    {% if s.background != blank %}--vhm-bg: {{ s.background }};{% endif %}
+    {% if s.play_bg != blank %}--vhm-play-bg: {{ s.play_bg }};{% endif %}
+    {% if s.play_icon_color != blank %}--vhm-play-icon: {{ s.play_icon_color }};{% endif %}
+    {% if s.play_border_color != blank %}--vhm-play-border: {{ s.play_border_color }};{% endif %}
+  "
+>
+  <div class="video-hope-modal__inner video-hope-modal__inner--{{ s.layout_width }}">
+    <div class="video-hope-modal__media">
+      <div class="video-hope-modal__frame">
+        {%- if image_desktop != blank -%}
+          <picture class="video-hope-modal__picture">
+            {%- if image_mobile != blank -%}
+              <source
+                media="(max-width: 749px)"
+                srcset="{{ image_mobile | image_url: width: 375 }} 375w, {{ image_mobile | image_url: width: 750 }} 750w, {{ image_mobile | image_url: width: 1125 }} 1125w"
+                sizes="100vw"
+                width="{{ image_mobile.width }}"
+                height="{{ image_mobile.height }}"
+              >
+            {%- endif -%}
+            {{
+              image_desktop
+              | image_url: width: 2000
+              | image_tag:
+                widths: '500, 700, 900, 1100, 1400, 1800, 2000',
+                sizes: sizes,
+                alt: alt,
+                loading: loading,
+                fetchpriority: fetchpriority,
+                class: 'video-hope-modal__image'
+            }}
+          </picture>
+        {%- else -%}
+          {{ 'hero-apparel-1' | placeholder_svg_tag: 'video-hope-modal__image video-hope-modal__placeholder' }}
+        {%- endif -%}
+
+        {%- if has_video -%}
+          <video-modal class="video-hope-modal__modal">
+            <button
+              type="button"
+              class="video-hope-modal__play"
+              on:click="/showDialog"
+              aria-label="{{ 'accessibility.play_video' | t }}"
+            >
+              <svg
+                class="video-hope-modal__play-icon"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z"/>
+              </svg>
+            </button>
+
+            <dialog
+              ref="dialog"
+              class="video-hope-modal__dialog"
+              aria-label="{{ video_title | escape }}"
+              scroll-lock
+            >
+              <button
+                type="button"
+                class="video-hope-modal__close"
+                on:click="/closeDialog"
+                aria-label="{{ 'actions.close' | t }}"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d="M6 6l12 12M18 6L6 18"/>
+                </svg>
+              </button>
+              <div class="video-hope-modal__player" ref="player"></div>
+            </dialog>
+
+            <template ref="videoTemplate">
+              {%- if s.video_source == 'uploaded' -%}
+                {{
+                  s.video
+                  | video_tag:
+                    autoplay: true,
+                    controls: true,
+                    playsinline: true,
+                    class: 'video-hope-modal__video'
+                }}
+              {%- elsif video_url.type == 'youtube' -%}
+                <iframe
+                  class="video-hope-modal__video"
+                  src="https://www.youtube-nocookie.com/embed/{{ video_url.id }}?autoplay=1&rel=0&playsinline=1"
+                  title="{{ video_title | escape }}"
+                  allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                  allowfullscreen
+                  frameborder="0"
+                ></iframe>
+              {%- elsif video_url.type == 'vimeo' -%}
+                <iframe
+                  class="video-hope-modal__video"
+                  src="https://player.vimeo.com/video/{{ video_url.id }}?autoplay=1"
+                  title="{{ video_title | escape }}"
+                  allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                  allowfullscreen
+                  frameborder="0"
+                ></iframe>
+              {%- endif -%}
+            </template>
+          </video-modal>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <div class="video-hope-modal__content">
+      {%- # theme-check-disable UnclosedHTMLElement -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'feature' -%}
+          {%- unless in_grid -%}
+            <div class="video-hope-modal__features">
+            {%- assign in_grid = true -%}
+          {%- endunless -%}
+
+          {%- assign b = block.settings -%}
+          <div
+            class="video-hope-modal__feature"
+            style="
+              --vhm-f-pad: {{ b.padding }}px;
+              --vhm-f-pad-mobile: {{ b.padding_mobile }}px;
+              --vhm-f-radius: {{ b.radius }}px;
+              --vhm-f-title-size: {{ b.title_size }}px;
+              --vhm-f-title-size-mobile: {{ b.title_size_mobile }}px;
+              --vhm-f-text-size: {{ b.text_size }}px;
+              --vhm-f-text-size-mobile: {{ b.text_size_mobile }}px;
+              {% if b.card_bg != blank %}--vhm-f-bg: {{ b.card_bg }};{% endif %}
+              {% if b.icon_bg != blank %}--vhm-f-icon-bg: {{ b.icon_bg }};{% endif %}
+              {% if b.icon_color != blank %}--vhm-f-icon-color: {{ b.icon_color }};{% endif %}
+              {% if b.title_color != blank %}--vhm-f-title-color: {{ b.title_color }};{% endif %}
+              {% if b.text_color != blank %}--vhm-f-text-color: {{ b.text_color }};{% endif %}
+            "
+            {{ block.shopify_attributes }}
+          >
+            {%- if b.icon_svg != blank or b.icon_image != blank -%}
+              <span class="video-hope-modal__feature-icon"{% if b.icon_svg != blank or b.icon_alt == blank %} aria-hidden="true"{% endif %}>
+                {%- if b.icon_svg != blank -%}
+                  {{- b.icon_svg -}}
+                {%- else -%}
+                  {{
+                    b.icon_image
+                    | image_url: width: 64
+                    | image_tag:
+                      width: 16,
+                      height: 16,
+                      alt: b.icon_alt,
+                      loading: 'lazy',
+                      class: 'video-hope-modal__feature-image'
+                  }}
+                {%- endif -%}
+              </span>
+            {%- endif -%}
+            {%- if b.title != blank -%}
+              <p class="video-hope-modal__feature-title">{{ b.title | escape }}</p>
+            {%- endif -%}
+            {%- if b.text != blank -%}
+              <p class="video-hope-modal__feature-text">{{ b.text | escape }}</p>
+            {%- endif -%}
+          </div>
+        {%- else -%}
+          {%- if in_grid -%}
+            </div>
+            {%- assign in_grid = false -%}
+          {%- endif -%}
+
+          {%- case block.type -%}
+            {%- when 'heading' -%}
+              {%- if block.settings.heading != blank -%}
+                {%- assign tag = block.settings.tag -%}
+                <{{ tag }}
+                  class="video-hope-modal__heading"
+                  style="--vhm-size: {{ block.settings.size }}px; --vhm-size-mobile: {{ block.settings.size_mobile }}px; --vhm-weight: {{ block.settings.weight }}; --vhm-line: {{ block.settings.line_height | divided_by: 100.0 }}; --vhm-space: {{ block.settings.spacing_bottom }}px; --vhm-space-mobile: {{ block.settings.spacing_bottom_mobile }}px;{% if block.settings.color != blank %} --vhm-color: {{ block.settings.color }};{% endif %}"
+                  {{ block.shopify_attributes }}
+                >
+                  {{- block.settings.heading | escape -}}
+                </{{ tag }}>
+              {%- endif -%}
+
+            {%- when 'text' -%}
+              {%- if block.settings.text != blank -%}
+                <div
+                  class="video-hope-modal__text"
+                  style="--vhm-size: {{ block.settings.size }}px; --vhm-size-mobile: {{ block.settings.size_mobile }}px; --vhm-max: {{ block.settings.max_width }}ch; --vhm-space: {{ block.settings.spacing_bottom }}px; --vhm-space-mobile: {{ block.settings.spacing_bottom_mobile }}px;{% if block.settings.color != blank %} --vhm-color: {{ block.settings.color }};{% endif %}"
+                  {{ block.shopify_attributes }}
+                >
+                  {{- block.settings.text -}}
+                </div>
+              {%- endif -%}
+          {%- endcase -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if in_grid -%}
+        </div>
+      {%- endif -%}
+      {%- # theme-check-enable UnclosedHTMLElement -%}
+    </div>
+  </div>
+</div>
+
+{%- if has_video -%}
+  <script type="module" src="{{ 'video-modal.js' | asset_url }}"></script>
+{%- endif -%}
+
+{% stylesheet %}
+  .video-hope-modal {
+    padding-block: var(--vhm-pad-top) var(--vhm-pad-bottom);
+    background-color: var(--vhm-bg, var(--color-background));
+    color: var(--color-foreground);
+    overflow-x: clip;
+  }
+
+  .video-hope-modal__inner {
+    box-sizing: border-box;
+    display: flex;
+    align-items: var(--vhm-align-v, center);
+    gap: var(--vhm-gap);
+    width: 100%;
+    margin-inline: auto;
+  }
+
+  .video-hope-modal__inner--page {
+    max-width: var(--page-width);
+    padding-inline: var(--page-margin);
+  }
+
+  .video-hope-modal__inner--full {
+    padding-inline: var(--page-margin);
+  }
+
+  .video-hope-modal--media-end .video-hope-modal__media {
+    order: 1;
+  }
+
+  .video-hope-modal__media {
+    flex: 0 0 var(--vhm-media-width);
+    min-width: 0;
+  }
+
+  .video-hope-modal__frame {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: var(--vhm-ratio);
+    border-radius: var(--vhm-radius);
+  }
+
+  .video-hope-modal__picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .video-hope-modal__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    object-fit: cover;
+  }
+
+  .video-hope-modal__placeholder {
+    background-color: rgb(var(--color-foreground-rgb) / var(--opacity-5, 0.05));
+  }
+
+  .video-hope-modal__modal {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+  }
+
+  .video-hope-modal__play {
+    display: grid;
+    place-items: center;
+    box-sizing: border-box;
+    width: var(--vhm-play-size);
+    height: var(--vhm-play-size);
+    min-width: var(--minimum-touch-target, 44px);
+    min-height: var(--minimum-touch-target, 44px);
+    padding: 0;
+    border: var(--vhm-play-border-width) solid var(--vhm-play-border, var(--color-background));
+    border-radius: 50%;
+    background-color: var(--vhm-play-bg, var(--color-foreground));
+    color: var(--vhm-play-icon, var(--color-background));
+    box-shadow: 0 6px 18px rgb(0 0 0 / 0.25);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform var(--animation-speed, 0.2s) var(--animation-easing, ease);
+  }
+
+  .video-hope-modal__play:hover {
+    transform: scale(1.08);
+  }
+
+  .video-hope-modal__play:focus-visible,
+  .video-hope-modal__close:focus-visible {
+    outline: var(--focus-outline-width, 2px) solid currentColor;
+    outline-offset: var(--focus-outline-offset, 3px);
+  }
+
+  .video-hope-modal__play-icon {
+    width: 40%;
+    height: 40%;
+    margin-inline-start: 6%;
+  }
+
+  [dir='rtl'] .video-hope-modal__play-icon {
+    transform: scaleX(-1);
+    margin-inline-start: 6%;
+  }
+
+  .video-hope-modal__dialog {
+    position: fixed;
+    box-sizing: border-box;
+    width: min(92vw, 1000px);
+    max-width: none;
+    max-height: 92dvh;
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 16px;
+    background-color: #000;
+    color: #fff;
+    overflow: hidden;
+    pointer-events: auto;
+  }
+
+  .video-hope-modal__dialog::backdrop {
+    background: rgb(0 0 0 / 0.8);
+  }
+
+  .video-hope-modal__dialog[open] {
+    animation: elementSlideInTop var(--animation-speed, 0.2s) var(--animation-easing, ease) forwards;
+  }
+
+  .video-hope-modal__dialog.dialog-closing {
+    animation: elementSlideOutTop var(--animation-speed, 0.2s) var(--animation-easing, ease) forwards;
+  }
+
+  .video-hope-modal__player {
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    background-color: #000;
+  }
+
+  .video-hope-modal__video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: contain;
+  }
+
+  .video-hope-modal__close {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 8px;
+    inset-inline-end: 8px;
+    display: grid;
+    place-items: center;
+    width: var(--minimum-touch-target, 44px);
+    height: var(--minimum-touch-target, 44px);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background-color: rgb(0 0 0 / 0.55);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .video-hope-modal__close svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .video-hope-modal__content {
+    display: flex;
+    flex: 1 1 0;
+    flex-direction: column;
+    align-items: var(--vhm-items);
+    min-width: 0;
+    text-align: var(--vhm-text-align);
+    overflow-wrap: break-word;
+  }
+
+  .video-hope-modal__content > * {
+    margin-block: 0 var(--vhm-space, 0);
+  }
+
+  .video-hope-modal__content > *:last-child {
+    margin-block-end: 0;
+  }
+
+  .video-hope-modal__heading {
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--vhm-weight, 700);
+    font-size: var(--vhm-size);
+    line-height: var(--vhm-line, 1.15);
+    color: var(--vhm-color, var(--color-foreground-heading, var(--color-foreground)));
+    text-wrap: balance;
+  }
+
+  .video-hope-modal__text {
+    max-width: var(--vhm-max, 60ch);
+    font-family: var(--font-body--family);
+    font-size: var(--vhm-size);
+    line-height: 1.5;
+    color: var(--vhm-color, var(--color-foreground));
+  }
+
+  .video-hope-modal__text > * {
+    margin: 0;
+  }
+
+  .video-hope-modal__text > * + * {
+    margin-block-start: 0.75em;
+  }
+
+  .video-hope-modal__features {
+    display: grid;
+    grid-template-columns: repeat(var(--vhm-cols), minmax(0, 1fr));
+    gap: var(--vhm-feature-gap);
+    align-self: stretch;
+    margin-block-end: 0;
+    text-align: start;
+  }
+
+  .video-hope-modal__content > .video-hope-modal__features + * {
+    margin-block-start: 24px;
+  }
+
+  .video-hope-modal__feature {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    min-width: 0;
+    padding: var(--vhm-f-pad);
+    border-radius: var(--vhm-f-radius);
+    background-color: var(--vhm-f-bg, rgb(var(--color-foreground-rgb) / var(--opacity-5, 0.05)));
+  }
+
+  .video-hope-modal__feature-icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    margin-block-end: 4px;
+    border-radius: 50%;
+    background-color: var(--vhm-f-icon-bg, var(--color-background));
+    color: var(--vhm-f-icon-color, var(--color-foreground));
+  }
+
+  .video-hope-modal__feature-icon svg,
+  .video-hope-modal__feature-image {
+    display: block;
+    width: 16px;
+    height: 16px;
+  }
+
+  .video-hope-modal__feature-title,
+  .video-hope-modal__feature-text {
+    margin: 0;
+    max-width: 100%;
+  }
+
+  .video-hope-modal__feature-title {
+    font-family: var(--font-body--family);
+    font-size: var(--vhm-f-title-size);
+    font-weight: 700;
+    line-height: 1.25;
+    color: var(--vhm-f-title-color, var(--color-foreground));
+  }
+
+  .video-hope-modal__feature-text {
+    font-family: var(--font-body--family);
+    font-size: var(--vhm-f-text-size);
+    line-height: 1.45;
+    color: var(--vhm-f-text-color, rgb(var(--color-foreground-rgb) / var(--opacity-70, 0.7)));
+  }
+
+  @media screen and (min-width: 750px) and (max-width: 989px) {
+    .video-hope-modal__inner {
+      gap: min(var(--vhm-gap), 32px);
+    }
+
+    .video-hope-modal__heading {
+      font-size: min(var(--vhm-size), 32px);
+    }
+
+    .video-hope-modal__features {
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 140px), 1fr));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .video-hope-modal__play {
+      transition: none;
+    }
+
+    .video-hope-modal__play:hover {
+      transform: none;
+    }
+
+    .video-hope-modal__dialog[open],
+    .video-hope-modal__dialog.dialog-closing {
+      animation: none;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .video-hope-modal {
+      padding-block: var(--vhm-pad-top-mobile) var(--vhm-pad-bottom-mobile);
+    }
+
+    .video-hope-modal__inner {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--vhm-gap-mobile);
+    }
+
+    .video-hope-modal--mobile-media-first .video-hope-modal__media {
+      order: -1;
+    }
+
+    .video-hope-modal--mobile-media-last .video-hope-modal__media {
+      order: 1;
+    }
+
+    .video-hope-modal__media {
+      flex: 0 0 auto;
+      width: 100%;
+    }
+
+    .video-hope-modal__content {
+      flex: 0 1 auto;
+    }
+
+    .video-hope-modal__content > * {
+      margin-block-end: var(--vhm-space-mobile, var(--vhm-space, 0));
+    }
+
+    .video-hope-modal__content > *:last-child {
+      margin-block-end: 0;
+    }
+
+    .video-hope-modal__heading,
+    .video-hope-modal__text {
+      font-size: var(--vhm-size-mobile);
+    }
+
+    .video-hope-modal__play {
+      width: var(--vhm-play-size-mobile);
+      height: var(--vhm-play-size-mobile);
+    }
+
+    .video-hope-modal__features {
+      grid-template-columns: repeat(var(--vhm-cols-mobile), minmax(0, 1fr));
+      gap: var(--vhm-feature-gap-mobile);
+    }
+
+    .video-hope-modal__feature {
+      padding: var(--vhm-f-pad-mobile);
+    }
+
+    .video-hope-modal__feature-title {
+      font-size: var(--vhm-f-title-size-mobile);
+    }
+
+    .video-hope-modal__feature-text {
+      font-size: var(--vhm-f-text-size-mobile);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Video Hope modal",
+  "tag": "section",
+  "class": "video-hope-modal-section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Imagen"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Imagen escritorio"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Imagen móvil",
+      "info": "Opcional. Se muestra en pantallas de 749 px o menos; si está vacía se usa la de escritorio."
+    },
+    {
+      "type": "text",
+      "id": "image_alt",
+      "label": "Texto alternativo",
+      "info": "Si está vacío se usa el texto alternativo de la imagen."
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Proporción de la imagen",
+      "options": [
+        {
+          "value": "auto",
+          "label": "Automática (según la imagen)"
+        },
+        {
+          "value": "1.7778",
+          "label": "Panorámica 16:9"
+        },
+        {
+          "value": "1.5",
+          "label": "Horizontal 3:2"
+        },
+        {
+          "value": "1.3333",
+          "label": "Horizontal 4:3"
+        },
+        {
+          "value": "1",
+          "label": "Cuadrada"
+        },
+        {
+          "value": "0.8",
+          "label": "Vertical 4:5"
+        }
+      ],
+      "default": "1.5"
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "label": "Radio de borde",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "default": 24,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "select",
+      "id": "video_source",
+      "label": "Origen del video",
+      "options": [
+        {
+          "value": "uploaded",
+          "label": "Archivo subido a Shopify"
+        },
+        {
+          "value": "url",
+          "label": "URL de YouTube o Vimeo"
+        }
+      ],
+      "default": "uploaded",
+      "info": "Sin video no se muestra el botón de play."
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video",
+      "visible_if": "{{ section.settings.video_source == 'uploaded' }}"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "label": "URL del video",
+      "accept": [
+        "youtube",
+        "vimeo"
+      ],
+      "visible_if": "{{ section.settings.video_source == 'url' }}"
+    },
+    {
+      "type": "header",
+      "content": "Botón de play"
+    },
+    {
+      "type": "range",
+      "id": "play_size",
+      "label": "Tamaño (escritorio)",
+      "min": 40,
+      "max": 120,
+      "step": 4,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "play_size_mobile",
+      "label": "Tamaño (móvil)",
+      "min": 40,
+      "max": 100,
+      "step": 4,
+      "default": 56,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "play_bg",
+      "label": "Color de fondo"
+    },
+    {
+      "type": "color",
+      "id": "play_icon_color",
+      "label": "Color del icono"
+    },
+    {
+      "type": "color",
+      "id": "play_border_color",
+      "label": "Color del borde"
+    },
+    {
+      "type": "range",
+      "id": "play_border_width",
+      "label": "Grosor del borde",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "default": 3,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "layout_width",
+      "label": "Ancho del contenido",
+      "options": [
+        {
+          "value": "page",
+          "label": "Ancho de página"
+        },
+        {
+          "value": "full",
+          "label": "Ancho completo"
+        }
+      ],
+      "default": "page"
+    },
+    {
+      "type": "select",
+      "id": "media_side",
+      "label": "Lado de la imagen (escritorio)",
+      "options": [
+        {
+          "value": "start",
+          "label": "Inicio"
+        },
+        {
+          "value": "end",
+          "label": "Final"
+        }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "select",
+      "id": "mobile_media_order",
+      "label": "Orden de la imagen (móvil)",
+      "options": [
+        {
+          "value": "first",
+          "label": "Primero"
+        },
+        {
+          "value": "last",
+          "label": "Al final"
+        }
+      ],
+      "default": "first"
+    },
+    {
+      "type": "range",
+      "id": "media_width",
+      "label": "Ancho de la imagen (escritorio)",
+      "min": 30,
+      "max": 70,
+      "step": 2,
+      "default": 52,
+      "unit": "%"
+    },
+    {
+      "type": "select",
+      "id": "vertical_align",
+      "label": "Alineación vertical",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Arriba"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "flex-end",
+          "label": "Abajo"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "content_align",
+      "label": "Alineación del texto",
+      "options": [
+        {
+          "value": "start",
+          "label": "Inicio"
+        },
+        {
+          "value": "center",
+          "label": "Centro"
+        },
+        {
+          "value": "end",
+          "label": "Final"
+        }
+      ],
+      "default": "start"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Separación imagen-contenido (escritorio)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 48,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "Separación imagen-contenido (móvil)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 28,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Grilla de tarjetas"
+    },
+    {
+      "type": "range",
+      "id": "feature_columns",
+      "label": "Columnas (escritorio)",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "feature_columns_mobile",
+      "label": "Columnas (móvil)",
+      "options": [
+        {
+          "value": "1",
+          "label": "1 columna"
+        },
+        {
+          "value": "2",
+          "label": "2 columnas"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "feature_gap",
+      "label": "Separación (escritorio)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "feature_gap_mobile",
+      "label": "Separación (móvil)",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 10,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Esquema de color",
+      "default": "scheme-1"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Color de fondo",
+      "info": "Vacío usa el fondo del esquema de color."
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Superior (escritorio)",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Inferior (escritorio)",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 64,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Superior (móvil)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Inferior (móvil)",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Título",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Título",
+          "default": "¿Qué hace tan especial un helado de Hope?"
+        },
+        {
+          "type": "select",
+          "id": "tag",
+          "label": "Etiqueta HTML",
+          "options": [
+            {
+              "value": "h1",
+              "label": "H1"
+            },
+            {
+              "value": "h2",
+              "label": "H2"
+            },
+            {
+              "value": "h3",
+              "label": "H3"
+            }
+          ],
+          "default": "h2"
+        },
+        {
+          "type": "range",
+          "id": "size",
+          "label": "Tamaño (escritorio)",
+          "min": 20,
+          "max": 80,
+          "step": 2,
+          "default": 40,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "size_mobile",
+          "label": "Tamaño (móvil)",
+          "min": 16,
+          "max": 48,
+          "step": 2,
+          "default": 28,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "weight",
+          "label": "Grosor de la fuente",
+          "min": 400,
+          "max": 900,
+          "step": 100,
+          "default": 700
+        },
+        {
+          "type": "range",
+          "id": "line_height",
+          "label": "Interlineado",
+          "min": 80,
+          "max": 160,
+          "step": 5,
+          "default": 115,
+          "unit": "%"
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Color del texto"
+        },
+        {
+          "type": "range",
+          "id": "spacing_bottom",
+          "label": "Espacio inferior (escritorio)",
+          "min": 0,
+          "max": 60,
+          "step": 2,
+          "default": 12,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "spacing_bottom_mobile",
+          "label": "Espacio inferior (móvil)",
+          "min": 0,
+          "max": 60,
+          "step": 2,
+          "default": 8,
+          "unit": "px"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Texto",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Texto",
+          "default": "<p>Cada cucharada fue una mezcla de amor, sabor y color.</p>"
+        },
+        {
+          "type": "range",
+          "id": "size",
+          "label": "Tamaño (escritorio)",
+          "min": 12,
+          "max": 28,
+          "step": 1,
+          "default": 16,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "size_mobile",
+          "label": "Tamaño (móvil)",
+          "min": 12,
+          "max": 24,
+          "step": 1,
+          "default": 15,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "max_width",
+          "label": "Ancho máximo",
+          "min": 30,
+          "max": 100,
+          "step": 5,
+          "default": 60,
+          "unit": "ch"
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Color del texto"
+        },
+        {
+          "type": "range",
+          "id": "spacing_bottom",
+          "label": "Espacio inferior (escritorio)",
+          "min": 0,
+          "max": 60,
+          "step": 2,
+          "default": 24,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "spacing_bottom_mobile",
+          "label": "Espacio inferior (móvil)",
+          "min": 0,
+          "max": 60,
+          "step": 2,
+          "default": 16,
+          "unit": "px"
+        }
+      ]
+    },
+    {
+      "type": "feature",
+      "name": "Tarjeta",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Icono"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon_image",
+          "label": "Imagen del icono"
+        },
+        {
+          "type": "html",
+          "id": "icon_svg",
+          "label": "Código SVG del icono",
+          "info": "Tiene prioridad sobre la imagen. Usa currentColor para tomar el color del icono."
+        },
+        {
+          "type": "text",
+          "id": "icon_alt",
+          "label": "Texto alternativo del icono",
+          "info": "Vacío marca el icono como decorativo."
+        },
+        {
+          "type": "header",
+          "content": "Contenido"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Título",
+          "default": "Base suave"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Descripción",
+          "default": "Batida para lograr una textura fresca y cremosa."
+        },
+        {
+          "type": "header",
+          "content": "Colores"
+        },
+        {
+          "type": "color",
+          "id": "card_bg",
+          "label": "Fondo de la tarjeta"
+        },
+        {
+          "type": "color",
+          "id": "icon_bg",
+          "label": "Fondo del icono"
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Color del icono"
+        },
+        {
+          "type": "color",
+          "id": "title_color",
+          "label": "Color del título"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Color de la descripción"
+        },
+        {
+          "type": "header",
+          "content": "Tamaños y espaciado"
+        },
+        {
+          "type": "range",
+          "id": "title_size",
+          "label": "Tamaño del título (escritorio)",
+          "min": 12,
+          "max": 24,
+          "step": 1,
+          "default": 15,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "title_size_mobile",
+          "label": "Tamaño del título (móvil)",
+          "min": 12,
+          "max": 24,
+          "step": 1,
+          "default": 14,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "text_size",
+          "label": "Tamaño de la descripción (escritorio)",
+          "min": 11,
+          "max": 20,
+          "step": 1,
+          "default": 13,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "text_size_mobile",
+          "label": "Tamaño de la descripción (móvil)",
+          "min": 11,
+          "max": 20,
+          "step": 1,
+          "default": 13,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "padding",
+          "label": "Espaciado interno (escritorio)",
+          "min": 8,
+          "max": 40,
+          "step": 2,
+          "default": 16,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "padding_mobile",
+          "label": "Espaciado interno (móvil)",
+          "min": 8,
+          "max": 40,
+          "step": 2,
+          "default": 14,
+          "unit": "px"
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "label": "Radio de borde",
+          "min": 0,
+          "max": 32,
+          "step": 2,
+          "default": 12,
+          "unit": "px"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video Hope modal",
+      "settings": {
+        "background": "#fdf0f5",
+        "play_bg": "#d4508a",
+        "play_icon_color": "#ffffff",
+        "play_border_color": "#ffffff"
+      },
+      "blocks": {
+        "heading_1": {
+          "type": "heading",
+          "settings": {
+            "heading": "¿Qué hace tan especial un helado de Hope?",
+            "tag": "h2",
+            "color": "#6b0f3a"
+          }
+        },
+        "text_1": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Cada cucharada fue una mezcla de amor, sabor y color. Helado artesanal pensado para disfrutar sin culpa.</p>",
+            "color": "#5a4a52"
+          }
+        },
+        "feature_1": {
+          "type": "feature",
+          "settings": {
+            "icon_svg": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M7 12l5 9 5-9'/><path d='M6 12a6 6 0 0 1 12 0z'/><path d='M9 7a3 3 0 0 1 6 0'/></svg>",
+            "title": "Base suave",
+            "text": "Batida para lograr una textura fresca y cremosa.",
+            "card_bg": "#fdecef",
+            "icon_bg": "#ffffff",
+            "icon_color": "#6b0f3a",
+            "title_color": "#6b0f3a",
+            "text_color": "#5a4a52"
+          }
+        },
+        "feature_2": {
+          "type": "feature",
+          "settings": {
+            "icon_svg": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M12 21c-4-2-7-6-7-10a4 4 0 0 1 4-3c1.2 0 2.2.4 3 1 .8-.6 1.8-1 3-1a4 4 0 0 1 4 3c0 4-3 8-7 10z'/><path d='M12 8c0-2 1-3.5 3-4M12 8C12 6 11 4.5 9 4'/></svg>",
+            "title": "Frutas naturales",
+            "text": "Toppings de fruta real, dulce y jugosa.",
+            "card_bg": "#fdf3dc",
+            "icon_bg": "#ffffff",
+            "icon_color": "#8a5a1a",
+            "title_color": "#6b0f3a",
+            "text_color": "#5a4a52"
+          }
+        },
+        "feature_3": {
+          "type": "feature",
+          "settings": {
+            "icon_svg": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z'/></svg>",
+            "title": "Salsas artesanales",
+            "text": "Caramelo, chocolate y frutos rojos hechos a mano.",
+            "card_bg": "#f1eafd",
+            "icon_bg": "#ffffff",
+            "icon_color": "#5b3aa0",
+            "title_color": "#6b0f3a",
+            "text_color": "#5a4a52"
+          }
+        },
+        "feature_4": {
+          "type": "feature",
+          "settings": {
+            "icon_svg": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M5 8h14l-1.6 12a1 1 0 0 1-1 .9H7.6a1 1 0 0 1-1-.9L5 8z'/><path d='M4 8h16M8 8c0-2.5 1.8-4 4-4s4 1.5 4 4'/></svg>",
+            "title": "Vasito Hope",
+            "text": "Personalizado, biodegradable y compostable.",
+            "card_bg": "#e6f4ef",
+            "icon_bg": "#ffffff",
+            "icon_color": "#2f6b55",
+            "title_color": "#6b0f3a",
+            "text_color": "#5a4a52"
+          }
+        }
+      },
+      "block_order": [
+        "heading_1",
+        "text_1",
+        "feature_1",
+        "feature_2",
+        "feature_3",
+        "feature_4"
+      ]
+    }
+  ]
+}
+{% endschema %}

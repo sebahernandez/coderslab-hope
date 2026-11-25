@@ -81,13 +81,18 @@
         endif
       %}
       {% capture list_items %}
-        {% for product in products limit: section.settings.max_products %}
+        {% assign rendered_count = 0 %}
+        {% for product in products %}
+          {% comment %} Internal products (tag `addon`) are never recommended. {% endcomment %}
+          {% if product.tags contains 'addon' %}{% continue %}{% endif %}
+          {% if rendered_count >= section.settings.max_products %}{% break %}{% endif %}
+          {% if rendered_count > 0 %}
+            <!--@list/split-->
+          {% endif %}
+          {% assign rendered_count = rendered_count | plus: 1 %}
           <div class="resource-list__item">
             {% content_for 'block', type: '_product-card', id: 'static-product-card', closest.product: product %}
           </div>
-          {% unless forloop.last %}
-            <!--@list/split-->
-          {% endunless %}
         {% endfor %}
       {% endcapture %}
 
