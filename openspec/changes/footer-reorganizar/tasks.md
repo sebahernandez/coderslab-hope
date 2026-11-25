@@ -14,7 +14,7 @@
 ## 3. Validación y despliegue
 
 - [x] 3.1 Subir los archivos a un tema de desarrollo con `shopify theme push --only … --nodelete` y verificar que el servidor no reporta errores.
-- [ ] 3.2 Verificar en el editor a 1440, 1024, 750 y 390 px: orden de columnas, Ubicación/Horario en una columna, divisor sobre las políticas, políticas a lo ancho, fondo blanco y sin scroll horizontal.
+- [x] 3.2 Verificar en el editor a 1440, 1024, 750 y 390 px: orden de columnas, Ubicación/Horario en una columna, divisor sobre las políticas, políticas a lo ancho, fondo blanco y sin scroll horizontal.
 - [x] 3.3 Commit + push a `develop` y confirmar que los cambios aparecen en `HOPE-development`.
 
 ## Workflow follow-up
