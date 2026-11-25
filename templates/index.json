@@ -600,6 +600,7 @@
         "image_radius": 24,
         "video_source": "uploaded",
         "video": "shopify://files/videos/Video-hope.mp4",
+        "video_url": "",
         "play_size": 64,
         "play_size_mobile": 56,
         "play_bg": "#d4508a",
@@ -625,6 +626,125 @@
         "padding_top_mobile": 40,
         "padding_bottom_mobile": 40
       }
+    },
+    "testimonios_hope_7UF6hj": {
+      "type": "testimonios-hope",
+      "blocks": {
+        "testimonial_4AFMbn": {
+          "type": "testimonial",
+          "settings": {
+            "avatar": "shopify://shop_images/avatar-03.png",
+            "avatar_alt": "",
+            "rating": 5,
+            "name": "Carolina",
+            "quote": "<p>“El helado de Hope es de lo mejor, de mis favoritos por su increíble sabor y calidad. Amo visitarlos, una increíble experiencia.”</p>",
+            "avatar_size": 44,
+            "star_size": 14,
+            "name_size": 14,
+            "name_size_mobile": 14,
+            "quote_size": 15,
+            "quote_size_mobile": 14,
+            "padding": 20,
+            "padding_mobile": 16,
+            "quote_spacing": 24,
+            "quote_spacing_mobile": 16,
+            "radius": 16,
+            "card_bg": "#ffffff",
+            "border_color": "#f3dbe5",
+            "star_color": "#9c2a5f",
+            "star_empty_color": "",
+            "name_color": "#6b0f3a",
+            "quote_color": "#4a4a4a"
+          }
+        },
+        "testimonial_tq6izy": {
+          "type": "testimonial",
+          "settings": {
+            "avatar": "shopify://shop_images/avatar-02.png",
+            "avatar_alt": "",
+            "rating": 5,
+            "name": "Jhoanna",
+            "quote": "<p>“Un lugar perfecto para disfrutar algo dulce y refrescante. Probé un milkshake y estaba espectacular. Excelente atención y muy buena presentación.”</p>",
+            "avatar_size": 44,
+            "star_size": 14,
+            "name_size": 14,
+            "name_size_mobile": 14,
+            "quote_size": 15,
+            "quote_size_mobile": 14,
+            "padding": 20,
+            "padding_mobile": 16,
+            "quote_spacing": 24,
+            "quote_spacing_mobile": 16,
+            "radius": 16,
+            "card_bg": "#ffffff",
+            "border_color": "#f3dbe5",
+            "star_color": "#9c2a5f",
+            "star_empty_color": "",
+            "name_color": "#6b0f3a",
+            "quote_color": "#4a4a4a"
+          }
+        },
+        "testimonial_aYgBxW": {
+          "type": "testimonial",
+          "settings": {
+            "avatar": "shopify://shop_images/avatar-01.png",
+            "avatar_alt": "",
+            "rating": 5,
+            "name": "Carla",
+            "quote": "<p>“¡Mi heladería favorita en Tucacas! Los helados tienen muchísimo sabor, los toppings son variados y las porciones generosas. Ideal para compartir en familia.”</p>",
+            "avatar_size": 44,
+            "star_size": 14,
+            "name_size": 14,
+            "name_size_mobile": 14,
+            "quote_size": 15,
+            "quote_size_mobile": 14,
+            "padding": 20,
+            "padding_mobile": 16,
+            "quote_spacing": 24,
+            "quote_spacing_mobile": 16,
+            "radius": 16,
+            "card_bg": "#ffffff",
+            "border_color": "#f3dbe5",
+            "star_color": "#9c2a5f",
+            "star_empty_color": "",
+            "name_color": "#6b0f3a",
+            "quote_color": "#4a4a4a"
+          }
+        }
+      },
+      "block_order": [
+        "testimonial_4AFMbn",
+        "testimonial_tq6izy",
+        "testimonial_aYgBxW"
+      ],
+      "name": "Testimonios Hope",
+      "settings": {
+        "heading": "Lo que dicen quienes ya probaron Hope",
+        "heading_tag": "h2",
+        "subheading": "Creamos momentos felices que valen la pena repetir",
+        "heading_align": "center",
+        "heading_size": 36,
+        "heading_size_mobile": 26,
+        "subheading_size": 16,
+        "subheading_size_mobile": 14,
+        "header_spacing": 32,
+        "header_spacing_mobile": 24,
+        "layout_width": "page",
+        "content_max_width": 1200,
+        "columns_desktop": 3,
+        "columns_tablet": 2,
+        "columns_mobile": "1",
+        "gap": 20,
+        "gap_mobile": 16,
+        "color_scheme": "",
+        "background": "",
+        "heading_color": "#6b0f3a",
+        "subheading_color": "#5a4a52",
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "padding_top_mobile": 32,
+        "padding_bottom_mobile": 32
+      }
     }
   },
   "order": [
@@ -632,6 +752,7 @@
     "text_image_jdgmGB",
     "box_items_KGiXY9",
     "product_tiles_m4Bc3c",
-    "video_hope_modal_nFwVzD"
+    "video_hope_modal_nFwVzD",
+    "testimonios_hope_7UF6hj"
   ]
 }
