@@ -42,9 +42,102 @@
         "padding-block-start": 100,
         "padding-block-end": 16
       }
+    },
+    "text_image_jdgmGB": {
+      "type": "text-image",
+      "blocks": {
+        "heading_d8MrXQ": {
+          "type": "heading",
+          "settings": {
+            "heading": "Helados artesanales",
+            "tag": "h2",
+            "color": "#6b0f3a",
+            "size": 56,
+            "size_mobile": 38,
+            "weight": "800",
+            "line_height": 105,
+            "spacing_bottom": 20
+          }
+        },
+        "subheading_BfzJXU": {
+          "type": "subheading",
+          "settings": {
+            "text": "Con sabor a felicidad",
+            "color": "#b0185a",
+            "size": 13,
+            "size_mobile": 12,
+            "weight": "700",
+            "uppercase": true,
+            "letter_spacing": 12,
+            "spacing_bottom": 16
+          }
+        },
+        "text_TcGM8b": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Endulzamos cada rincón de Tucacas con sabores que roban sonrisas.</p>",
+            "color": "#3d3d3d",
+            "size": 17,
+            "size_mobile": 16,
+            "max_width": 45,
+            "spacing_bottom": 24
+          }
+        },
+        "button_B6pTEV": {
+          "type": "button",
+          "settings": {
+            "label": "Arma tu helado",
+            "link": "",
+            "new_tab": false,
+            "style": "solid",
+            "size": "medium",
+            "background": "#6b0f3a",
+            "text_color": "#ffffff",
+            "background_hover": "#8a1a4e",
+            "radius": 40,
+            "show_arrow": true,
+            "full_width_mobile": false,
+            "spacing_bottom": 12
+          }
+        }
+      },
+      "block_order": [
+        "heading_d8MrXQ",
+        "subheading_BfzJXU",
+        "text_TcGM8b",
+        "button_B6pTEV"
+      ],
+      "name": "Texto con imagen",
+      "settings": {
+        "image_desktop": "shopify://shop_images/helados-hope.avif",
+        "image_mobile": "shopify://shop_images/helados-hope.avif",
+        "image_alt": "",
+        "image_link": "",
+        "ratio_desktop": "1.25",
+        "ratio_mobile": "1",
+        "image_fit": "cover",
+        "image_position": "auto",
+        "image_radius": 24,
+        "layout_width": "page",
+        "media_side": "end",
+        "mobile_media_order": "last",
+        "media_width": 55,
+        "content_max_width": 520,
+        "vertical_align": "center",
+        "text_align_desktop": "left",
+        "text_align_mobile": "left",
+        "gap": 48,
+        "gap_mobile": 28,
+        "color_scheme": "",
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "padding_top_mobile": 32,
+        "padding_bottom_mobile": 32
+      }
     }
   },
   "order": [
-    "slide_hope_iDJtCQ"
+    "slide_hope_iDJtCQ",
+    "text_image_jdgmGB"
   ]
 }
