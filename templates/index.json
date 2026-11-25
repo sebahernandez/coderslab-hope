@@ -58,6 +58,7 @@
         "image_7MCty9",
         "image_QyPCcP"
       ],
+      "disabled": true,
       "name": "Slide Hope",
       "settings": {
         "mode": "fixed",
@@ -187,7 +188,6 @@
         "text_description",
         "hero_button"
       ],
-      "disabled": true,
       "name": "Hero Banner Helados",
       "settings": {
         "vertical_alignment": "center",
