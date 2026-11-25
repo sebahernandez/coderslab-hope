@@ -50,6 +50,7 @@
           {% for _id in order_ids %}
             {% assign int_id = _id | times: 1 %}
             {% assign product = products | find: 'id', int_id %}
+            {% if product == blank or product.tags contains 'addon' %}{% continue %}{% endif %}
             <li
               class="predictive-search-results__card predictive-search-results__card--product"
               ref="recentlyViewedItems[]"
@@ -64,7 +65,12 @@
             </li>
           {% endfor %}
         {% else %}
-          {% for product in products limit: limit %}
+          {% assign rendered_count = 0 %}
+          {% for product in products %}
+            {% comment %} Internal products (tag `addon`) are never listed. {% endcomment %}
+            {% if product.tags contains 'addon' %}{% continue %}{% endif %}
+            {% if rendered_count >= limit %}{% break %}{% endif %}
+            {% assign rendered_count = rendered_count | plus: 1 %}
             <li
               class="predictive-search-results__card predictive-search-results__card--product"
               ref="recentlyViewedItems[]"
@@ -97,6 +103,7 @@
         {% for _id in order_ids %}
           {% assign int_id = _id | times: 1 %}
           {% assign product = products | find: 'id', int_id %}
+          {% if product == blank or product.tags contains 'addon' %}{% continue %}{% endif %}
           <li
             class="predictive-search-results__card predictive-search-results__card--product"
             ref="resultsItems[]"
@@ -111,7 +118,12 @@
           </li>
         {% endfor %}
       {% else %}
-        {% for product in products limit: limit %}
+        {% assign rendered_count = 0 %}
+        {% for product in products %}
+          {% comment %} Internal products (tag `addon`) are never listed. {% endcomment %}
+          {% if product.tags contains 'addon' %}{% continue %}{% endif %}
+          {% if rendered_count >= limit %}{% break %}{% endif %}
+          {% assign rendered_count = rendered_count | plus: 1 %}
           <li
             class="predictive-search-results__card predictive-search-results__card--product"
             ref="resultsItems[]"

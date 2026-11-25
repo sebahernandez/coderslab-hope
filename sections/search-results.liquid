@@ -30,6 +30,7 @@
 
       {% capture children %}
         {% for product in products %}
+          {% if product.tags contains 'addon' %}{% continue %}{% endif %}
           <li
             id="{{ section.id }}-{{ product.id }}"
             class="product-grid__item product-grid__item--{{ forloop.index0 }}"
