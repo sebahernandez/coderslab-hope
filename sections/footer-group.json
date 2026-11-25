@@ -290,7 +290,7 @@
                   "type": "text",
                   "name": "Horario",
                   "settings": {
-                    "text": "<p><strong>Horario<br/></strong>Lunes&nbsp;a&nbsp;jueves<br/>9:00&nbsp;am –&nbsp;22:00 pm<br/>Viernes&nbsp;a&nbsp;domingo<br/>9:00 am –&nbsp;12:00 pm</p>",
+                    "text": "<p><strong>Horario<br/></strong>Lunes&nbsp;a&nbsp;jueves<br/>10:00&nbsp;am –&nbsp;21:00 pm<br/>Viernes&nbsp;a&nbsp;domingo<br/>10:00 am –&nbsp;22:00 pm</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
