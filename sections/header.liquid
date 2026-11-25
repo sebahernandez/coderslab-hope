@@ -164,9 +164,42 @@
       echo '--glass-blur: ' | append: section.settings.glass_blur | append: 'px;'
       echo '--glass-opacity: ' | append: section.settings.glass_opacity | append: ';'
       echo '--glass-radius: ' | append: section.settings.glass_radius | append: 'px;'
-      echo '--glass-float-margin: ' | append: section.settings.glass_float_margin | append: 'px;'
       echo '--glass-gap: ' | append: section.settings.glass_gap | append: 'px;'
     endcapture
+  endif
+
+  # Appearance controls: only emit variables that differ from the default look.
+  capture header_style
+    echo glass_style
+    echo '--glass-float-margin: ' | append: section.settings.glass_float_margin | append: 'px;'
+
+    if section.settings.header_band_enable and transparent == blank
+      echo '--header-band-color: ' | append: section.settings.header_band_color | append: ';'
+    endif
+
+    if section.settings.header_min_height > 0
+      echo '--header-min-height: ' | append: section.settings.header_min_height | append: 'px;'
+    endif
+
+    if section.settings.custom_spacing
+      echo '--header-custom-padding-block-start: ' | append: section.settings['padding-block-start'] | append: 'px;'
+      echo '--header-custom-padding-block-end: ' | append: section.settings['padding-block-end'] | append: 'px;'
+      echo '--header-custom-padding-inline: ' | append: section.settings['padding-inline'] | append: 'px;'
+      echo '--header-custom-margin-block-end: ' | append: section.settings['margin-block-end'] | append: 'px;'
+      echo '--header-custom-margin-inline: ' | append: section.settings['margin-inline'] | append: 'px;'
+    endif
+  endcapture
+
+  if section.settings.header_band_enable and transparent == blank
+    assign class = class | append: ' header--band'
+  endif
+
+  if section.settings.header_min_height > 0
+    assign class = class | append: ' header--min-height'
+  endif
+
+  if section.settings.custom_spacing
+    assign class = class | append: ' header--custom-spacing'
   endif
 %}
 
@@ -198,9 +231,7 @@
   {% if sticky %}
     sticky="{{ sticky }}"
   {% endif %}
-  {% if glass_style %}
-    style="{{ glass_style | strip }}"
-  {% endif %}
+  style="{{ header_style | strip_newlines | strip }}"
   data-skip-node-update
   data-scroll-direction="none"
 >
@@ -675,11 +706,6 @@
       border-bottom: 0;
     }
 
-    /* Separación del borde superior para el look "isla" flotante */
-    .header__row--top {
-      margin-block-start: var(--glass-float-margin, 12px);
-    }
-
     /* Un solo panel de vidrio que envuelve las 3 zonas */
     .header__columns {
       grid-gap: var(--glass-gap, 16px);
@@ -726,6 +752,58 @@
 
     overflow-list::part(more) {
       display: none;
+    }
+  }
+
+  /* -------------------------------------------------------------------------
+   * Apariencia configurable: margen superior, franja de fondo a ancho
+   * completo, altura mínima y espaciado personalizado (escritorio).
+   * ------------------------------------------------------------------------- */
+
+  /* Separación del borde superior (aplica con y sin glassmorphism) */
+  .header:not([transparent]) .header__row--top {
+    margin-block-start: var(--glass-float-margin, 0px);
+  }
+
+  /* Contiene los márgenes de las filas para que la altura medida
+   * (--header-height) los incluya y la reserva de espacio sea exacta. */
+  .header--band {
+    display: flow-root;
+
+    /* La franja se pinta en el propio header, que ocupa todo el ancho */
+    background-color: var(--header-band-color);
+  }
+
+  .header--band .header__row {
+    background-color: transparent;
+  }
+
+  /* Con glass el header es fijo y no ocupa espacio: se reserva su altura para
+   * que la franja no tape el inicio de la primera sección. */
+  body:has(#header-component.header--band.header--glass) main {
+    padding-block-start: var(--header-height);
+  }
+
+  .header.header--min-height .header__columns {
+    min-height: var(--header-min-height);
+    align-items: center;
+  }
+
+  @media screen and (min-width: 750px) {
+    .header.header--custom-spacing:not([transparent]) {
+      .header__columns {
+        --padding-block-start: var(--header-custom-padding-block-start);
+        --padding-block-end: var(--header-custom-padding-block-end);
+
+        padding-inline: var(--header-custom-padding-inline);
+        margin-block-end: var(--header-custom-margin-block-end);
+        margin-inline: var(--header-custom-margin-inline);
+      }
+
+      .header__column--left,
+      .header__column--right {
+        padding-inline: 0;
+      }
     }
   }
 
@@ -1154,13 +1232,13 @@
     {
       "type": "range",
       "id": "glass_float_margin",
-      "label": "Separación del borde superior",
+      "label": "Margen superior",
+      "info": "Separación del borde superior. En móvil también define el margen lateral.",
       "min": 0,
-      "max": 32,
+      "max": 48,
       "step": 1,
       "unit": "px",
-      "default": 12,
-      "visible_if": "{{ section.settings.enable_glass_header }}"
+      "default": 12
     },
     {
       "type": "range",
@@ -1172,6 +1250,97 @@
       "unit": "px",
       "default": 16,
       "visible_if": "{{ section.settings.enable_glass_header }}"
+    },
+    {
+      "type": "header",
+      "content": "Fondo y espaciado"
+    },
+    {
+      "type": "checkbox",
+      "id": "header_band_enable",
+      "label": "Fondo a ancho completo",
+      "info": "Pinta una franja de color de borde a borde detrás de la barra. El contenido empieza debajo del encabezado.",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "header_band_color",
+      "label": "Color de fondo",
+      "default": "#FFFFFF",
+      "visible_if": "{{ section.settings.header_band_enable }}"
+    },
+    {
+      "type": "range",
+      "id": "header_min_height",
+      "label": "Altura mínima",
+      "info": "0 = automática.",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_spacing",
+      "label": "Espaciado personalizado",
+      "info": "Aplica en escritorio.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding-block-start",
+      "label": "Padding superior",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12,
+      "visible_if": "{{ section.settings.custom_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-block-end",
+      "label": "Padding inferior",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12,
+      "visible_if": "{{ section.settings.custom_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "padding-inline",
+      "label": "Padding lateral",
+      "min": 0,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 20,
+      "visible_if": "{{ section.settings.custom_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "margin-block-end",
+      "label": "Margen inferior",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.custom_spacing }}"
+    },
+    {
+      "type": "range",
+      "id": "margin-inline",
+      "label": "Margen lateral",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ section.settings.custom_spacing }}"
     },
     {
       "type": "header",
