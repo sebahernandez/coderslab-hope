@@ -9,10 +9,10 @@
  */
 {
   "sections": {
-    "slide_hope_LFi3Ae": {
+    "slide_hope_iDJtCQ": {
       "type": "slide-hope",
       "blocks": {
-        "image_4XPMMc": {
+        "image_jiKRDC": {
           "type": "image",
           "settings": {
             "image_desktop": "shopify://shop_images/2-barquillas.avif",
@@ -26,20 +26,7 @@
             "position": "auto"
           }
         },
-        "image_7MCty9": {
-          "type": "image",
-          "settings": {
-            "alt": "",
-            "link": "",
-            "width": "centered",
-            "height_unit": "auto",
-            "height_desktop": 450,
-            "height_mobile": 300,
-            "fit": "cover",
-            "position": "auto"
-          }
-        },
-        "image_QyPCcP": {
+        "image_MNT6XY": {
           "type": "image",
           "settings": {
             "alt": "",
@@ -54,11 +41,9 @@
         }
       },
       "block_order": [
-        "image_4XPMMc",
-        "image_7MCty9",
-        "image_QyPCcP"
+        "image_jiKRDC",
+        "image_MNT6XY"
       ],
-      "disabled": true,
       "name": "Slide Hope",
       "settings": {
         "mode": "fixed",
@@ -188,6 +173,7 @@
         "text_description",
         "hero_button"
       ],
+      "disabled": true,
       "name": "Hero Banner Helados",
       "settings": {
         "vertical_alignment": "center",
@@ -806,7 +792,7 @@
     }
   },
   "order": [
-    "slide_hope_LFi3Ae",
+    "slide_hope_iDJtCQ",
     "hero_text_KKQXTN",
     "hope_features_DjnWDG",
     "hero_text_QextmY",
