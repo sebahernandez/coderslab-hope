@@ -87,7 +87,7 @@
         "glass_float_margin": 12,
         "margin-block-end": 17,
         "glass_gap": 18,
-        "glass_border_width": 2,
+        "glass_border_width": 0,
         "glass_border_color": "#ffffff",
         "glass_border_opacity": 90,
         "header_band_enable": true,
