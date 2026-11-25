@@ -12,7 +12,7 @@
 - [x] 2.1 Validar JSON del schema, rangos (≥ 3 pasos, default alineado) y defaults de select con script; correr `shopify theme check` sin ofensas en los archivos tocados.
 - [x] 2.2 Subir los archivos a un tema de desarrollo con `shopify theme push --only … --nodelete` y verificar que el servidor no reporta errores.
 - [ ] 2.3 Verificar en el editor a 1280, 800 y 390 px: 3 / 2 / 1 columnas, alturas iguales por fila, sin scroll horizontal ni controles de carrusel.
-- [ ] 2.4 Commit + push a `develop` y confirmar que el archivo aparece en `HOPE-development`.
+- [x] 2.4 Commit + push a `develop` y confirmar que el archivo aparece en `HOPE-development`.
 
 ## Workflow follow-up
 
