@@ -15,8 +15,8 @@
         "image_jiKRDC": {
           "type": "image",
           "settings": {
-            "image_desktop": "shopify://shop_images/barquillas-home.avif",
-            "image_mobile": "shopify://shop_images/2-barquillas-movil.avif",
+            "image_desktop": "shopify://shop_images/hero-home-desktop.avif",
+            "image_mobile": "shopify://shop_images/hero-home-movil.avif",
             "alt": "helado barquilla hope",
             "link": "shopify://products/barquillo",
             "width": "centered",
