@@ -190,7 +190,7 @@
                 "align_baseline": false,
                 "horizontal_alignment_flex_direction_column": "flex-start",
                 "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
+                "gap": 12,
                 "width": "custom",
                 "custom_width": 100,
                 "width_mobile": "fill",
@@ -241,51 +241,7 @@
                     "padding-inline-end": 0
                   },
                   "blocks": {}
-                }
-              },
-              "block_order": [
-                "text_ubicacion"
-              ]
-            },
-            "group_horario": {
-              "type": "group",
-              "name": "Horario",
-              "settings": {
-                "link": "",
-                "open_in_new_tab": false,
-                "content_direction": "column",
-                "vertical_on_mobile": false,
-                "horizontal_alignment": "flex-start",
-                "vertical_alignment": "flex-start",
-                "align_baseline": false,
-                "horizontal_alignment_flex_direction_column": "flex-start",
-                "vertical_alignment_flex_direction_column": "flex-start",
-                "gap": 4,
-                "width": "custom",
-                "custom_width": 100,
-                "width_mobile": "fill",
-                "custom_width_mobile": 100,
-                "height": "fit",
-                "custom_height": 100,
-                "inherit_color_scheme": true,
-                "color_scheme": "",
-                "background_media": "none",
-                "video_position": "cover",
-                "background_image_position": "cover",
-                "border": "none",
-                "border_width": 1,
-                "border_opacity": 100,
-                "border_radius": 0,
-                "toggle_overlay": false,
-                "overlay_color": "#00000026",
-                "overlay_style": "solid",
-                "gradient_direction": "to top",
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {
+                },
                 "text_horario": {
                   "type": "text",
                   "name": "Horario",
@@ -314,6 +270,7 @@
                 }
               },
               "block_order": [
+                "text_ubicacion",
                 "text_horario"
               ]
             },
@@ -422,7 +379,6 @@
             "group_4aCyy7",
             "menu_AtwCFE",
             "group_ubicacion",
-            "group_horario",
             "group_medios_pago"
           ]
         },
@@ -514,8 +470,8 @@
         }
       },
       "block_order": [
-        "divider_hFm3am",
         "group_tbFfTQ",
+        "divider_hFm3am",
         "footer_utilities_KRaGcH"
       ],
       "name": "Footer",
@@ -530,11 +486,11 @@
         "gap": 48,
         "section_width": "page-width",
         "section_height": "",
-        "color_scheme": "scheme-2",
+        "color_scheme": "scheme-footer-blanco",
         "background_media": "none",
         "video_position": "cover",
         "background_image_position": "cover",
-        "padding-block-start": 0,
+        "padding-block-start": 48,
         "padding-block-end": 48
       }
     }

@@ -54,9 +54,10 @@
   }
 
   @media screen and (min-width: 750px) {
+    /* Tablet: brand | menu, then location+hours | payments. */
     footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 32px;
       align-items: start;
     }
@@ -65,20 +66,13 @@
       width: 100%;
       max-width: 100%;
     }
-
-    footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content > .group-block:has(.hope-payment-method) {
-      grid-column: span 2;
-    }
   }
 
+  /* Desktop: four columns — brand, menu, location+hours, payments. */
   @media screen and (min-width: 1200px) {
     footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content {
-      grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.75fr) minmax(0, 0.85fr) minmax(0, 0.9fr) minmax(0, 1.6fr);
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 0.9fr);
       gap: clamp(24px, 3vw, 48px);
-    }
-
-    footer .section-content-wrapper > .group-block:has(.hope-payment-method) > .group-block-content > .group-block:has(.hope-payment-method) {
-      grid-column: auto;
     }
   }
 {% endstylesheet %}
