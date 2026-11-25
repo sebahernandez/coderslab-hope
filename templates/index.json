@@ -236,6 +236,7 @@
           "settings": {
             "product": "helado-hope",
             "description_words": 15,
+            "image": "shopify://shop_images/Helado-Hope.avif",
             "image_alt": "",
             "image_ratio": "1.25",
             "image_fit": "cover",
@@ -287,6 +288,7 @@
           "settings": {
             "product": "mixo-hope",
             "description_words": 15,
+            "image": "shopify://shop_images/Mixo-Hope.avif",
             "image_alt": "",
             "image_ratio": "1.25",
             "image_fit": "cover",
@@ -338,6 +340,7 @@
           "settings": {
             "product": "milkshake",
             "description_words": 15,
+            "image": "shopify://shop_images/Milkshakes.avif",
             "image_alt": "",
             "image_ratio": "1.25",
             "image_fit": "cover",
@@ -389,6 +392,7 @@
           "settings": {
             "product": "barquillo",
             "description_words": 15,
+            "image": "shopify://shop_images/Barquilla.avif",
             "image_alt": "",
             "image_ratio": "1.25",
             "image_fit": "cover",
