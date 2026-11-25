@@ -87,6 +87,7 @@
     "increase_quantity": "Aumentar cantidad",
     "quantity": "Cantidad",
     "rating": "La calificación de este producto es {{ rating }} de 5",
+    "testimonial_rating": "{{ rating }} de 5 estrellas",
     "nested_product": "{{ product_title }} para {{ parent_title }}"
   },
   "actions": {

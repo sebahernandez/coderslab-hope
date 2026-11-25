@@ -1,0 +1,814 @@
+{% comment %}
+  Section contract.
+  Renders a heading, an optional subheading and a static grid of customer testimonials.
+  Each testimonial is a block with its own avatar, star rating (1-5), name, quote and
+  styling (colors, sizes, spacing) with mobile variants. The section owns the layout:
+  columns per breakpoint, gaps, width and vertical spacing.
+  The cards live in a semantic list track (`__track` / `__slide`) so a future slide mode
+  can reuse the same markup and block settings.
+  @example
+  <!-- Add "Testimonios Hope" from the theme editor and edit each "Testimonio" block -->
+{% endcomment %}
+
+{% liquid
+  assign s = section.settings
+  assign heading_tag = s.heading_tag | default: 'h2'
+%}
+
+<div
+  class="testimonios-hope color-{{ s.color_scheme }}"
+  style="
+    --th-pad-top: {{ s.padding_top }}px;
+    --th-pad-bottom: {{ s.padding_bottom }}px;
+    --th-pad-top-m: {{ s.padding_top_mobile }}px;
+    --th-pad-bottom-m: {{ s.padding_bottom_mobile }}px;
+    --th-max: {{ s.content_max_width }}px;
+    --th-align: {{ s.heading_align }};
+    --th-heading-size: {{ s.heading_size }}px;
+    --th-heading-size-m: {{ s.heading_size_mobile }}px;
+    --th-sub-size: {{ s.subheading_size }}px;
+    --th-sub-size-m: {{ s.subheading_size_mobile }}px;
+    --th-header-space: {{ s.header_spacing }}px;
+    --th-header-space-m: {{ s.header_spacing_mobile }}px;
+    --th-cols: {{ s.columns_desktop }};
+    --th-cols-t: {{ s.columns_tablet }};
+    --th-cols-m: {{ s.columns_mobile }};
+    --th-gap: {{ s.gap }}px;
+    --th-gap-m: {{ s.gap_mobile }}px;
+    {%- if s.background != blank %} --th-bg: {{ s.background }};{% endif -%}
+    {%- if s.heading_color != blank %} --th-heading-color: {{ s.heading_color }};{% endif -%}
+    {%- if s.subheading_color != blank %} --th-sub-color: {{ s.subheading_color }};{% endif -%}
+  "
+>
+  <div class="testimonios-hope__inner testimonios-hope__inner--{{ s.layout_width }}">
+    {%- if s.heading != blank or s.subheading != blank -%}
+      <div class="testimonios-hope__header">
+        {%- if s.heading != blank -%}
+          <{{ heading_tag }} class="testimonios-hope__heading">{{ s.heading | escape }}</{{ heading_tag }}>
+        {%- endif -%}
+        {%- if s.subheading != blank -%}
+          <p class="testimonios-hope__subheading">{{ s.subheading | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="testimonios-hope__track" role="list">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign b = block.settings
+            assign rating = b.rating | plus: 0
+          -%}
+          <li
+            class="testimonios-hope__slide testimonios-hope__card"
+            style="
+              --th-card-pad: {{ b.padding }}px;
+              --th-card-pad-m: {{ b.padding_mobile }}px;
+              --th-card-radius: {{ b.radius }}px;
+              --th-avatar: {{ b.avatar_size }}px;
+              --th-star: {{ b.star_size }}px;
+              --th-name-size: {{ b.name_size }}px;
+              --th-name-size-m: {{ b.name_size_mobile }}px;
+              --th-quote-size: {{ b.quote_size }}px;
+              --th-quote-size-m: {{ b.quote_size_mobile }}px;
+              --th-quote-space: {{ b.quote_spacing }}px;
+              --th-quote-space-m: {{ b.quote_spacing_mobile }}px;
+              {%- if b.card_bg != blank %} --th-card-bg: {{ b.card_bg }};{% endif -%}
+              {%- if b.border_color != blank %} --th-card-border: {{ b.border_color }};{% endif -%}
+              {%- if b.star_color != blank %} --th-star-color: {{ b.star_color }};{% endif -%}
+              {%- if b.star_empty_color != blank %} --th-star-empty: {{ b.star_empty_color }};{% endif -%}
+              {%- if b.name_color != blank %} --th-name-color: {{ b.name_color }};{% endif -%}
+              {%- if b.quote_color != blank %} --th-quote-color: {{ b.quote_color }};{% endif -%}
+            "
+            {{ block.shopify_attributes }}
+          >
+            <div class="testimonios-hope__author">
+              {%- if b.avatar != blank -%}
+                {%- assign avatar_px = b.avatar_size | times: 2 -%}
+                {{
+                  b.avatar
+                  | image_url: width: avatar_px, height: avatar_px, crop: 'center'
+                  | image_tag:
+                    width: b.avatar_size,
+                    height: b.avatar_size,
+                    alt: b.avatar_alt,
+                    loading: 'lazy',
+                    class: 'testimonios-hope__avatar'
+                }}
+              {%- endif -%}
+
+              <div class="testimonios-hope__meta">
+                {%- if rating > 0 -%}
+                  <div class="testimonios-hope__stars">
+                    <span class="visually-hidden">
+                      {{- 'accessibility.testimonial_rating' | t: rating: rating -}}
+                    </span>
+                    {%- for i in (1..5) -%}
+                      <svg
+                        class="testimonios-hope__star{% if i > rating %} testimonios-hope__star--empty{% endif %}"
+                        viewBox="0 0 20 20"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <path d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 14.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9L10 1.5z"/>
+                      </svg>
+                    {%- endfor -%}
+                  </div>
+                {%- endif -%}
+
+                {%- if b.name != blank -%}
+                  <p class="testimonios-hope__name">{{ b.name | escape }}</p>
+                {%- endif -%}
+              </div>
+            </div>
+
+            {%- if b.quote != blank -%}
+              <blockquote class="testimonios-hope__quote">{{ b.quote }}</blockquote>
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</div>
+
+{% stylesheet %}
+  .testimonios-hope {
+    padding-block: var(--th-pad-top) var(--th-pad-bottom);
+    background-color: var(--th-bg, var(--color-background));
+    color: var(--color-foreground);
+  }
+
+  .testimonios-hope__inner {
+    box-sizing: border-box;
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: var(--page-margin, 16px);
+  }
+
+  .testimonios-hope__inner--page {
+    max-width: min(var(--th-max), var(--page-width, 1200px));
+  }
+
+  .testimonios-hope__header {
+    margin-block-end: var(--th-header-space);
+    text-align: var(--th-align, center);
+  }
+
+  .testimonios-hope__heading {
+    margin: 0;
+    font-family: var(--font-heading--family);
+    font-style: var(--font-heading--style);
+    font-weight: var(--font-heading--weight, 700);
+    font-size: var(--th-heading-size);
+    line-height: 1.15;
+    color: var(--th-heading-color, var(--color-foreground-heading, var(--color-foreground)));
+    text-wrap: balance;
+    overflow-wrap: break-word;
+  }
+
+  .testimonios-hope__subheading {
+    margin: 0.5em 0 0;
+    font-family: var(--font-body--family);
+    font-size: var(--th-sub-size);
+    line-height: 1.5;
+    color: var(--th-sub-color, rgb(var(--color-foreground-rgb) / 0.75));
+  }
+
+  .testimonios-hope__track {
+    display: grid;
+    grid-template-columns: repeat(var(--th-cols), minmax(0, 1fr));
+    align-items: stretch;
+    gap: var(--th-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .testimonios-hope__card {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: var(--th-card-pad);
+    border: 1px solid var(--th-card-border, rgb(var(--color-foreground-rgb) / 0.12));
+    border-radius: var(--th-card-radius);
+    background-color: var(--th-card-bg, var(--color-background));
+    overflow-wrap: break-word;
+  }
+
+  .testimonios-hope__author {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  .testimonios-hope__avatar {
+    flex: none;
+    width: var(--th-avatar);
+    height: var(--th-avatar);
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .testimonios-hope__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .testimonios-hope__stars {
+    display: flex;
+    gap: 2px;
+  }
+
+  .testimonios-hope__star {
+    width: var(--th-star);
+    height: var(--th-star);
+    fill: var(--th-star-color, var(--color-foreground));
+  }
+
+  .testimonios-hope__star--empty {
+    fill: var(--th-star-empty, rgb(var(--color-foreground-rgb) / 0.2));
+  }
+
+  .testimonios-hope__name {
+    margin: 0;
+    font-family: var(--font-body--family);
+    font-weight: 700;
+    font-size: var(--th-name-size);
+    line-height: 1.3;
+    color: var(--th-name-color, var(--color-foreground-heading, var(--color-foreground)));
+  }
+
+  .testimonios-hope__quote {
+    margin: var(--th-quote-space) 0 0;
+    padding: 0;
+    border: 0;
+    font-family: var(--font-body--family);
+    font-style: normal;
+    font-size: var(--th-quote-size);
+    line-height: 1.65;
+    color: var(--th-quote-color, rgb(var(--color-foreground-rgb) / 0.8));
+  }
+
+  .testimonios-hope__quote > * {
+    margin: 0;
+  }
+
+  .testimonios-hope__quote > * + * {
+    margin-block-start: 0.6em;
+  }
+
+  @media screen and (max-width: 989px) {
+    .testimonios-hope__track {
+      grid-template-columns: repeat(var(--th-cols-t), minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .testimonios-hope {
+      padding-block: var(--th-pad-top-m) var(--th-pad-bottom-m);
+    }
+
+    .testimonios-hope__header {
+      margin-block-end: var(--th-header-space-m);
+    }
+
+    .testimonios-hope__heading {
+      font-size: var(--th-heading-size-m);
+    }
+
+    .testimonios-hope__subheading {
+      font-size: var(--th-sub-size-m);
+    }
+
+    .testimonios-hope__track {
+      grid-template-columns: repeat(var(--th-cols-m), minmax(0, 1fr));
+      gap: var(--th-gap-m);
+    }
+
+    .testimonios-hope__card {
+      padding: var(--th-card-pad-m);
+    }
+
+    .testimonios-hope__name {
+      font-size: var(--th-name-size-m);
+    }
+
+    .testimonios-hope__quote {
+      margin-block-start: var(--th-quote-space-m);
+      font-size: var(--th-quote-size-m);
+    }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Testimonios Hope",
+  "tag": "section",
+  "class": "testimonios-hope-section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "header",
+      "content": "Encabezado"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Título",
+      "default": "Lo que dicen quienes ya probaron Hope"
+    },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Etiqueta HTML del título",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" }
+      ],
+      "default": "h2"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subtítulo",
+      "default": "Creamos momentos felices que valen la pena repetir"
+    },
+    {
+      "type": "select",
+      "id": "heading_align",
+      "label": "Alineación",
+      "options": [
+        { "value": "start", "label": "Izquierda" },
+        { "value": "center", "label": "Centro" },
+        { "value": "end", "label": "Derecha" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Tamaño del título escritorio",
+      "min": 18,
+      "max": 72,
+      "step": 1,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Tamaño del título móvil",
+      "min": 16,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Tamaño del subtítulo escritorio",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "subheading_size_mobile",
+      "label": "Tamaño del subtítulo móvil",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "label": "Espacio bajo el encabezado escritorio",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "header_spacing_mobile",
+      "label": "Espacio bajo el encabezado móvil",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Diseño"
+    },
+    {
+      "type": "select",
+      "id": "layout_width",
+      "label": "Ancho",
+      "options": [
+        { "value": "page", "label": "Contenido centrado" },
+        { "value": "full", "label": "Ancho completo" }
+      ],
+      "default": "page"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Ancho máximo del contenido",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1200,
+      "visible_if": "{{ section.settings.layout_width == 'page' }}"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "label": "Columnas escritorio",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "label": "Columnas tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columnas móvil",
+      "options": [
+        { "value": "1", "label": "1" },
+        { "value": "2", "label": "2" }
+      ],
+      "default": "1"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Separación escritorio",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "gap_mobile",
+      "label": "Separación móvil",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Colores"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Esquema de color",
+      "default": "scheme-1"
+    },
+    {
+      "type": "paragraph",
+      "content": "Los colores vacíos usan el esquema de color."
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Fondo de la sección"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Título"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Subtítulo"
+    },
+    {
+      "type": "header",
+      "content": "Espaciado"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Superior escritorio",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Inferior escritorio",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Superior móvil",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Inferior móvil",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonio",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Contenido"
+        },
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Avatar"
+        },
+        {
+          "type": "text",
+          "id": "avatar_alt",
+          "label": "Texto alternativo del avatar",
+          "info": "Déjalo vacío si la imagen es decorativa."
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "Calificación (estrellas)",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 5,
+          "info": "0 oculta las estrellas."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Nombre",
+          "default": "Usuario:"
+        },
+        {
+          "type": "richtext",
+          "id": "quote",
+          "label": "Testimonio",
+          "default": "<p>“El helado de Hope es de lo mejor, de mis favoritos por su increíble sabor y calidad.”</p>"
+        },
+        {
+          "type": "header",
+          "content": "Tamaños"
+        },
+        {
+          "type": "range",
+          "id": "avatar_size",
+          "label": "Tamaño del avatar",
+          "min": 32,
+          "max": 96,
+          "step": 2,
+          "unit": "px",
+          "default": 44
+        },
+        {
+          "type": "range",
+          "id": "star_size",
+          "label": "Tamaño de las estrellas",
+          "min": 10,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "default": 14
+        },
+        {
+          "type": "range",
+          "id": "name_size",
+          "label": "Nombre escritorio",
+          "min": 11,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "default": 14
+        },
+        {
+          "type": "range",
+          "id": "name_size_mobile",
+          "label": "Nombre móvil",
+          "min": 11,
+          "max": 22,
+          "step": 1,
+          "unit": "px",
+          "default": 14
+        },
+        {
+          "type": "range",
+          "id": "quote_size",
+          "label": "Testimonio escritorio",
+          "min": 11,
+          "max": 24,
+          "step": 1,
+          "unit": "px",
+          "default": 15
+        },
+        {
+          "type": "range",
+          "id": "quote_size_mobile",
+          "label": "Testimonio móvil",
+          "min": 11,
+          "max": 22,
+          "step": 1,
+          "unit": "px",
+          "default": 14
+        },
+        {
+          "type": "header",
+          "content": "Tarjeta"
+        },
+        {
+          "type": "range",
+          "id": "padding",
+          "label": "Relleno escritorio",
+          "min": 8,
+          "max": 60,
+          "step": 2,
+          "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "range",
+          "id": "padding_mobile",
+          "label": "Relleno móvil",
+          "min": 8,
+          "max": 40,
+          "step": 2,
+          "unit": "px",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "quote_spacing",
+          "label": "Espacio sobre el testimonio escritorio",
+          "min": 0,
+          "max": 48,
+          "step": 2,
+          "unit": "px",
+          "default": 24
+        },
+        {
+          "type": "range",
+          "id": "quote_spacing_mobile",
+          "label": "Espacio sobre el testimonio móvil",
+          "min": 0,
+          "max": 40,
+          "step": 2,
+          "unit": "px",
+          "default": 16
+        },
+        {
+          "type": "range",
+          "id": "radius",
+          "label": "Radio de esquinas",
+          "min": 0,
+          "max": 40,
+          "step": 1,
+          "unit": "px",
+          "default": 16
+        },
+        {
+          "type": "header",
+          "content": "Colores (opcional)"
+        },
+        {
+          "type": "paragraph",
+          "content": "Si están vacíos se usa el esquema de color de la sección."
+        },
+        {
+          "type": "color",
+          "id": "card_bg",
+          "label": "Fondo"
+        },
+        {
+          "type": "color",
+          "id": "border_color",
+          "label": "Borde"
+        },
+        {
+          "type": "color",
+          "id": "star_color",
+          "label": "Estrellas"
+        },
+        {
+          "type": "color",
+          "id": "star_empty_color",
+          "label": "Estrellas vacías"
+        },
+        {
+          "type": "color",
+          "id": "name_color",
+          "label": "Nombre"
+        },
+        {
+          "type": "color",
+          "id": "quote_color",
+          "label": "Testimonio"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Testimonios Hope",
+      "settings": {
+        "heading_color": "#6b0f3a",
+        "subheading_color": "#5a4a52"
+      },
+      "blocks": [
+        {
+          "type": "testimonial",
+          "settings": {
+            "name": "Usuario:",
+            "rating": 5,
+            "quote": "<p>“El helado de Hope es de lo mejor, de mis favoritos por su increíble sabor y calidad. Amo visitarlos, una increíble experiencia.”</p>",
+            "card_bg": "#ffffff",
+            "border_color": "#f3dbe5",
+            "star_color": "#9c2a5f",
+            "name_color": "#6b0f3a",
+            "quote_color": "#4a4a4a"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "name": "Usuario:",
+            "rating": 5,
+            "quote": "<p>“Un lugar perfecto para disfrutar algo dulce y refrescante. Probé un milkshake y estaba espectacular. Excelente atención y muy buena presentación.”</p>",
+            "card_bg": "#ffffff",
+            "border_color": "#f3dbe5",
+            "star_color": "#9c2a5f",
+            "name_color": "#6b0f3a",
+            "quote_color": "#4a4a4a"
+          }
+        },
+        {
+          "type": "testimonial",
+          "settings": {
+            "name": "Usuario:",
+            "rating": 5,
+            "quote": "<p>“¡Mi heladería favorita en Tucacas! Los helados tienen muchísimo sabor, los toppings son variados y las porciones generosas. Ideal para compartir en familia.”</p>",
+            "card_bg": "#ffffff",
+            "border_color": "#f3dbe5",
+            "star_color": "#9c2a5f",
+            "name_color": "#6b0f3a",
+            "quote_color": "#4a4a4a"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
