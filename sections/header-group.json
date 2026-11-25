@@ -88,7 +88,7 @@
         "margin-block-end": 12,
         "glass_gap": 18,
         "header_band_enable": true,
-        "header_band_color": "#faa3c5",
+        "header_band_color": "#FECBDF",
         "header_min_height": 0,
         "custom_spacing": false,
         "padding-block-start": 12,
