@@ -17,7 +17,7 @@
 - [x] 3.1 Correr `shopify theme check` filtrado a los archivos nuevos sin ofensas.
 - [x] 3.2 Subir los archivos a un tema de desarrollo con `shopify theme push --only … --nodelete` y verificar que el servidor no reporta errores de schema (plan B: si el schema de la tarjeta es rechazado por tamaño, extraer el botón a `blocks/_product-tile-button.liquid` como bloque estático).
 - [ ] 3.3 Verificar en el editor a 1280, 800 y 390 px: columnas 4/2/1, sin scroll horizontal, textos largos ajustados, imagen móvil aplicada.
-- [ ] 3.4 Commit + push a `develop` y confirmar que los archivos aparecen en `HOPE-development` (pull del archivo desde el tema).
+- [x] 3.4 Commit + push a `develop` y confirmar que los archivos aparecen en `HOPE-development` (pull del archivo desde el tema).
 
 ## Workflow follow-up
 
