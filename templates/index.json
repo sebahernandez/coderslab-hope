@@ -16,33 +16,19 @@
           "type": "image",
           "settings": {
             "image_desktop": "shopify://shop_images/2-barquillas.avif",
-            "alt": "",
-            "link": "",
+            "alt": "helado barquilla hope",
+            "link": "shopify://products/barquillo",
             "width": "centered",
-            "height_unit": "auto",
-            "height_desktop": 450,
+            "height_unit": "px",
+            "height_desktop": 550,
             "height_mobile": 300,
             "fit": "cover",
-            "position": "auto"
-          }
-        },
-        "image_MNT6XY": {
-          "type": "image",
-          "settings": {
-            "alt": "",
-            "link": "",
-            "width": "centered",
-            "height_unit": "auto",
-            "height_desktop": 450,
-            "height_mobile": 300,
-            "fit": "cover",
-            "position": "auto"
+            "position": "center"
           }
         }
       },
       "block_order": [
-        "image_jiKRDC",
-        "image_MNT6XY"
+        "image_jiKRDC"
       ],
       "name": "Slide Hope",
       "settings": {
