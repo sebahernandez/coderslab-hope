@@ -16,7 +16,7 @@
 
 - [x] 3.1 Con todos los ajustes nuevos en su default, comparar capturas de escritorio y móvil del inicio antes/después y confirmar que son equivalentes
 - [x] 3.2 Ejecutar `shopify theme check` sobre `sections/header.liquid` y resolver hallazgos válidos
-- [ ] 3.3 Commit + push a `develop` y confirmar en el editor de temas que los nuevos controles aparecen (schema no descartado) y los valores guardados se mantienen
+- [x] 3.3 Commit + push a `develop` y confirmar en el editor de temas que los nuevos controles aparecen (schema no descartado) y los valores guardados se mantienen
 
 ## Workflow follow-up
 
