@@ -1,12 +1,13 @@
 {% comment %}
   Section contract.
-  Renders a two-column block: a static image with a centered play button next to a stack of
-  merchant-ordered blocks (heading, text, feature cards). Pressing play opens a modal dialog
-  (custom element `video-modal`, extends the theme DialogComponent) that mounts an uploaded video
-  or a YouTube/Vimeo iframe from a <template> only on open, and unmounts it on close.
+  Renders a two-column block: a rounded media frame next to a stack of merchant-ordered blocks
+  (heading, text, feature cards). With a video configured, the frame plays it inline: muted,
+  autoplay, infinite loop, no controls (uploaded file, or a YouTube/Vimeo background embed).
+  The image is the uploaded video's poster, and the frame content when there is no video.
+  Uploaded videos stay paused on the poster under prefers-reduced-motion.
   Consecutive `feature` blocks are grouped into one grid. Columns stack below 750px.
   @example
-  <!-- Add "Video Hope modal" from the theme editor, pick an image and a video, edit its blocks -->
+  <!-- Add "Video Hope modal" from the theme editor, pick a video (and a poster image), edit its blocks -->
 {% endcomment %}
 
 {% liquid
@@ -102,8 +103,7 @@
     assign has_video = true
   endif
 
-  assign play_label = 'accessibility.play_video' | t
-  assign video_title = play_label
+  assign video_title = 'accessibility.play_video' | t
   for block in section.blocks
     if block.type == 'heading' and block.settings.heading != blank
       assign video_title = block.settings.heading | strip_html
@@ -129,24 +129,66 @@
     --vhm-items: {{ items }};
     --vhm-ratio: {{ ratio }};
     --vhm-radius: {{ s.image_radius }}px;
-    --vhm-play-size: {{ s.play_size }}px;
-    --vhm-play-size-mobile: {{ s.play_size_mobile }}px;
-    --vhm-play-border-width: {{ s.play_border_width }}px;
     --vhm-cols: {{ s.feature_columns }};
     --vhm-cols-mobile: {{ s.feature_columns_mobile }};
     --vhm-feature-gap: {{ s.feature_gap }}px;
     --vhm-feature-gap-mobile: {{ s.feature_gap_mobile }}px;
     {% if s.background != blank %}--vhm-bg: {{ s.background }};{% endif %}
-    {% if s.play_bg != blank %}--vhm-play-bg: {{ s.play_bg }};{% endif %}
-    {% if s.play_icon_color != blank %}--vhm-play-icon: {{ s.play_icon_color }};{% endif %}
-    {% if s.play_border_color != blank %}--vhm-play-border: {{ s.play_border_color }};{% endif %}
     {% if s.overlay_enabled %}--vhm-overlay-rgb: {{ s.overlay_color.red | default: 0 }} {{ s.overlay_color.green | default: 0 }} {{ s.overlay_color.blue | default: 0 }}; --vhm-overlay-opacity: {{ s.overlay_opacity | divided_by: 100.0 }};{% endif %}
   "
 >
   <div class="video-hope-modal__inner video-hope-modal__inner--{{ s.layout_width }}">
     <div class="video-hope-modal__media">
       <div class="video-hope-modal__frame">
-        {%- if image_desktop != blank -%}
+        {%- if has_video -%}
+          {%- if s.video_source == 'uploaded' -%}
+            {%- liquid
+              assign poster = s.video.preview_image
+              if image_desktop != blank
+                assign poster = image_desktop
+              endif
+            -%}
+            {%- comment -%} Decorative ambient loop: muted is required by browsers for autoplay. {%- endcomment -%}
+            <video
+              class="video-hope-modal__video"
+              autoplay
+              muted
+              loop
+              playsinline
+              disablepictureinpicture
+              preload="metadata"
+              {% if poster != blank %}poster="{{ poster | image_url: width: 1400 }}"{% endif %}
+              aria-hidden="true"
+              tabindex="-1"
+            >
+              {%- for source in s.video.sources -%}
+                <source src="{{ source.url }}" type="{{ source.mime_type }}">
+              {%- endfor -%}
+            </video>
+          {%- elsif video_url.type == 'youtube' -%}
+            <iframe
+              class="video-hope-modal__video video-hope-modal__video--embed"
+              src="https://www.youtube-nocookie.com/embed/{{ video_url.id }}?autoplay=1&mute=1&loop=1&playlist={{ video_url.id }}&controls=0&playsinline=1&rel=0&modestbranding=1&disablekb=1"
+              title="{{ video_title | escape }}"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              loading="lazy"
+              tabindex="-1"
+              aria-hidden="true"
+              frameborder="0"
+            ></iframe>
+          {%- elsif video_url.type == 'vimeo' -%}
+            <iframe
+              class="video-hope-modal__video video-hope-modal__video--embed"
+              src="https://player.vimeo.com/video/{{ video_url.id }}?background=1"
+              title="{{ video_title | escape }}"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              loading="lazy"
+              tabindex="-1"
+              aria-hidden="true"
+              frameborder="0"
+            ></iframe>
+          {%- endif -%}
+        {%- elsif image_desktop != blank -%}
           <picture class="video-hope-modal__picture">
             {%- if image_mobile != blank -%}
               <source
@@ -180,87 +222,6 @@
           ></span>
         {%- endif -%}
 
-        {%- if has_video -%}
-          <video-modal class="video-hope-modal__modal">
-            <button
-              type="button"
-              class="video-hope-modal__play"
-              on:click="/showDialog"
-              aria-label="{{ 'accessibility.play_video' | t }}"
-            >
-              {%- comment -%} The button covers the whole image (YouTube-style hit area); the circle is visual only. {%- endcomment -%}
-              <span class="video-hope-modal__play-circle" aria-hidden="true">
-                <svg
-                  class="video-hope-modal__play-icon"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z"/>
-                </svg>
-              </span>
-            </button>
-
-            <dialog
-              ref="dialog"
-              class="video-hope-modal__dialog"
-              aria-label="{{ video_title | escape }}"
-              scroll-lock
-            >
-              <button
-                type="button"
-                class="video-hope-modal__close"
-                on:click="/closeDialog"
-                aria-label="{{ 'actions.close' | t }}"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  aria-hidden="true"
-                  focusable="false"
-                >
-                  <path d="M6 6l12 12M18 6L6 18"/>
-                </svg>
-              </button>
-              <div class="video-hope-modal__player" ref="player"></div>
-            </dialog>
-
-            <template ref="videoTemplate">
-              {%- if s.video_source == 'uploaded' -%}
-                {{
-                  s.video
-                  | video_tag:
-                    autoplay: true,
-                    controls: true,
-                    playsinline: true,
-                    class: 'video-hope-modal__video'
-                }}
-              {%- elsif video_url.type == 'youtube' -%}
-                <iframe
-                  class="video-hope-modal__video"
-                  src="https://www.youtube-nocookie.com/embed/{{ video_url.id }}?autoplay=1&rel=0&playsinline=1"
-                  title="{{ video_title | escape }}"
-                  allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-                  allowfullscreen
-                  frameborder="0"
-                ></iframe>
-              {%- elsif video_url.type == 'vimeo' -%}
-                <iframe
-                  class="video-hope-modal__video"
-                  src="https://player.vimeo.com/video/{{ video_url.id }}?autoplay=1"
-                  title="{{ video_title | escape }}"
-                  allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-                  allowfullscreen
-                  frameborder="0"
-                ></iframe>
-              {%- endif -%}
-            </template>
-          </video-modal>
-        {%- endif -%}
       </div>
     </div>
 
@@ -357,8 +318,17 @@
   </div>
 </div>
 
-{%- if has_video -%}
-  <script type="module" src="{{ 'video-modal.js' | asset_url }}"></script>
+{%- if has_video and s.video_source == 'uploaded' -%}
+  <script type="module">
+    // Respect reduced motion: keep the uploaded loop paused on its poster.
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      for (const video of document.querySelectorAll('#shopify-section-{{ section.id }} video.video-hope-modal__video')) {
+        video.removeAttribute('autoplay');
+        video.pause();
+        video.currentTime = 0;
+      }
+    }
+  </script>
 {%- endif -%}
 
 {% stylesheet %}
@@ -399,6 +369,8 @@
   .video-hope-modal__frame {
     position: relative;
     overflow: hidden;
+    /* isolation keeps Safari clipping the composited video to the rounded corners. */
+    isolation: isolate;
     aspect-ratio: var(--vhm-ratio);
     border-radius: var(--vhm-radius);
   }
@@ -415,7 +387,6 @@
     height: 100%;
     max-width: 100%;
     object-fit: cover;
-    transition: transform 0.6s var(--animation-easing, ease);
   }
 
   .video-hope-modal__overlay {
@@ -423,7 +394,6 @@
     inset: 0;
     pointer-events: none;
     background-color: rgb(var(--vhm-overlay-rgb) / var(--vhm-overlay-opacity));
-    transition: opacity var(--animation-speed, 0.2s) var(--animation-easing, ease);
   }
 
   /* YouTube-style vignette: darker top and bottom edges, clear center. */
@@ -437,189 +407,35 @@
     );
   }
 
-  .video-hope-modal__frame:hover .video-hope-modal__image,
-  .video-hope-modal__frame:focus-within .video-hope-modal__image {
-    transform: scale(1.04);
-  }
-
-  .video-hope-modal__frame:hover .video-hope-modal__overlay,
-  .video-hope-modal__frame:focus-within .video-hope-modal__overlay {
-    opacity: 0.75;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .video-hope-modal__image {
-      transition: none;
-    }
-
-    .video-hope-modal__frame:hover .video-hope-modal__image,
-    .video-hope-modal__frame:focus-within .video-hope-modal__image {
-      transform: none;
-    }
-  }
-
   .video-hope-modal__placeholder {
     background-color: rgb(var(--color-foreground-rgb) / var(--opacity-5, 0.05));
   }
 
-  .video-hope-modal__modal {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    pointer-events: none;
-  }
-
-  /* Full-frame hit area, like a YouTube thumbnail. */
-  .video-hope-modal__play {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    pointer-events: auto;
-  }
-
-  .video-hope-modal__play-circle {
-    display: grid;
-    place-items: center;
-    box-sizing: border-box;
-    width: var(--vhm-play-size);
-    height: var(--vhm-play-size);
-    min-width: var(--minimum-touch-target, 44px);
-    min-height: var(--minimum-touch-target, 44px);
-    border: var(--vhm-play-border-width) solid var(--vhm-play-border, var(--color-background));
-    border-radius: 50%;
-    background-color: var(--vhm-play-bg, var(--color-foreground));
-    color: var(--vhm-play-icon, var(--color-background));
-    box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
-    transition: transform var(--animation-speed, 0.2s) var(--animation-easing, ease);
-  }
-
-  .video-hope-modal__play:hover .video-hope-modal__play-circle,
-  .video-hope-modal__play:focus-visible .video-hope-modal__play-circle {
-    transform: scale(1.1);
-  }
-
-  .video-hope-modal__play:focus-visible {
-    outline: none;
-  }
-
-  .video-hope-modal__play:focus-visible .video-hope-modal__play-circle,
-  .video-hope-modal__close:focus-visible {
-    outline: var(--focus-outline-width, 2px) solid #fff;
-    outline-offset: var(--focus-outline-offset, 3px);
-  }
-
-  .video-hope-modal__play-icon {
-    width: 40%;
-    height: 40%;
-    margin-inline-start: 6%;
-  }
-
-  [dir='rtl'] .video-hope-modal__play-icon {
-    transform: scaleX(-1);
-    margin-inline-start: 6%;
-  }
-
-  .video-hope-modal__dialog {
-    position: fixed;
-    inset: 0;
-    box-sizing: border-box;
-    /* Width is also capped by the viewport height so the 16:9 player always fits. */
-    width: min(92vw, 1000px, calc(92vh * 16 / 9));
-    width: min(92vw, 1000px, calc(92dvh * 16 / 9));
-    max-width: none;
-    height: fit-content;
-    max-height: 92vh;
-    max-height: 92dvh;
-    margin: auto;
-    padding: 0;
-    border: 0;
-    border-radius: 16px;
-    background-color: #000;
-    color: #fff;
-    overflow: hidden;
-    pointer-events: auto;
-  }
-
-  .video-hope-modal__dialog::backdrop {
-    background: rgb(0 0 0 / 0.8);
-  }
-
-  /* Own keyframes: the global elementSlideInTop animates margin-top and breaks margin: auto centering. */
-  .video-hope-modal__dialog[open] {
-    animation: video-hope-modal-in var(--animation-speed, 0.2s) var(--animation-easing, ease) forwards;
-  }
-
-  .video-hope-modal__dialog.dialog-closing {
-    animation: video-hope-modal-out var(--animation-speed, 0.2s) var(--animation-easing, ease) forwards;
-  }
-
-  @keyframes video-hope-modal-in {
-    from {
-      opacity: 0;
-      transform: translateY(var(--padding-sm, 12px));
-    }
-
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes video-hope-modal-out {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    to {
-      opacity: 0;
-      transform: translateY(var(--padding-sm, 12px));
-    }
-  }
-
-
-  .video-hope-modal__player {
-    aspect-ratio: 16 / 9;
-    width: 100%;
-    background-color: #000;
-  }
-
+  /* Fills the rounded frame; the frame's overflow: hidden clips the corners. */
   .video-hope-modal__video {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
     border: 0;
-    object-fit: contain;
+    object-fit: cover;
+    pointer-events: none;
   }
 
-  .video-hope-modal__close {
-    position: absolute;
-    z-index: 1;
-    inset-block-start: 8px;
-    inset-inline-end: 8px;
-    display: grid;
-    place-items: center;
-    width: var(--minimum-touch-target, 44px);
-    height: var(--minimum-touch-target, 44px);
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background-color: rgb(0 0 0 / 0.55);
-    color: #fff;
-    cursor: pointer;
+  /* Iframes can't use object-fit: scale the 16:9 player until it covers the frame. */
+  .video-hope-modal__video--embed {
+    inset: auto;
+    inset-block-start: 50%;
+    inset-inline-start: 50%;
+    width: max(100%, calc(100% * 1.7778 / var(--vhm-ratio)));
+    height: auto;
+    aspect-ratio: 16 / 9;
+    transform: translate(-50%, -50%);
   }
 
-  .video-hope-modal__close svg {
-    width: 20px;
-    height: 20px;
+  [dir='rtl'] .video-hope-modal__video--embed {
+    transform: translate(50%, -50%);
   }
 
   .video-hope-modal__content {
@@ -745,22 +561,6 @@
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .video-hope-modal__play-circle {
-      transition: none;
-    }
-
-    .video-hope-modal__play:hover .video-hope-modal__play-circle,
-    .video-hope-modal__play:focus-visible .video-hope-modal__play-circle {
-      transform: none;
-    }
-
-    .video-hope-modal__dialog[open],
-    .video-hope-modal__dialog.dialog-closing {
-      animation: none;
-    }
-  }
-
   @media screen and (max-width: 749px) {
     .video-hope-modal {
       padding-block: var(--vhm-pad-top-mobile) var(--vhm-pad-bottom-mobile);
@@ -800,11 +600,6 @@
     .video-hope-modal__heading,
     .video-hope-modal__text {
       font-size: var(--vhm-size-mobile);
-    }
-
-    .video-hope-modal__play-circle {
-      width: var(--vhm-play-size-mobile);
-      height: var(--vhm-play-size-mobile);
     }
 
     .video-hope-modal__features {
@@ -956,7 +751,7 @@
         }
       ],
       "default": "uploaded",
-      "info": "Sin video no se muestra el botón de play."
+      "info": "El video se reproduce solo, sin sonido y en loop. Sin video se muestra la imagen."
     },
     {
       "type": "video",
@@ -973,55 +768,6 @@
         "vimeo"
       ],
       "visible_if": "{{ section.settings.video_source == 'url' }}"
-    },
-    {
-      "type": "header",
-      "content": "Botón de play"
-    },
-    {
-      "type": "range",
-      "id": "play_size",
-      "label": "Tamaño (escritorio)",
-      "min": 40,
-      "max": 120,
-      "step": 4,
-      "default": 64,
-      "unit": "px"
-    },
-    {
-      "type": "range",
-      "id": "play_size_mobile",
-      "label": "Tamaño (móvil)",
-      "min": 40,
-      "max": 100,
-      "step": 4,
-      "default": 56,
-      "unit": "px"
-    },
-    {
-      "type": "color",
-      "id": "play_bg",
-      "label": "Color de fondo"
-    },
-    {
-      "type": "color",
-      "id": "play_icon_color",
-      "label": "Color del icono"
-    },
-    {
-      "type": "color",
-      "id": "play_border_color",
-      "label": "Color del borde"
-    },
-    {
-      "type": "range",
-      "id": "play_border_width",
-      "label": "Grosor del borde",
-      "min": 0,
-      "max": 8,
-      "step": 1,
-      "default": 3,
-      "unit": "px"
     },
     {
       "type": "header",
@@ -1571,10 +1317,7 @@
     {
       "name": "Video Hope modal",
       "settings": {
-        "background": "#fdf0f5",
-        "play_bg": "#d4508a",
-        "play_icon_color": "#ffffff",
-        "play_border_color": "#ffffff"
+        "background": "#fdf0f5"
       },
       "blocks": {
         "heading_1": {
