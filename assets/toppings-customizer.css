@@ -21,7 +21,10 @@ body:has(.hopecfg) {
   /* Mobile gutter matches the floating glass navbar (published by sections/header.liquid);
      falls back to the theme page margin when the glass navbar is off */
   padding-inline: var(--hope-navbar-gutter-mobile, var(--page-margin, 16px));
-  padding-block: 6rem;
+  /* Fixed block padding below 540px of viewport height. The top side subtracts
+     the height the header already reserves in main (--header-flow-offset). */
+  --hopecfg-pad-block: 6rem;
+  padding-block: max(12px, calc(var(--hopecfg-pad-block) - var(--header-flow-offset, 0px))) var(--hopecfg-pad-block);
 }
 .hopecfg *,
 .hopecfg *::before,
@@ -30,14 +33,14 @@ body:has(.hopecfg) {
 }
 
 @media (min-width: 640px) {
-  .hopecfg { padding-block: 7rem; }
+  .hopecfg { --hopecfg-pad-block: 7rem; }
 }
 /* Tablet/desktop: same page margin as the navbar (base.css page-width grid) */
 @media (min-width: 750px) {
   .hopecfg { padding-inline: var(--page-margin, 40px); }
 }
 @media (min-width: 1024px) {
-  .hopecfg { padding-block: 9.5rem; }
+  .hopecfg { --hopecfg-pad-block: 9.5rem; }
 }
 
 /* Contenedor tarjeta con los 2 paneles */
@@ -67,17 +70,20 @@ body:has(.hopecfg) {
 
 /* Presupuesto de alto: con al menos 540px de viewport la tarjeta cabe completa bajo el
    navbar fijo (--header-group-height) y solo se desplaza .hopecfg__config-scroll.
+   El padding superior resta la altura que el encabezado ya reservó en main
+   (--header-flow-offset); el alto de la tarjeta resta la altura completa del encabezado,
+   que es lo que tapa el viewport.
    Por debajo se conservan el padding y el min-height de arriba. 100vh es respaldo de 100svh. */
 @media (min-height: 540px) {
   .hopecfg {
     --hopecfg-gap: 12px;
-    --hopecfg-top: calc(var(--header-group-height, 76px) + var(--hopecfg-gap));
-    padding-block: var(--hopecfg-top) var(--hopecfg-gap);
+    --hopecfg-header: var(--header-group-height, 76px);
+    padding-block: calc(var(--hopecfg-header) - var(--header-flow-offset, 0px) + var(--hopecfg-gap)) var(--hopecfg-gap);
   }
   .hopecfg__frame {
     min-height: 0;
-    height: min(calc(100vh - var(--hopecfg-top) - var(--hopecfg-gap)), 900px);
-    height: min(calc(100svh - var(--hopecfg-top) - var(--hopecfg-gap)), 900px);
+    height: min(calc(100vh - var(--hopecfg-header) - 2 * var(--hopecfg-gap)), 900px);
+    height: min(calc(100svh - var(--hopecfg-header) - 2 * var(--hopecfg-gap)), 900px);
   }
 }
 @media (min-height: 540px) and (min-width: 1024px) {
