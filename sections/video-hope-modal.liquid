@@ -21,6 +21,32 @@
 
   assign alt = s.image_alt | default: image_desktop.alt
 
+  # Responsive widths capped at the uploaded file's width (Shopify never upscales),
+  # always including the original width so high-DPR screens get the full resolution.
+  assign desktop_widths = ''
+  assign mobile_srcset = ''
+  if image_desktop != blank
+    assign candidate_widths = '500,700,900,1100,1400,1800,2200,2600,3000' | split: ','
+    for w in candidate_widths
+      assign wn = w | plus: 0
+      if wn < image_desktop.width
+        assign desktop_widths = desktop_widths | append: wn | append: ','
+      endif
+    endfor
+    assign desktop_widths = desktop_widths | append: image_desktop.width
+
+    assign mobile_candidates = '375,550,750,1100,1500' | split: ','
+    for w in mobile_candidates
+      assign wn = w | plus: 0
+      if wn < image_mobile.width
+        assign mobile_url = image_mobile | image_url: width: wn
+        assign mobile_srcset = mobile_srcset | append: mobile_url | append: ' ' | append: wn | append: 'w, '
+      endif
+    endfor
+    assign mobile_url = image_mobile | image_url: width: image_mobile.width
+    assign mobile_srcset = mobile_srcset | append: mobile_url | append: ' ' | append: image_mobile.width | append: 'w'
+  endif
+
   assign loading = 'lazy'
   assign fetchpriority = 'auto'
   if section.index == 1
@@ -90,6 +116,7 @@
     {% if s.play_bg != blank %}--vhm-play-bg: {{ s.play_bg }};{% endif %}
     {% if s.play_icon_color != blank %}--vhm-play-icon: {{ s.play_icon_color }};{% endif %}
     {% if s.play_border_color != blank %}--vhm-play-border: {{ s.play_border_color }};{% endif %}
+    {% if s.overlay_enabled %}--vhm-overlay-rgb: {{ s.overlay_color.red | default: 0 }} {{ s.overlay_color.green | default: 0 }} {{ s.overlay_color.blue | default: 0 }}; --vhm-overlay-opacity: {{ s.overlay_opacity | divided_by: 100.0 }};{% endif %}
   "
 >
   <div class="video-hope-modal__inner video-hope-modal__inner--{{ s.layout_width }}">
@@ -100,7 +127,7 @@
             {%- if image_mobile != blank -%}
               <source
                 media="(max-width: 749px)"
-                srcset="{{ image_mobile | image_url: width: 375 }} 375w, {{ image_mobile | image_url: width: 750 }} 750w, {{ image_mobile | image_url: width: 1125 }} 1125w"
+                srcset="{{ mobile_srcset }}"
                 sizes="100vw"
                 width="{{ image_mobile.width }}"
                 height="{{ image_mobile.height }}"
@@ -108,9 +135,9 @@
             {%- endif -%}
             {{
               image_desktop
-              | image_url: width: 2000
+              | image_url: width: image_desktop.width
               | image_tag:
-                widths: '500, 700, 900, 1100, 1400, 1800, 2000',
+                widths: desktop_widths,
                 sizes: sizes,
                 alt: alt,
                 loading: loading,
@@ -122,6 +149,13 @@
           {{ 'hero-apparel-1' | placeholder_svg_tag: 'video-hope-modal__image video-hope-modal__placeholder' }}
         {%- endif -%}
 
+        {%- if s.overlay_enabled -%}
+          <span
+            class="video-hope-modal__overlay{% if s.overlay_gradient %} video-hope-modal__overlay--gradient{% endif %}"
+            aria-hidden="true"
+          ></span>
+        {%- endif -%}
+
         {%- if has_video -%}
           <video-modal class="video-hope-modal__modal">
             <button
@@ -130,15 +164,18 @@
               on:click="/showDialog"
               aria-label="{{ 'accessibility.play_video' | t }}"
             >
-              <svg
-                class="video-hope-modal__play-icon"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z"/>
-              </svg>
+              {%- comment -%} The button covers the whole image (YouTube-style hit area); the circle is visual only. {%- endcomment -%}
+              <span class="video-hope-modal__play-circle" aria-hidden="true">
+                <svg
+                  class="video-hope-modal__play-icon"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  <path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z"/>
+                </svg>
+              </span>
             </button>
 
             <dialog
@@ -354,6 +391,47 @@
     height: 100%;
     max-width: 100%;
     object-fit: cover;
+    transition: transform 0.6s var(--animation-easing, ease);
+  }
+
+  .video-hope-modal__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-color: rgb(var(--vhm-overlay-rgb) / var(--vhm-overlay-opacity));
+    transition: opacity var(--animation-speed, 0.2s) var(--animation-easing, ease);
+  }
+
+  /* YouTube-style vignette: darker top and bottom edges, clear center. */
+  .video-hope-modal__overlay--gradient {
+    background-image: linear-gradient(
+      to bottom,
+      rgb(var(--vhm-overlay-rgb) / 0.5) 0%,
+      rgb(var(--vhm-overlay-rgb) / 0) 30%,
+      rgb(var(--vhm-overlay-rgb) / 0) 55%,
+      rgb(var(--vhm-overlay-rgb) / 0.6) 100%
+    );
+  }
+
+  .video-hope-modal__frame:hover .video-hope-modal__image,
+  .video-hope-modal__frame:focus-within .video-hope-modal__image {
+    transform: scale(1.04);
+  }
+
+  .video-hope-modal__frame:hover .video-hope-modal__overlay,
+  .video-hope-modal__frame:focus-within .video-hope-modal__overlay {
+    opacity: 0.75;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .video-hope-modal__image {
+      transition: none;
+    }
+
+    .video-hope-modal__frame:hover .video-hope-modal__image,
+    .video-hope-modal__frame:focus-within .video-hope-modal__image {
+      transform: none;
+    }
   }
 
   .video-hope-modal__placeholder {
@@ -368,7 +446,22 @@
     pointer-events: none;
   }
 
+  /* Full-frame hit area, like a YouTube thumbnail. */
   .video-hope-modal__play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  .video-hope-modal__play-circle {
     display: grid;
     place-items: center;
     box-sizing: border-box;
@@ -376,24 +469,26 @@
     height: var(--vhm-play-size);
     min-width: var(--minimum-touch-target, 44px);
     min-height: var(--minimum-touch-target, 44px);
-    padding: 0;
     border: var(--vhm-play-border-width) solid var(--vhm-play-border, var(--color-background));
     border-radius: 50%;
     background-color: var(--vhm-play-bg, var(--color-foreground));
     color: var(--vhm-play-icon, var(--color-background));
-    box-shadow: 0 6px 18px rgb(0 0 0 / 0.25);
-    cursor: pointer;
-    pointer-events: auto;
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
     transition: transform var(--animation-speed, 0.2s) var(--animation-easing, ease);
   }
 
-  .video-hope-modal__play:hover {
-    transform: scale(1.08);
+  .video-hope-modal__play:hover .video-hope-modal__play-circle,
+  .video-hope-modal__play:focus-visible .video-hope-modal__play-circle {
+    transform: scale(1.1);
   }
 
-  .video-hope-modal__play:focus-visible,
+  .video-hope-modal__play:focus-visible {
+    outline: none;
+  }
+
+  .video-hope-modal__play:focus-visible .video-hope-modal__play-circle,
   .video-hope-modal__close:focus-visible {
-    outline: var(--focus-outline-width, 2px) solid currentColor;
+    outline: var(--focus-outline-width, 2px) solid #fff;
     outline-offset: var(--focus-outline-offset, 3px);
   }
 
@@ -410,9 +505,14 @@
 
   .video-hope-modal__dialog {
     position: fixed;
+    inset: 0;
     box-sizing: border-box;
-    width: min(92vw, 1000px);
+    /* Width is also capped by the viewport height so the 16:9 player always fits. */
+    width: min(92vw, 1000px, calc(92vh * 16 / 9));
+    width: min(92vw, 1000px, calc(92dvh * 16 / 9));
     max-width: none;
+    height: fit-content;
+    max-height: 92vh;
     max-height: 92dvh;
     margin: auto;
     padding: 0;
@@ -428,13 +528,39 @@
     background: rgb(0 0 0 / 0.8);
   }
 
+  /* Own keyframes: the global elementSlideInTop animates margin-top and breaks margin: auto centering. */
   .video-hope-modal__dialog[open] {
-    animation: elementSlideInTop var(--animation-speed, 0.2s) var(--animation-easing, ease) forwards;
+    animation: video-hope-modal-in var(--animation-speed, 0.2s) var(--animation-easing, ease) forwards;
   }
 
   .video-hope-modal__dialog.dialog-closing {
-    animation: elementSlideOutTop var(--animation-speed, 0.2s) var(--animation-easing, ease) forwards;
+    animation: video-hope-modal-out var(--animation-speed, 0.2s) var(--animation-easing, ease) forwards;
   }
+
+  @keyframes video-hope-modal-in {
+    from {
+      opacity: 0;
+      transform: translateY(var(--padding-sm, 12px));
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes video-hope-modal-out {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    to {
+      opacity: 0;
+      transform: translateY(var(--padding-sm, 12px));
+    }
+  }
+
 
   .video-hope-modal__player {
     aspect-ratio: 16 / 9;
@@ -596,11 +722,12 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .video-hope-modal__play {
+    .video-hope-modal__play-circle {
       transition: none;
     }
 
-    .video-hope-modal__play:hover {
+    .video-hope-modal__play:hover .video-hope-modal__play-circle,
+    .video-hope-modal__play:focus-visible .video-hope-modal__play-circle {
       transform: none;
     }
 
@@ -651,7 +778,7 @@
       font-size: var(--vhm-size-mobile);
     }
 
-    .video-hope-modal__play {
+    .video-hope-modal__play-circle {
       width: var(--vhm-play-size-mobile);
       height: var(--vhm-play-size-mobile);
     }
@@ -749,6 +876,42 @@
       "step": 4,
       "default": 24,
       "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Overlay de la imagen"
+    },
+    {
+      "type": "checkbox",
+      "id": "overlay_enabled",
+      "label": "Mostrar overlay",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Color del overlay",
+      "default": "#000000",
+      "visible_if": "{{ section.settings.overlay_enabled }}"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Opacidad del overlay",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "default": 20,
+      "unit": "%",
+      "visible_if": "{{ section.settings.overlay_enabled }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "overlay_gradient",
+      "label": "Degradado en bordes superior e inferior",
+      "info": "Oscurece los bordes como en las miniaturas de YouTube.",
+      "default": true,
+      "visible_if": "{{ section.settings.overlay_enabled }}"
     },
     {
       "type": "header",
