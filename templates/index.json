@@ -608,7 +608,7 @@
         "image_radius": 24,
         "overlay_enabled": true,
         "overlay_color": "#000000",
-        "overlay_opacity": 20,
+        "overlay_opacity": 5,
         "overlay_gradient": true,
         "video_source": "uploaded",
         "video": "shopify://files/videos/Video-hope.mp4",
