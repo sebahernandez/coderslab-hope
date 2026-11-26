@@ -9,6 +9,6 @@
 
 ## 2. Verificación visual
 
-- [ ] 2.1 En preview, sin franja y margen superior 12 px: comprobar que `--header-height` en `body` incluye los 12 px y que nada externo se desplaza.
-- [ ] 2.2 Con franja activa: comprobar que la franja cubre desde el borde superior del viewport hasta el borde inferior del encabezado y la primera sección empieza justo debajo.
-- [ ] 2.3 Con glassmorphism desactivado y en móvil (375 px): comprobar posición de la barra y alineación de `.hopecfg` con el navbar.
+- [x] 2.1 En preview, sin franja y margen superior 12 px: comprobar que `--header-height` en `body` incluye los 12 px y que nada externo se desplaza.
+- [x] 2.2 Con franja activa: comprobar que la franja cubre desde el borde superior del viewport hasta el borde inferior del encabezado y la primera sección empieza justo debajo.
+- [x] 2.3 Con glassmorphism desactivado y en móvil (375 px): comprobar posición de la barra y alineación de `.hopecfg` con el navbar.
