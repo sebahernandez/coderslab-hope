@@ -88,7 +88,7 @@
           "type": "button",
           "settings": {
             "label": "Arma tu helado",
-            "link": "shopify://collections",
+            "link": "shopify://collections/helados",
             "new_tab": false,
             "style": "solid",
             "size": "medium",
