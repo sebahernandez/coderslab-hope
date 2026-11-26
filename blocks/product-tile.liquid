@@ -35,9 +35,26 @@
   endif
 
   assign title_tag = s.title_tag | default: 'h3'
+
+  # Button font size: preset per size option, overridden only when the merchant opts in,
+  # so tiles saved before the custom-size settings keep their rendered size.
+  case s.button_size
+    when 'medium'
+      assign btn_font = 15
+    when 'large'
+      assign btn_font = 17
+    else
+      assign btn_font = 13
+  endcase
+  assign btn_font_m = btn_font
+  if s.button_custom_font
+    assign btn_font = s.button_font_size
+    assign btn_font_m = s.button_font_size_mobile
+  endif
+  assign btn_weight = s.button_weight | default: '600'
 -%}
 <div
-  class="product-tile{% if s.align == 'center' %} product-tile--center{% endif %}{% if s.image_hover_zoom %} product-tile--zoom{% endif %}"
+  class="product-tile{% if s.align == 'center' %} product-tile--center{% endif %}{% if s.image_hover_zoom %} product-tile--zoom{% endif %}{% if s.button_label != blank %} product-tile--has-button{% endif %}"
   style="
     --pt-ratio: {{ ratio }};
     --pt-ratio-m: {{ ratio_mobile }};
@@ -53,6 +70,9 @@
     --pt-text-space: {{ s.text_spacing }}px;
     --pt-text-space-m: {{ s.text_spacing_mobile }}px;
     --pt-btn-radius: {{ s.button_radius }}px;
+    --pt-btn-font: {{ btn_font }}px;
+    --pt-btn-font-m: {{ btn_font_m }}px;
+    --pt-btn-weight: {{ btn_weight }};
     --pt-radius: {{ s.card_radius }}px;
     --pt-pad: {{ s.padding }}px;
     --pt-pad-m: {{ s.padding_mobile }}px;
@@ -222,6 +242,11 @@
     color: var(--pt-title-color, var(--color-foreground-heading, var(--color-foreground)));
   }
 
+  /* Hierarchy rule: with a button, the title never renders larger than the button label. */
+  .product-tile--has-button .product-tile__title {
+    font-size: min(var(--pt-title-size), var(--pt-btn-font));
+  }
+
   .product-tile__text {
     margin: 0 0 var(--pt-text-space);
     font-family: var(--font-body--family);
@@ -259,7 +284,8 @@
     border: 1px solid transparent;
     border-radius: var(--pt-btn-radius, 999px);
     font-family: var(--font-body--family);
-    font-weight: 600;
+    font-size: var(--pt-btn-font);
+    font-weight: var(--pt-btn-weight, 600);
     line-height: 1.2;
     text-decoration: none;
     cursor: pointer;
@@ -274,19 +300,17 @@
       opacity var(--pt-btn-duration) var(--pt-btn-easing);
   }
 
+  /* Size options own padding only; the label size comes from --pt-btn-font. */
   .product-tile__button--small {
     padding: 0.5em 1.1em;
-    font-size: 0.8125rem;
   }
 
   .product-tile__button--medium {
     padding: 0.7em 1.4em;
-    font-size: 0.9375rem;
   }
 
   .product-tile__button--large {
     padding: 0.9em 1.8em;
-    font-size: 1.0625rem;
   }
 
   .product-tile__button--solid {
@@ -295,10 +319,14 @@
     color: var(--pt-btn-fg, var(--color-background));
   }
 
+  /* Hover fallbacks derive from the button's own colors so an empty hover setting never turns it black. */
   .product-tile__button--solid:hover {
-    background-color: var(--pt-btn-bg-hover, var(--pt-btn-bg, var(--color-foreground)));
+    border-color: var(--pt-btn-bg-hover, color-mix(in srgb, var(--pt-btn-bg, var(--color-foreground)) 85%, #fff));
+    background-color: var(
+      --pt-btn-bg-hover,
+      color-mix(in srgb, var(--pt-btn-bg, var(--color-foreground)) 85%, #fff)
+    );
     color: var(--pt-btn-fg-hover, var(--pt-btn-fg, var(--color-background)));
-    opacity: 0.9;
   }
 
   .product-tile__button--outline {
@@ -308,9 +336,15 @@
   }
 
   .product-tile__button--outline:hover {
-    background-color: var(--pt-btn-bg-hover, var(--color-foreground));
-    border-color: var(--pt-btn-bg-hover, var(--pt-btn-border, var(--color-foreground)));
-    color: var(--pt-btn-fg-hover, var(--color-background));
+    border-color: var(
+      --pt-btn-bg-hover,
+      color-mix(in srgb, var(--pt-btn-fg, var(--color-foreground)) 35%, var(--pt-btn-bg, var(--color-background)))
+    );
+    background-color: var(
+      --pt-btn-bg-hover,
+      color-mix(in srgb, var(--pt-btn-fg, var(--color-foreground)) 10%, var(--pt-btn-bg, var(--color-background)))
+    );
+    color: var(--pt-btn-fg-hover, var(--pt-btn-fg, var(--color-foreground)));
   }
 
   .product-tile__button:focus-visible {
@@ -360,6 +394,14 @@
     .product-tile__title {
       margin-block-end: var(--pt-title-space-m);
       font-size: var(--pt-title-size-m);
+    }
+
+    .product-tile--has-button .product-tile__title {
+      font-size: min(var(--pt-title-size-m), var(--pt-btn-font-m));
+    }
+
+    .product-tile__button {
+      font-size: var(--pt-btn-font-m);
     }
 
     .product-tile__text {
@@ -465,6 +507,7 @@
       "type": "range",
       "id": "title_size",
       "label": "Tamaño",
+      "info": "Con botón visible, el título no supera el tamaño de fuente del botón.",
       "min": 14,
       "max": 60,
       "step": 1,
@@ -590,6 +633,49 @@
         { "value": "large", "label": "Grande" }
       ],
       "default": "small",
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_custom_font",
+      "label": "Tamaño de fuente personalizado",
+      "info": "Desactivado usa el tamaño de fuente del tamaño elegido.",
+      "default": false,
+      "visible_if": "{{ block.settings.button_label != blank }}"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Tamaño de fuente",
+      "min": 11,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.button_label != blank and block.settings.button_custom_font }}"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size_mobile",
+      "label": "Tamaño de fuente en móvil",
+      "min": 11,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15,
+      "visible_if": "{{ block.settings.button_label != blank and block.settings.button_custom_font }}"
+    },
+    {
+      "type": "select",
+      "id": "button_weight",
+      "label": "Grosor de fuente",
+      "options": [
+        { "value": "400", "label": "Normal" },
+        { "value": "500", "label": "Medio" },
+        { "value": "600", "label": "Seminegrita" },
+        { "value": "700", "label": "Negrita" }
+      ],
+      "default": "600",
       "visible_if": "{{ block.settings.button_label != blank }}"
     },
     {
