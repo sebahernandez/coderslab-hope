@@ -2,45 +2,9 @@
 
 ## Purpose
 
-Define cómo la sección "Video Hope modal" muestra una imagen con botón de play que reproduce un video en una ventana modal, junto a bloques configurables de título, texto y tarjetas de atributo.
+Define cómo la sección "Video Hope modal" reproduce un video en línea (automático, silenciado y en loop) dentro de un recuadro redondeado, junto a bloques configurables de título, texto y tarjetas de atributo.
 
 ## Requirements
-
-### Requirement: Imagen estática con botón de play
-
-La sección SHALL mostrar una imagen estática (con imagen móvil opcional para anchos de 749 px o menos) y, cuando hay un video configurado, un botón de play centrado sobre ella. Sin video configurado, el botón MUST NOT renderizarse. Sin imagen, SHALL mostrarse un placeholder.
-
-#### Scenario: Imagen y video configurados
-- **WHEN** la sección tiene imagen y video
-- **THEN** se ve la imagen con un botón de play centrado
-
-#### Scenario: Sin video
-- **WHEN** la sección tiene imagen pero no video
-- **THEN** se ve solo la imagen, sin botón de play
-
-### Requirement: Reproducción en ventana modal
-
-Al activar el botón de play SHALL abrirse una ventana modal que reproduce el video automáticamente. El video SHALL poder ser un archivo subido a Shopify o una URL de YouTube o Vimeo. Al cerrar la modal la reproducción MUST detenerse.
-
-#### Scenario: Abrir video subido
-- **WHEN** el visitante pulsa play y el video es un archivo de Shopify
-- **THEN** se abre la modal y el video comienza a reproducirse con controles
-
-#### Scenario: Abrir video de YouTube
-- **WHEN** el visitante pulsa play y el video es una URL de YouTube
-- **THEN** se abre la modal con el reproductor de YouTube reproduciendo
-
-#### Scenario: Cerrar detiene el video
-- **WHEN** el video se reproduce y el visitante cierra la modal
-- **THEN** el sonido y la reproducción se detienen
-
-### Requirement: Accesibilidad de la modal
-
-El botón de play SHALL tener nombre accesible. La modal SHALL cerrarse con la tecla Escape, con un botón de cerrar con nombre accesible y al hacer clic fuera del video; mientras está abierta el foco MUST quedar contenido en ella y al cerrarse SHALL volver al botón de play.
-
-#### Scenario: Cerrar con Escape
-- **WHEN** la modal está abierta y el visitante pulsa Escape
-- **THEN** la modal se cierra y el foco vuelve al botón de play
 
 ### Requirement: Contenido como bloques
 
@@ -70,39 +34,6 @@ En anchos mayores a 749 px la media y el contenido SHALL mostrarse en dos column
 - **WHEN** la sección se ve a 390 px
 - **THEN** la imagen y el contenido se apilan, las tarjetas usan las columnas móviles configuradas y no hay scroll horizontal
 
-
-### Requirement: Modal centrada en el viewport
-
-Mientras está abierta, la ventana modal del video SHALL quedar centrada vertical y horizontalmente en el viewport en cualquier ancho y orientación de pantalla, también al terminar la animación de apertura. El video MUST verse completo dentro del viewport, sin recortarse ni generar scroll.
-
-#### Scenario: Escritorio
-- **WHEN** el visitante abre la modal en una pantalla de 1440 × 900 px
-- **THEN** la modal queda centrada con el mismo espacio arriba y abajo
-
-#### Scenario: Móvil vertical
-- **WHEN** el visitante abre la modal en una pantalla de 390 × 844 px
-- **THEN** la modal queda centrada verticalmente y no pegada al borde superior
-
-#### Scenario: Móvil horizontal
-- **WHEN** el visitante abre la modal en una pantalla de 844 × 390 px
-- **THEN** la modal queda centrada y el video 16:9 se ve completo sin scroll
-
-#### Scenario: Después de la animación
-- **WHEN** la animación de apertura termina
-- **THEN** la modal permanece centrada, sin desplazarse hacia arriba
-
-### Requirement: Overlay de la imagen del video
-
-La imagen con botón de play SHALL poder mostrar un overlay configurable (activable, color, opacidad y degradado en los bordes superior e inferior, activo por defecto). Toda la superficie de la imagen SHALL abrir el video al hacer clic, y al pasar el puntero o enfocar SHALL dar respuesta visual sin desplazar el layout.
-
-#### Scenario: Overlay por defecto
-- **WHEN** el comerciante agrega la sección sin cambiar ajustes
-- **THEN** la imagen muestra un velo oscuro suave con bordes superior e inferior más oscuros
-
-#### Scenario: Clic fuera del botón circular
-- **WHEN** el visitante hace clic en una esquina de la imagen
-- **THEN** se abre la modal del video
-
 ### Requirement: Resolución máxima de la imagen
 
 La imagen SHALL ofrecer al navegador versiones hasta el ancho original del archivo subido, incluido ese ancho, sin pedir anchos mayores que el original.
@@ -110,3 +41,79 @@ La imagen SHALL ofrecer al navegador versiones hasta el ancho original del archi
 #### Scenario: Pantalla de alta densidad
 - **WHEN** la imagen subida mide 684 px de ancho y se ve en una pantalla retina
 - **THEN** el navegador carga la versión de 684 px
+
+### Requirement: Video en línea con reproducción automática
+
+Cuando hay un video configurado (archivo subido a Shopify o URL de YouTube o Vimeo), la sección SHALL mostrarlo dentro del recuadro de la media, ocupando toda su superficie, con reproducción automática, silenciado, en loop infinito y sin controles visibles. La sección MUST NOT renderizar botón de play ni ventana modal.
+
+#### Scenario: Video subido
+- **WHEN** la sección tiene un video subido a Shopify y el visitante carga la página
+- **THEN** el video se reproduce solo, sin sonido, dentro del recuadro y sin controles
+
+#### Scenario: Loop infinito
+- **WHEN** el video llega a su final
+- **THEN** vuelve a empezar automáticamente sin intervención del visitante
+
+#### Scenario: Video de YouTube o Vimeo
+- **WHEN** la sección tiene una URL de YouTube o Vimeo
+- **THEN** el video se reproduce silenciado y en loop dentro del recuadro, sin abrir una modal
+
+#### Scenario: Reproducción en móvil
+- **WHEN** la sección se ve en un iPhone a 390 px
+- **THEN** el video se reproduce en línea dentro del recuadro, sin pasar a pantalla completa
+
+### Requirement: Recuadro del video con bordes redondeados
+
+El recuadro del video SHALL respetar el radio de borde y la proporción configurados en la sección. El video MUST llenar el recuadro recortándose si su proporción difiere, sin franjas negras y sin sobresalir de las esquinas redondeadas.
+
+#### Scenario: Radio por defecto de la home
+- **WHEN** la sección tiene radio de borde 24 px y proporción 3:2
+- **THEN** el video se ve con las cuatro esquinas redondeadas a 24 px y llena el recuadro 3:2
+
+#### Scenario: Video 16:9 en recuadro cuadrado
+- **WHEN** el video es 16:9 y la proporción configurada es cuadrada
+- **THEN** el video se recorta a los lados y llena el recuadro sin franjas
+
+### Requirement: Imagen como poster y reemplazo
+
+Con un video subido configurado, la imagen de la sección (con su variante móvil) SHALL usarse solo como fotograma de espera mientras el video carga y MUST NOT mostrarse encima ni junto al video. Sin video configurado, SHALL mostrarse la imagen estática; sin imagen ni video, un placeholder.
+
+#### Scenario: Video cargando
+- **WHEN** el video subido aún no empezó a reproducirse
+- **THEN** el recuadro muestra la imagen configurada como poster
+
+#### Scenario: Sin video
+- **WHEN** la sección tiene imagen pero no video
+- **THEN** se ve solo la imagen estática con el radio configurado, sin botón
+
+### Requirement: Respeto de la preferencia de reducir movimiento
+
+Si el visitante tiene activada la preferencia del sistema de reducir movimiento, el video subido MUST NOT reproducirse automáticamente y el recuadro SHALL mostrar el poster.
+
+#### Scenario: Reducir movimiento activo
+- **WHEN** el visitante tiene `prefers-reduced-motion: reduce` y carga la página
+- **THEN** el recuadro muestra la imagen poster y el video no avanza
+
+### Requirement: Video decorativo para tecnologías de asistencia
+
+El video en línea SHALL tratarse como decorativo: MUST NOT recibir foco con el teclado ni ser anunciado por lectores de pantalla como un control interactivo.
+
+#### Scenario: Navegación con teclado
+- **WHEN** el visitante recorre la sección con la tecla Tab
+- **THEN** el foco pasa del contenido anterior al siguiente sin detenerse en el video
+
+### Requirement: Overlay del recuadro del video
+
+El recuadro de la media SHALL poder mostrar un overlay configurable (activable, color, opacidad y degradado en los bordes superior e inferior, activo por defecto) sobre el video o la imagen. El recuadro MUST NOT reaccionar al clic, al hover ni al foco.
+
+#### Scenario: Overlay por defecto
+- **WHEN** el comerciante agrega la sección sin cambiar ajustes
+- **THEN** el video muestra un velo oscuro suave con bordes superior e inferior más oscuros
+
+#### Scenario: Overlay desactivado
+- **WHEN** el comerciante desactiva "Mostrar overlay"
+- **THEN** el video se ve sin velo
+
+#### Scenario: Clic en el video
+- **WHEN** el visitante hace clic sobre el recuadro del video
+- **THEN** no se abre ninguna modal y el video sigue reproduciéndose
