@@ -263,10 +263,15 @@
     line-height: 1.2;
     text-decoration: none;
     cursor: pointer;
+    /* Slower than the theme's micro-interaction tokens so the hover color change reads as a fade. */
+    --pt-btn-duration: 0.35s;
+    --pt-btn-easing: var(--ease-out-cubic, ease-out);
+
     transition:
-      background-color var(--animation-speed, 0.2s) var(--animation-easing, ease),
-      color var(--animation-speed, 0.2s) var(--animation-easing, ease),
-      border-color var(--animation-speed, 0.2s) var(--animation-easing, ease);
+      background-color var(--pt-btn-duration) var(--pt-btn-easing),
+      color var(--pt-btn-duration) var(--pt-btn-easing),
+      border-color var(--pt-btn-duration) var(--pt-btn-easing),
+      opacity var(--pt-btn-duration) var(--pt-btn-easing);
   }
 
   .product-tile__button--small {
@@ -318,7 +323,7 @@
     flex: none;
     width: 1em;
     height: 1em;
-    transition: transform var(--animation-speed, 0.2s) var(--animation-easing, ease);
+    transition: transform var(--pt-btn-duration, 0.35s) var(--pt-btn-easing, ease-out);
   }
 
   .product-tile__button-icon svg {
