@@ -279,7 +279,7 @@
             "title_padding_right": 0,
             "title_padding_bottom": 0,
             "title_padding_left": 0,
-            "text": "<p>Lunes a jueves 9:00 am a 10:00 pm<br/>Viernes a domindo 9:00 am a 12:00 pm</p>",
+            "text": "<p>Lunes a jueves 10:00 &nbsp;a 21:00 Hrs<br/>Viernes a domindo 10:00 a 22:00 Hrs</p>",
             "text_font": "work_sans_n4",
             "text_weight": "auto",
             "text_size": 15,
