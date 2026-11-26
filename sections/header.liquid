@@ -768,23 +768,21 @@
    * completo, altura mínima y espaciado personalizado (escritorio).
    * ------------------------------------------------------------------------- */
 
-  /* Separación del borde superior (aplica con y sin glassmorphism) */
-  .header:not([transparent]) .header__row--top {
-    margin-block-start: var(--glass-float-margin, 0px);
-  }
-
-  /* Separación inferior (todas las resoluciones) */
-  .header:not([transparent]) .header__row--top:last-of-type,
-  .header:not([transparent]) .header__row--bottom {
-    margin-block-end: var(--header-margin-block-end, 0px);
-  }
-
-  /* Contiene los márgenes de las filas para que la altura medida
-   * (--header-height) los incluya y la reserva de espacio sea exacta. */
-  .header--band {
+  /* Separación superior e inferior de la barra (con y sin glassmorphism).
+   * Es padding del propio header, no margen de las filas: así nunca colapsa
+   * hacia afuera ni empuja elementos externos, y entra en la altura medida
+   * (--header-height). El header es un custom element (inline por defecto):
+   * flow-root lo hace de bloque para que el padding ocupe espacio y, además,
+   * contiene cualquier margen de los hijos. */
+  .header:not([transparent]) {
     display: flow-root;
+    padding-block-start: var(--glass-float-margin, 0px);
+    padding-block-end: var(--header-margin-block-end, 0px);
+  }
 
-    /* La franja se pinta en el propio header, que ocupa todo el ancho */
+  .header--band {
+    /* La franja se pinta en el propio header (incluida la zona de padding),
+     * que ocupa todo el ancho */
     background-color: var(--header-band-color);
   }
 
