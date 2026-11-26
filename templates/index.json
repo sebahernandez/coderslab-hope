@@ -606,7 +606,7 @@
         "image_alt": "heladeria hope venezuela",
         "image_ratio": "1.5",
         "image_radius": 24,
-        "overlay_enabled": true,
+        "overlay_enabled": false,
         "overlay_color": "#000000",
         "overlay_opacity": 5,
         "overlay_gradient": true,
