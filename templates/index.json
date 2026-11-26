@@ -110,8 +110,8 @@
       ],
       "name": "Texto con imagen",
       "settings": {
-        "image_desktop": "shopify://shop_images/helados-hope.avif",
-        "image_mobile": "shopify://shop_images/helados-hope.avif",
+        "image_desktop": "shopify://shop_images/helados-artesanales-hope.avif",
+        "image_mobile": "shopify://shop_images/helados-artesanales-hope.avif",
         "image_alt": "helados hope",
         "image_link": "",
         "ratio_desktop": "1.25",
