@@ -18,7 +18,7 @@
             "image_desktop": "shopify://shop_images/hero-home-desktop.avif",
             "image_mobile": "shopify://shop_images/hero-home-movil.avif",
             "alt": "helado barquilla hope",
-            "link": "shopify://products/barquillo",
+            "link": "shopify://products/helado-hope",
             "width": "centered",
             "height_unit": "px",
             "height_desktop": 680,
