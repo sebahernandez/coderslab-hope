@@ -37,7 +37,7 @@
   assign title_tag = s.title_tag | default: 'h3'
 -%}
 <div
-  class="product-tile{% if s.align == 'center' %} product-tile--center{% endif %}"
+  class="product-tile{% if s.align == 'center' %} product-tile--center{% endif %}{% if s.image_hover_zoom %} product-tile--zoom{% endif %}"
   style="
     --pt-ratio: {{ ratio }};
     --pt-ratio-m: {{ ratio_mobile }};
@@ -181,6 +181,23 @@
     height: 100%;
     max-width: 100%;
     object-fit: var(--pt-fit, cover);
+  }
+
+  /* Hover zoom: the media wrapper's overflow clips the scaled image, so layout stays put. */
+  .product-tile--zoom {
+    --pt-zoom-scale: 1.06;
+    --pt-zoom-duration: 0.6s;
+  }
+
+  @media (any-pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .product-tile--zoom .product-tile__image {
+      transition: transform var(--pt-zoom-duration) var(--ease-out-cubic, ease-out);
+    }
+
+    .product-tile--zoom:hover .product-tile__image,
+    .product-tile--zoom:focus-within .product-tile__image {
+      transform: scale(var(--pt-zoom-scale));
+    }
   }
 
   .product-tile__body {
@@ -424,6 +441,7 @@
       "default": 12
     },
     { "type": "color", "id": "image_bg", "label": "Fondo tras la imagen", "info": "Visible con el ajuste Contener." },
+    { "type": "checkbox", "id": "image_hover_zoom", "label": "Zoom de imagen en hover", "default": true },
 
     { "type": "header", "content": "Título" },
     { "type": "text", "id": "title", "label": "Título", "info": "Vacío usa el título del producto." },
