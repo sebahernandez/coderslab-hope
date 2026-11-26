@@ -49,9 +49,9 @@
         "grid_gap": 24,
         "image_ratio": "portrait",
         "section_width": "page-width",
-        "gap": 32,
+        "gap": 16,
         "color_scheme": "scheme-1",
-        "padding-block-start": 180,
+        "padding-block-start": 48,
         "padding-block-end": 48
       }
     }
