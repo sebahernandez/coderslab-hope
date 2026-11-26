@@ -151,7 +151,7 @@
      el header glass está activo (si no, el header es sticky/in-flow y no haría falta).
      Aplica tanto en móvil como en desktop. */
   body:has(#header-component.header--glass) .section-resource-list {
-    padding-block-start: calc(var(--header-group-height, 86px) + var(--padding-xl));
+    padding-block-start: calc(var(--header-group-height, 86px) - var(--header-flow-offset, 0px) + var(--padding-xl));
   }
 {% endstylesheet %}
 

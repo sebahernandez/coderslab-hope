@@ -2346,8 +2346,8 @@ main .shopify-policy__container {
   margin-inline: auto;
   padding-inline: 16px;
   /* El header es position: fixed (~86px). Reservar su alto + aire para que el
-     título no quede tapado. */
-  padding-block: calc(var(--header-group-height, 86px) + var(--padding-4xl)) var(--padding-6xl);
+     título no quede tapado, restando lo que el header ya reservó en main. */
+  padding-block: calc(var(--header-group-height, 86px) - var(--header-flow-offset, 0px) + var(--padding-4xl)) var(--padding-6xl);
 }
 
 @media screen and (min-width: 750px) {

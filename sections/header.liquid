@@ -322,6 +322,9 @@
     --header-height: 0px;
     --header-group-height: var(--header-height);
     --transparent-header-offset-boolean: 0; /* stylelint-disable-line declaration-property-value-disallowed-list */
+    /* Height the header reserves in the document flow. Pages that offset the
+     * fixed header subtract it so the header height is reserved only once. */
+    --header-flow-offset: 0px;
   }
 
   body:has(> #header-group > header) {
@@ -792,8 +795,12 @@
 
   /* Con glass el header es fijo y no ocupa espacio: se reserva su altura para
    * que la franja no tape el inicio de la primera sección. */
+  body:has(#header-component.header--band.header--glass) {
+    --header-flow-offset: var(--header-height);
+  }
+
   body:has(#header-component.header--band.header--glass) main {
-    padding-block-start: var(--header-height);
+    padding-block-start: var(--header-flow-offset);
   }
 
   .header.header--min-height .header__columns {
