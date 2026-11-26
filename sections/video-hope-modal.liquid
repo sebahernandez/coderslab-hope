@@ -54,11 +54,35 @@
     assign fetchpriority = 'high'
   endif
 
+  # object-fit: cover crops images wider than the frame, so only part of the file's width
+  # is visible. Scale `sizes` by that crop factor so the browser downloads enough pixels
+  # for the visible area instead of assuming the whole image is shown.
+  assign frame_ratio = ratio | times: 1.0
+  assign crop_desktop = 1
+  if image_desktop != blank and image_desktop.aspect_ratio > frame_ratio
+    assign crop_desktop = image_desktop.aspect_ratio | divided_by: frame_ratio | round: 3
+  endif
+  assign crop_mobile = 1
+  if image_mobile != blank and image_mobile.aspect_ratio > frame_ratio
+    assign crop_mobile = image_mobile.aspect_ratio | divided_by: frame_ratio | round: 3
+  endif
+
+  assign desktop_vw = s.media_width | append: 'vw'
+  assign mobile_vw = '100vw'
+  if crop_desktop > 1
+    assign desktop_vw = 'calc(' | append: s.media_width | append: 'vw * ' | append: crop_desktop | append: ')'
+    assign mobile_vw = 'calc(100vw * ' | append: crop_desktop | append: ')'
+  endif
+  assign mobile_source_sizes = '100vw'
+  if crop_mobile > 1
+    assign mobile_source_sizes = 'calc(100vw * ' | append: crop_mobile | append: ')'
+  endif
+
   if s.layout_width == 'full'
-    assign sizes = '(min-width: 750px) ' | append: s.media_width | append: 'vw, 100vw'
+    assign sizes = '(min-width: 750px) ' | append: desktop_vw | append: ', ' | append: mobile_vw
   else
-    assign sizes_px = 1600 | times: s.media_width | divided_by: 100
-    assign sizes = '(min-width: 1600px) ' | append: sizes_px | append: 'px, (min-width: 750px) ' | append: s.media_width | append: 'vw, 100vw'
+    assign sizes_px = 1600 | times: s.media_width | divided_by: 100 | times: crop_desktop | round
+    assign sizes = '(min-width: 1600px) ' | append: sizes_px | append: 'px, (min-width: 750px) ' | append: desktop_vw | append: ', ' | append: mobile_vw
   endif
 
   case s.content_align
@@ -128,7 +152,7 @@
               <source
                 media="(max-width: 749px)"
                 srcset="{{ mobile_srcset }}"
-                sizes="100vw"
+                sizes="{{ mobile_source_sizes }}"
                 width="{{ image_mobile.width }}"
                 height="{{ image_mobile.height }}"
               >
