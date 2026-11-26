@@ -169,6 +169,17 @@
       echo '--glass-border-width: ' | append: section.settings.glass_border_width | append: 'px;'
       echo '--glass-border-rgb: ' | append: glass_border_color.red | append: ' ' | append: glass_border_color.green | append: ' ' | append: glass_border_color.blue | append: ';'
       echo '--glass-border-opacity: ' | append: section.settings.glass_border_opacity | append: ';'
+      if section.settings.glass_shadow_enable
+        echo '--glass-shadow-y: ' | append: section.settings.glass_shadow_offset_y | append: 'px;'
+        echo '--glass-shadow-blur: ' | append: section.settings.glass_shadow_blur | append: 'px;'
+        echo '--glass-shadow-opacity: ' | append: section.settings.glass_shadow_opacity | append: ';'
+        assign glass_shadow_color = section.settings.glass_shadow_color
+        if glass_shadow_color != blank
+          echo '--glass-shadow-rgb: ' | append: glass_shadow_color.red | append: ' ' | append: glass_shadow_color.green | append: ' ' | append: glass_shadow_color.blue | append: ';'
+        endif
+      else
+        echo '--glass-shadow: none;'
+      endif
     endcapture
   endif
 
@@ -727,7 +738,11 @@
       /* Borde blanco delgado pero marcado que rodea todo el panel de vidrio */
       border: var(--glass-border-width, 2px) solid
         rgb(var(--glass-border-rgb, 255 255 255) / calc(var(--glass-border-opacity, 90) / 100));
-      box-shadow: 0 6px 24px rgb(var(--color-foreground-rgb) / 0.1);
+      box-shadow: var(
+        --glass-shadow,
+        0 var(--glass-shadow-y, 6px) var(--glass-shadow-blur, 24px)
+          rgb(var(--glass-shadow-rgb, var(--color-foreground-rgb)) / calc(var(--glass-shadow-opacity, 10) / 100))
+      );
     }
 
     /* Padding para que el logo no quede pegado al borde izquierdo del vidrio */
@@ -1308,6 +1323,53 @@
       "unit": "%",
       "default": 90,
       "visible_if": "{{ section.settings.enable_glass_header and section.settings.glass_border_width > 0 }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "glass_shadow_enable",
+      "label": "Mostrar sombra",
+      "default": true,
+      "visible_if": "{{ section.settings.enable_glass_header }}"
+    },
+    {
+      "type": "range",
+      "id": "glass_shadow_blur",
+      "label": "Difuminado de la sombra",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ section.settings.enable_glass_header and section.settings.glass_shadow_enable }}"
+    },
+    {
+      "type": "range",
+      "id": "glass_shadow_offset_y",
+      "label": "Desplazamiento vertical de la sombra",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "px",
+      "default": 6,
+      "visible_if": "{{ section.settings.enable_glass_header and section.settings.glass_shadow_enable }}"
+    },
+    {
+      "type": "color",
+      "id": "glass_shadow_color",
+      "label": "Color de la sombra",
+      "info": "Si se deja vacío, usa el color de texto del esquema.",
+      "visible_if": "{{ section.settings.enable_glass_header and section.settings.glass_shadow_enable }}"
+    },
+    {
+      "type": "range",
+      "id": "glass_shadow_opacity",
+      "label": "Opacidad de la sombra",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 10,
+      "visible_if": "{{ section.settings.enable_glass_header and section.settings.glass_shadow_enable }}"
     },
     {
       "type": "header",
