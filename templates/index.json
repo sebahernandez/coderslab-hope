@@ -601,8 +601,6 @@
       ],
       "name": "Video Hope modal",
       "settings": {
-        "image": "shopify://shop_images/Vasitos_de_yogur_helado_con_fresas_y_pistacho.jpg",
-        "image_mobile": "shopify://shop_images/Vasitos_de_yogur_helado_con_fresas_y_pistacho.jpg",
         "image_alt": "heladeria hope venezuela",
         "image_ratio": "1.5",
         "image_radius": 24,
