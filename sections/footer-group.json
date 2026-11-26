@@ -14,18 +14,6 @@
     "footer": {
       "type": "footer",
       "blocks": {
-        "divider_hFm3am": {
-          "type": "_divider",
-          "name": "t:names.divider",
-          "settings": {
-            "thickness": 1,
-            "corner_radius": "square",
-            "width_percent": 100,
-            "padding-block-start": 0,
-            "padding-block-end": 0
-          },
-          "blocks": {}
-        },
         "group_tbFfTQ": {
           "type": "group",
           "name": "Email signup",
@@ -246,7 +234,7 @@
                   "type": "text",
                   "name": "Horario",
                   "settings": {
-                    "text": "<p><strong>Horario<br/></strong>Lunes&nbsp;a&nbsp;jueves<br/>10:00&nbsp;am –&nbsp;21:00 pm<br/>Viernes&nbsp;a&nbsp;domingo<br/>10:00 am –&nbsp;22:00 pm</p>",
+                    "text": "<p><strong>Horario<br/></strong>Lunes&nbsp;a&nbsp;jueves<br/>10:00&nbsp;am –&nbsp;21:00 Hrs<br/>Viernes&nbsp;a&nbsp;domingo<br/>10:00 am –&nbsp;22:00 Hrs</p>",
                     "width": "100%",
                     "max_width": "none",
                     "alignment": "left",
@@ -381,6 +369,18 @@
             "group_ubicacion",
             "group_medios_pago"
           ]
+        },
+        "divider_hFm3am": {
+          "type": "_divider",
+          "name": "t:names.divider",
+          "settings": {
+            "thickness": 1,
+            "corner_radius": "square",
+            "width_percent": 100,
+            "padding-block-start": 0,
+            "padding-block-end": 0
+          },
+          "blocks": {}
         },
         "footer_utilities_KRaGcH": {
           "type": "footer-utilities",
