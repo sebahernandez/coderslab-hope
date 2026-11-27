@@ -53,7 +53,7 @@
             "heading": "Helados artesanales",
             "tag": "h2",
             "color": "#6b0f3a",
-            "size": 56,
+            "size": 70,
             "size_mobile": 38,
             "weight": "800",
             "line_height": 105,
@@ -65,7 +65,7 @@
           "settings": {
             "text": "Con sabor a felicidad",
             "color": "#b0185a",
-            "size": 13,
+            "size": 20,
             "size_mobile": 12,
             "weight": "700",
             "uppercase": true,
@@ -78,7 +78,7 @@
           "settings": {
             "text": "<p>Endulzamos cada rincón de Tucacas con sabores que roban sonrisas.</p>",
             "color": "#3d3d3d",
-            "size": 17,
+            "size": 22,
             "size_mobile": 16,
             "max_width": 45,
             "spacing_bottom": 24
