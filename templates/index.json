@@ -127,7 +127,7 @@
         "vertical_align": "center",
         "text_align_desktop": "left",
         "text_align_mobile": "left",
-        "gap": 48,
+        "gap": 40,
         "gap_mobile": 28,
         "color_scheme": "",
         "padding_top": 48,
