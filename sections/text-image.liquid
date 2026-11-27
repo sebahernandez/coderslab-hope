@@ -2,7 +2,9 @@
   Section contract.
   Renders a two-column banner: a stack of text blocks (heading, subheading, text, button)
   next to an image. Each block owns its copy, colors, sizes and spacing. The section owns
-  the image (independent desktop/mobile images, aspect ratio, focal position, radius) and
+  the image (independent desktop/mobile images, aspect ratio, size per breakpoint, horizontal alignment of the frame and of a
+  contained image within it, including an outer-edge option that follows the image side,
+  focal position, radius) and
   the layout: image side on desktop, image order on mobile, column width, gap, vertical
   alignment and text alignment per breakpoint. Columns stack below 750px.
   @example
@@ -15,13 +17,68 @@
   assign image_mobile = s.image_mobile | default: s.image_desktop
 
   # Aspect ratio: 'auto' follows the uploaded image; otherwise the numeric value is used.
+  # With 'auto' the frame matches the image, so 'contain' guarantees a full, uncropped image.
   assign ratio_desktop = s.ratio_desktop
+  assign fit_desktop = s.image_fit
   if ratio_desktop == 'auto'
     assign ratio_desktop = image_desktop.aspect_ratio | default: 1.25
+    assign fit_desktop = 'contain'
   endif
   assign ratio_mobile = s.ratio_mobile
+  assign fit_mobile = s.image_fit
   if ratio_mobile == 'auto'
     assign ratio_mobile = image_mobile.aspect_ratio | default: ratio_desktop
+    assign fit_mobile = 'contain'
+  endif
+
+  # Horizontal alignment drives the reduced frame and the contained image inside it.
+  # 'edge' follows the desktop image side and falls back to center once columns stack.
+  case s.image_align
+    when 'start'
+      assign image_justify = 'flex-start'
+      assign image_justify_mobile = 'flex-start'
+    when 'end'
+      assign image_justify = 'flex-end'
+      assign image_justify_mobile = 'flex-end'
+    when 'edge'
+      assign image_justify = 'flex-start'
+      if s.media_side == 'end'
+        assign image_justify = 'flex-end'
+      endif
+      assign image_justify_mobile = 'center'
+    else
+      assign image_justify = 'center'
+      assign image_justify_mobile = 'center'
+  endcase
+
+  # Vertical placement of a contained image within its frame.
+  case s.image_position
+    when 'top'
+      assign image_items = 'flex-start'
+    when 'bottom'
+      assign image_items = 'flex-end'
+    else
+      assign image_items = 'center'
+  endcase
+
+  # Contained images are sized inside the frame (not object-fit) so the radius follows the visible image.
+  # An image narrower than its frame fills the height; otherwise it fills the width.
+  assign frame_class = 'text-image__frame'
+  if image_desktop != blank
+    if fit_desktop == 'contain'
+      assign frame_class = frame_class | append: ' text-image__frame--contain-desktop'
+      assign frame_ratio = ratio_desktop | times: 1.0
+      if image_desktop.aspect_ratio < frame_ratio
+        assign frame_class = frame_class | append: ' text-image__frame--by-height-desktop'
+      endif
+    endif
+    if fit_mobile == 'contain'
+      assign frame_class = frame_class | append: ' text-image__frame--contain-mobile'
+      assign frame_ratio = ratio_mobile | times: 1.0
+      if image_mobile.aspect_ratio < frame_ratio
+        assign frame_class = frame_class | append: ' text-image__frame--by-height-mobile'
+      endif
+    endif
   endif
 
   assign position_desktop = s.image_position
@@ -42,11 +99,16 @@
     assign fetchpriority = 'high'
   endif
 
+  # Effective rendered width: column width scaled by the image size setting.
+  assign image_scale = s.image_scale | default: 100
+  assign image_scale_mobile = s.image_scale_mobile | default: 100
+  assign media_vw = s.media_width | times: image_scale | divided_by: 100
+  assign sizes_mobile = image_scale_mobile | append: 'vw'
   if s.layout_width == 'full'
-    assign sizes = '(min-width: 750px) ' | append: s.media_width | append: 'vw, 100vw'
+    assign sizes = '(min-width: 750px) ' | append: media_vw | append: 'vw, ' | append: sizes_mobile
   else
-    assign sizes_px = 1600 | times: s.media_width | divided_by: 100
-    assign sizes = '(min-width: 1600px) ' | append: sizes_px | append: 'px, (min-width: 750px) ' | append: s.media_width | append: 'vw, 100vw'
+    assign sizes_px = 1600 | times: media_vw | divided_by: 100
+    assign sizes = '(min-width: 1600px) ' | append: sizes_px | append: 'px, (min-width: 750px) ' | append: media_vw | append: 'vw, ' | append: sizes_mobile
   endif
 
   case s.text_align_desktop
@@ -88,7 +150,13 @@
     --ti-position: {{ position_desktop }};
     --ti-position-mobile: {{ position_mobile }};
     --ti-radius: {{ s.image_radius }}px;
-    --ti-fit: {{ s.image_fit }};
+    --ti-fit: {{ fit_desktop }};
+    --ti-fit-mobile: {{ fit_mobile }};
+    --ti-scale: {{ image_scale }}%;
+    --ti-scale-mobile: {{ image_scale_mobile }}%;
+    --ti-image-justify: {{ image_justify }};
+    --ti-image-justify-mobile: {{ image_justify_mobile }};
+    --ti-image-items: {{ image_items }};
   "
 >
   <div class="text-image__inner text-image__inner--{{ s.layout_width }}">
@@ -164,9 +232,9 @@
 
     <div class="text-image__media">
       {%- if s.image_link != blank -%}
-        <a class="text-image__frame" href="{{ s.image_link }}">
+        <a class="{{ frame_class }}" href="{{ s.image_link }}">
       {%- else -%}
-        <div class="text-image__frame">
+        <div class="{{ frame_class }}">
       {%- endif -%}
 
       {%- if image_desktop != blank -%}
@@ -175,7 +243,7 @@
             <source
               media="(max-width: 749px)"
               srcset="{{ image_mobile | image_url: width: 375 }} 375w, {{ image_mobile | image_url: width: 750 }} 750w, {{ image_mobile | image_url: width: 1125 }} 1125w, {{ image_mobile | image_url: width: 1500 }} 1500w"
-              sizes="100vw"
+              sizes="{{ sizes_mobile }}"
               width="{{ image_mobile.width }}"
               height="{{ image_mobile.height }}"
             >
@@ -395,12 +463,15 @@
   }
 
   .text-image__media {
+    display: flex;
     flex: 0 0 var(--ti-media-width);
+    justify-content: var(--ti-image-justify, center);
     min-width: 0;
   }
 
   .text-image__frame {
     display: block;
+    width: var(--ti-scale, 100%);
     overflow: hidden;
     aspect-ratio: var(--ti-ratio);
     border-radius: var(--ti-radius);
@@ -423,6 +494,32 @@
 
   .text-image__placeholder {
     background-color: rgb(var(--color-foreground-rgb) / var(--opacity-5, 0.05));
+  }
+
+  @media screen and (min-width: 750px) {
+    .text-image__frame--contain-desktop {
+      display: flex;
+      align-items: var(--ti-image-items, center);
+      justify-content: var(--ti-image-justify, center);
+      overflow: visible;
+      border-radius: 0;
+    }
+
+    .text-image__frame--contain-desktop .text-image__picture {
+      display: contents;
+    }
+
+    .text-image__frame--contain-desktop .text-image__image {
+      width: 100%;
+      height: auto;
+      object-fit: fill;
+      border-radius: var(--ti-radius);
+    }
+
+    .text-image__frame--by-height-desktop .text-image__image {
+      width: auto;
+      height: 100%;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -473,14 +570,41 @@
     .text-image__media {
       flex: 0 0 auto;
       width: 100%;
+      justify-content: var(--ti-image-justify-mobile, center);
     }
 
     .text-image__frame {
+      width: var(--ti-scale-mobile, 100%);
       aspect-ratio: var(--ti-ratio-mobile);
     }
 
     .text-image__image {
+      object-fit: var(--ti-fit-mobile, cover);
       object-position: var(--ti-position-mobile, center);
+    }
+
+    .text-image__frame--contain-mobile {
+      display: flex;
+      align-items: var(--ti-image-items, center);
+      justify-content: var(--ti-image-justify-mobile, center);
+      overflow: visible;
+      border-radius: 0;
+    }
+
+    .text-image__frame--contain-mobile .text-image__picture {
+      display: contents;
+    }
+
+    .text-image__frame--contain-mobile .text-image__image {
+      width: 100%;
+      height: auto;
+      object-fit: fill;
+      border-radius: var(--ti-radius);
+    }
+
+    .text-image__frame--by-height-mobile .text-image__image {
+      width: auto;
+      height: 100%;
     }
 
     .text-image__actions:has(.text-image__button--full-mobile) {
@@ -568,7 +692,42 @@
         { "value": "cover", "label": "Cubrir" },
         { "value": "contain", "label": "Contener" }
       ],
-      "default": "cover"
+      "default": "cover",
+      "info": "Con la proporción \"Según la imagen\" la imagen siempre se ve completa, sin recorte."
+    },
+    {
+      "type": "range",
+      "id": "image_scale",
+      "label": "Tamaño de la imagen (escritorio)",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100,
+      "info": "Achica la imagen dentro de su columna manteniendo la proporción, sin mover el texto."
+    },
+    {
+      "type": "range",
+      "id": "image_scale_mobile",
+      "label": "Tamaño de la imagen (móvil)",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "select",
+      "id": "image_align",
+      "label": "Alineación horizontal de la imagen",
+      "options": [
+        { "value": "start", "label": "Inicio" },
+        { "value": "center", "label": "Centro" },
+        { "value": "end", "label": "Final" },
+        { "value": "edge", "label": "Hacia el borde exterior" }
+      ],
+      "default": "center",
+      "info": "También ubica la imagen dentro del marco con encaje \"Contener\". \"Hacia el borde exterior\" sigue a \"Imagen en escritorio\" y se centra en móvil."
     },
     {
       "type": "select",
